@@ -1,72 +1,63 @@
-# 2. Calcul des intérêts (méthode exacte)
+# Souffrance et NSF – Logique de calcul
 
-## 2.1 Données de base d’un contrat
-
-- Capital financé initial (S0)
-- Taux annuel nominal (ex : 18,99 %)
-- Dates de prélèvement
-- Date d’origine du contrat
-
-Le calcul se fait AU JOUR PRÈS.
+La souffrance représente un montant exigible
+qui n’est pas inclus dans le calendrier normal
+des paiements du contrat.
 
 ---
 
-## 2.2 Nombre de jours
+## 1. Quand un paiement est NSF
 
-Pour chaque paiement :
+Lorsqu’un prélèvement ne passe pas :
 
-- Paiement 1 :
-  J1 = Date paiement 1 − Date d’origine
+- Le paiement prévu n’est PAS appliqué
+- Le contrat continue d’exister
+- Le solde du prêt continue de porter intérêt
 
-- Paiement n :
-  Jn = Date paiement n − Date paiement n-1
-
-Les jours réels sont utilisés (365).
+La ligne est marquée comme **NSF**.
 
 ---
 
-## 2.3 Formule d’intérêt
+## 2. Composition de la souffrance
 
-Pour chaque ligne :
+La souffrance est composée de :
 
-Intérêt = Solde début × Taux annuel × (Nombre de jours / 365)
+- Le paiement total non prélevé
+- Les frais NSF applicables
+- Les frais d’adhésion liés à cette échéance
 
-Exemple :
-Solde début = 2 250,00  
-Taux = 18,99 %  
-Jours = 14  
-
-Intérêt = 2 250 × 0,1899 × (14 / 365)
-
-Le résultat est arrondi à 0,01 $.
+C’est pour cette raison que la souffrance
+est souvent PLUS ÉLEVÉE que le paiement seul.
 
 ---
 
-## 2.4 Décomposition d’un paiement
+## 3. Différence entre solde et souffrance
 
-Chaque prélèvement est composé de :
+- Le **solde** représente le capital restant du contrat
+- La **souffrance** représente une dette immédiate
 
-- Intérêts
-- Capital
-- Frais d’adhésion (séparé du capital)
-
-Capital remboursé = Paiement prêt − Intérêts
-
----
-
-## 2.5 Mise à jour du solde
-
-Solde fin = Solde début − Capital remboursé
-
-Ce solde sert de base au calcul suivant.
+Le solde peut augmenter indirectement
+parce que les intérêts continuent de s’accumuler
+tant que la souffrance n’est pas réglée.
 
 ---
 
-## 2.6 Point clé (source de confusion)
+## 4. Résolution de la souffrance
 
-Le montant TOTAL prélevé
-≠
-Le montant qui réduit le solde
+Le client a trois options :
 
-Les frais d’adhésion et pénalités
-ne réduisent JAMAIS le capital.
+1. Payer la souffrance en totalité (paiement manuel)
+2. Répartir la souffrance sur X paiements futurs
+3. Combiner paiement partiel + répartition
+
+La résolution de la souffrance n’annule pas
+les paiements futurs du calendrier initial.
+
+---
+
+## 5. Principe clé
+
+La souffrance est un **événement**,
+pas une modification du contrat original.
+
+Le calendrier du contrat reste la vérité contractuelle.
