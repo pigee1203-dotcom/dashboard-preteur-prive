@@ -454,7 +454,7 @@
     }));
     state.selected = 1;
     state.arrearsItems = [];
-    state.events = [{ts:new Date().toISOString(), title:'Dossier chargé', txt:'Reporter = sélectionner lignes + 1-5/tous ou ajouter ligne. NSF = souffrance auto (paiement + 48$) + mêmes options.'}];
+    state.events = [{ts:new Date().toISOString(), title:'Dossier chargé', txt:'Reporter = sélectionner lignes + Sélection/AUTO 1-5/TOUS ou ajouter ligne. NSF = souffrance auto (paiement + 48$) + mêmes options.'}];
     renderAll();
   }
 
@@ -561,7 +561,7 @@
     document.getElementById('overlay').style.display = 'none';
   }
 
-  // ===== Reporter UI state (for toggles)
+  // ===== Reporter UI state (Sélection / Auto 1-5 / Tous / NEW)
   function onRepPlanChange(){
     const plan = document.getElementById('repPlan').value;
     const pick = document.getElementById('pickTargets');
@@ -573,19 +573,19 @@
     if(plan === 'NEW'){
       pick.style.display = 'none';
       nl.style.display = 'block';
-      confirm.classList.remove('disabled');
-      document.getElementById('repPreview').textContent = 'Ajout par ligne: —';
       document.getElementById('repNeed').textContent = 'Mode: ajout d’une ligne VIREMENT';
+      document.getElementById('repPreview').textContent = 'Ajout par ligne: —';
+      confirm.classList.remove('disabled');
       return;
     }
 
     pick.style.display = 'block';
     nl.style.display = 'none';
 
-    if(plan === 'ALL'){
-      document.querySelectorAll('.tchk').forEach(c => c.checked = true);
-      validateRepSelection();
-      return;
+    if(plan === 'ALL' || plan.startsWith('AUTO_')){
+      const n = plan === 'ALL' ? 9999 : Number(plan.replace('AUTO_',''));
+      const boxes = Array.from(document.querySelectorAll('.tchk')).slice(0, n);
+      boxes.forEach(b => b.checked = true);
     }
 
     validateRepSelection();
@@ -597,32 +597,27 @@
     const amt = clamp2(Number(document.getElementById('repAmt').value || 0));
 
     if(plan === 'NEW'){
+      if(amt > 0) confirm.classList.remove('disabled');
+      else confirm.classList.add('disabled');
+      return;
+    }
+
+    const checked = Array.from(document.querySelectorAll('.tchk')).filter(x=>x.checked);
+    const count = checked.length;
+
+    document.getElementById('repNeed').textContent = `Sélection: ${count} ligne(s)`;
+
+    if(count > 0 && amt > 0){
+      const per = clamp2(amt / count);
+      document.getElementById('repPreview').textContent = `Ajout par ligne: ${money(per)}`;
       confirm.classList.remove('disabled');
-      return;
+    } else {
+      document.getElementById('repPreview').textContent = 'Ajout par ligne: —';
+      confirm.classList.add('disabled');
     }
-
-    const checked = Array.from(document.querySelectorAll('.tchk')).filter(x=>x.checked).length;
-    const needEl = document.getElementById('repNeed');
-    const prevEl = document.getElementById('repPreview');
-
-    if(plan === 'ALL'){
-      const per = checked>0 ? clamp2(amt/checked) : 0;
-      needEl.textContent = `Sélection: ${checked} ligne(s) (tous)`;
-      prevEl.textContent = `Ajout par ligne: ${checked>0?money(per):'—'}`;
-      if(checked>0 && amt>0) confirm.classList.remove('disabled'); else confirm.classList.add('disabled');
-      return;
-    }
-
-    const need = Number(plan);
-    const per = checked>0 ? clamp2(amt/checked) : 0;
-    needEl.textContent = `À sélectionner: ${need} ligne(s)`;
-    prevEl.textContent = `Ajout par ligne: ${checked>0?money(per):'—'}`;
-
-    if(amt>0 && checked === need) confirm.classList.remove('disabled');
-    else confirm.classList.add('disabled');
   }
 
-  // ===== Arrears(NSF) UI state
+  // ===== Arrears(NSF) UI state (Sélection / Auto 1-5 / Tous / NEW)
   function onArrPlanChange(){
     const plan = document.getElementById('arrPlan').value;
     const pick = document.getElementById('arrPickTargets');
@@ -634,19 +629,19 @@
     if(plan === 'NEW'){
       pick.style.display = 'none';
       nl.style.display = 'block';
-      confirm.classList.remove('disabled');
       document.getElementById('arrNeed').textContent = 'Mode: ajout d’une ligne VIREMENT';
       document.getElementById('arrPreview').textContent = 'Ajout par ligne: —';
+      confirm.classList.remove('disabled');
       return;
     }
 
     pick.style.display = 'block';
     nl.style.display = 'none';
 
-    if(plan === 'ALL'){
-      document.querySelectorAll('.arrchk').forEach(c => c.checked = true);
-      validateArrSelection();
-      return;
+    if(plan === 'ALL' || plan.startsWith('AUTO_')){
+      const n = plan === 'ALL' ? 9999 : Number(plan.replace('AUTO_',''));
+      const boxes = Array.from(document.querySelectorAll('.arrchk')).slice(0, n);
+      boxes.forEach(b => b.checked = true);
     }
 
     validateArrSelection();
@@ -658,27 +653,24 @@
     const amt = clamp2(Number(document.getElementById('arrAmt').value || 0));
 
     if(plan === 'NEW'){
+      if(amt > 0) confirm.classList.remove('disabled');
+      else confirm.classList.add('disabled');
+      return;
+    }
+
+    const checked = Array.from(document.querySelectorAll('.arrchk')).filter(x=>x.checked);
+    const count = checked.length;
+
+    document.getElementById('arrNeed').textContent = `Sélection: ${count} ligne(s)`;
+
+    if(count > 0 && amt > 0){
+      const per = clamp2(amt / count);
+      document.getElementById('arrPreview').textContent = `Ajout par ligne: ${money(per)}`;
       confirm.classList.remove('disabled');
-      return;
+    } else {
+      document.getElementById('arrPreview').textContent = 'Ajout par ligne: —';
+      confirm.classList.add('disabled');
     }
-
-    const checked = Array.from(document.querySelectorAll('.arrchk')).filter(x=>x.checked).length;
-
-    if(plan === 'ALL'){
-      const per = checked>0 ? clamp2(amt/checked) : 0;
-      document.getElementById('arrNeed').textContent = `Sélection: ${checked} ligne(s) (tous)`;
-      document.getElementById('arrPreview').textContent = `Ajout par ligne: ${checked>0?money(per):'—'}`;
-      if(checked>0 && amt>0) confirm.classList.remove('disabled'); else confirm.classList.add('disabled');
-      return;
-    }
-
-    const need = Number(plan);
-    const per = checked>0 ? clamp2(amt/checked) : 0;
-    document.getElementById('arrNeed').textContent = `À sélectionner: ${need} ligne(s)`;
-    document.getElementById('arrPreview').textContent = `Ajout par ligne: ${checked>0?money(per):'—'}`;
-
-    if(amt>0 && checked === need) confirm.classList.remove('disabled');
-    else confirm.classList.add('disabled');
   }
 
   // ===== Open modal
@@ -697,7 +689,7 @@
       note:'📝 Ajouter une note'
     })[kind] || 'Action';
 
-    // ===== REPORT (sélection + 1-5/tous OU ajouter ligne)
+    // ===== REPORT (sélection libre + AUTO 1-5/TOUS + NEW)
     if(kind === 'report'){
       const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
       const targets = ordered.filter(r =>
@@ -720,20 +712,23 @@
           </div>
           <div class="field">
             <label>Montant à déplacer</label>
-            <input id="repAmt" type="number" step="0.01" value="${clamp2((row.total||0)+(row.adjustment||0))}" oninput="validateRepSelection()" />
+            <input id="repAmt" type="number" step="0.01"
+              value="${clamp2((row.total||0)+(row.adjustment||0))}"
+              oninput="validateRepSelection()" />
           </div>
         </div>
 
         <div class="row" style="margin-top:10px">
           <div class="field">
-            <label>Répartition</label>
+            <label>Mode</label>
             <select id="repPlan" onchange="onRepPlanChange()">
-              <option value="1">Sur 1 paiement</option>
-              <option value="2">Sur 2 paiements</option>
-              <option value="3" selected>Sur 3 paiements</option>
-              <option value="4">Sur 4 paiements</option>
-              <option value="5">Sur 5 paiements</option>
-              <option value="ALL">Sur tous les paiements à venir</option>
+              <option value="SEL" selected>Répartir sur les lignes cochées</option>
+              <option value="AUTO_1">Auto: 1 prochain paiement</option>
+              <option value="AUTO_2">Auto: 2 prochains paiements</option>
+              <option value="AUTO_3">Auto: 3 prochains paiements</option>
+              <option value="AUTO_4">Auto: 4 prochains paiements</option>
+              <option value="AUTO_5">Auto: 5 prochains paiements</option>
+              <option value="ALL">Auto: tous les paiements à venir</option>
               <option value="NEW">+ Ajouter une ligne de paiement (VIREMENT)</option>
             </select>
           </div>
@@ -746,6 +741,12 @@
         <div id="pickTargets" style="margin-top:10px">
           <div class="field">
             <label>Sélectionne les lignes où tu ajoutes le montant</label>
+
+            <div class="inlineInfo">
+              <div id="repNeed">Sélection: 0 ligne(s)</div>
+              <div class="mono" id="repPreview">Ajout par ligne: —</div>
+            </div>
+
             <div class="listBox" id="targetsBox">
               ${targets.map(t=>{
                 const total = clamp2((t.total||0)+(t.adjustment||0));
@@ -759,11 +760,6 @@
                   </div>
                 `;
               }).join('') || `<div class="m">Aucune ligne PAD disponible.</div>`}
-            </div>
-
-            <div class="inlineInfo">
-              <div id="repNeed">À sélectionner: 3 ligne(s)</div>
-              <div class="mono" id="repPreview">Ajout par ligne: —</div>
             </div>
           </div>
         </div>
@@ -783,9 +779,9 @@
 
         <div class="summary">
           ✅ Règle : la ligne source devient <b>25,00$</b> (Frais report) et reste <b>PAD</b>.<br/>
-          - 1–5 : tu coches EXACTEMENT le nombre de lignes.<br/>
-          - Tous : sélectionne toutes les lignes PAD à venir automatiquement.<br/>
-          - + Ajouter une ligne : crée un paiement <b>VIREMENT</b>.
+          - Mode “Sélection” : tu coches ce que tu veux, et ça répartit sur ces lignes.<br/>
+          - Modes “Auto” : ça coche pour toi (1–5 / tous), et tu peux ajuster ensuite.<br/>
+          - “+ Ajouter une ligne” : crée un paiement <b>VIREMENT</b>.
         </div>
       `;
 
@@ -814,7 +810,7 @@
         </div>
         <div class="summary">
           Quand la banque confirme NSF : la souffrance s’ajoute automatiquement = <b>paiement</b> + <b>48$</b>.<br/>
-          Ensuite tu peux la répartir sur 1–5 / tous, ou ajouter une ligne VIREMENT (comme Reporter).
+          Ensuite tu peux la répartir sur Sélection / Auto 1–5 / Tous, ou ajouter une ligne VIREMENT (comme Reporter).
         </div>
       `;
       foot.innerHTML = `
@@ -949,7 +945,12 @@
     const per = clamp2(amt / targets.length);
     targets.forEach(t => t.adjustment = clamp2((t.adjustment||0) + per));
 
-    logEvent(plan==='ALL' ? 'Report (TOUS)' : 'Report',
+    const label =
+      plan === 'ALL' ? 'Report (AUTO-TOUS)' :
+      plan.startsWith('AUTO_') ? 'Report (AUTO)' :
+      'Report (SÉLECTION)';
+
+    logEvent(label,
       `Source ${old} → devient ${money(fee)} (PAD). Montant ${money(amt)} réparti sur ${targets.length} paiement(s): +${money(per)} chacun.`
     );
 
@@ -1025,14 +1026,15 @@
 
       <div class="row" style="margin-top:10px">
         <div class="field">
-          <label>Répartition</label>
+          <label>Mode</label>
           <select id="arrPlan" onchange="onArrPlanChange()">
-            <option value="1">Sur 1 paiement</option>
-            <option value="2">Sur 2 paiements</option>
-            <option value="3" selected>Sur 3 paiements</option>
-            <option value="4">Sur 4 paiements</option>
-            <option value="5">Sur 5 paiements</option>
-            <option value="ALL">Sur tous les paiements à venir</option>
+            <option value="SEL" selected>Répartir sur les lignes cochées</option>
+            <option value="AUTO_1">Auto: 1 prochain paiement</option>
+            <option value="AUTO_2">Auto: 2 prochains paiements</option>
+            <option value="AUTO_3">Auto: 3 prochains paiements</option>
+            <option value="AUTO_4">Auto: 4 prochains paiements</option>
+            <option value="AUTO_5">Auto: 5 prochains paiements</option>
+            <option value="ALL">Auto: tous les paiements à venir</option>
             <option value="NEW">+ Ajouter une ligne de paiement (VIREMENT)</option>
           </select>
         </div>
@@ -1045,6 +1047,12 @@
       <div id="arrPickTargets" style="margin-top:10px">
         <div class="field">
           <label>Sélectionne les lignes où tu ajoutes la souffrance</label>
+
+          <div class="inlineInfo">
+            <div id="arrNeed">Sélection: 0 ligne(s)</div>
+            <div class="mono" id="arrPreview">Ajout par ligne: —</div>
+          </div>
+
           <div class="listBox">
             ${targets.map(t=>{
               const totalLine = clamp2((t.total||0)+(t.adjustment||0));
@@ -1058,11 +1066,6 @@
                 </div>
               `;
             }).join('') || `<div class="m">Aucune ligne PAD disponible.</div>`}
-          </div>
-
-          <div class="inlineInfo">
-            <div id="arrNeed">À sélectionner: 3 ligne(s)</div>
-            <div class="mono" id="arrPreview">Ajout par ligne: —</div>
           </div>
         </div>
       </div>
@@ -1082,7 +1085,7 @@
 
       <div class="summary">
         Souffrance NSF à traiter : <b>${money(item.total)}</b>.<br/>
-        Même logique que Reporter : 1–5 (sélection), Tous, ou + Ajouter une ligne (VIREMENT).
+        Même logique que Reporter : Sélection, Auto 1–5, Tous, ou + Ajouter une ligne (VIREMENT).
       </div>
     `;
 
@@ -1134,7 +1137,13 @@
     targets.forEach(t => t.adjustment = clamp2((t.adjustment||0) + per));
 
     item.status = 'RESOLVED';
-    logEvent(plan==='ALL' ? 'Souffrance (TOUS)' : 'Souffrance (répartie)',
+
+    const label =
+      plan === 'ALL' ? 'Souffrance (AUTO-TOUS)' :
+      plan.startsWith('AUTO_') ? 'Souffrance (AUTO)' :
+      'Souffrance (SÉLECTION)';
+
+    logEvent(label,
       `Souffrance ${money(amt)} répartie sur ${targets.length} paiement(s): +${money(per)} chacun.`
     );
 
