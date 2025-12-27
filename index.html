@@ -65,6 +65,7 @@
     @media (max-width: 980px){ .grid{grid-template-columns:1fr} .search{display:none} }
     .cards{display:grid;grid-template-columns: repeat(4, 1fr);gap:12px;margin-bottom:14px;}
     @media (max-width: 980px){ .cards{grid-template-columns: repeat(2, 1fr)} }
+
     .card{
       background:rgba(255,255,255,.06);
       border:1px solid var(--stroke);
@@ -76,6 +77,7 @@
     .card .label{color:var(--muted2);font-size:12px;display:flex;justify-content:space-between;gap:10px}
     .card .value{font-size:18px;margin-top:8px;font-weight:700;letter-spacing:.2px}
     .card .sub{margin-top:8px;color:var(--muted);font-size:12px}
+
     .panel{
       background:rgba(255,255,255,.05);
       border:1px solid var(--stroke);
@@ -93,6 +95,7 @@
     .panelHeader h2{margin:0;font-size:14px}
     .panelHeader small{color:var(--muted2)}
     .actions{display:flex;gap:8px;flex-wrap:wrap}
+
     .btn{
       border:1px solid rgba(255,255,255,.14);
       background:rgba(255,255,255,.07);
@@ -104,6 +107,7 @@
       transition: transform .08s ease, background .12s ease, opacity .12s ease;
       display:flex;align-items:center;gap:8px;
       user-select:none;
+      white-space:nowrap;
     }
     .btn:hover{background:rgba(255,255,255,.10)}
     .btn:active{transform: translateY(1px)}
@@ -112,6 +116,7 @@
     .btn.good{border-color:rgba(45,212,191,.45); background:rgba(45,212,191,.12)}
     .btn.ghost{background:transparent}
     .btn.disabled{opacity:.45; pointer-events:none;}
+
     .tableWrap{overflow:auto}
     table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;}
     th, td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;white-space:nowrap;}
@@ -141,6 +146,7 @@
     .kv .k{color:var(--muted2);font-size:11px}
     .kv .v{margin-top:6px;font-weight:700}
     .mono{font-family:var(--mono)}
+
     .notes{display:flex;flex-direction:column;gap:10px;margin-top:10px}
     .note{
       padding:10px;border-radius:16px;
@@ -149,6 +155,7 @@
     }
     .note .meta{color:var(--muted2);font-size:11px;display:flex;justify-content:space-between}
     .note .txt{margin-top:6px;color:var(--text);font-size:12.5px}
+
     .footerBar{
       display:flex;justify-content:space-between;gap:10px;align-items:center;
       padding:12px 14px;
@@ -157,6 +164,38 @@
       font-size:12px;
     }
     .hint{color:var(--muted2); font-size:12px; padding:10px 14px 0;}
+
+    /* Souffrance list */
+    .arrearsBox{
+      margin-top:12px;
+      padding:10px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      max-height:260px;
+      overflow:auto;
+    }
+    .arrearsRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      margin-bottom:8px;
+    }
+    .arrearsRow:hover{background:rgba(255,255,255,.05)}
+    .arrearsLeft{display:flex;flex-direction:column;gap:4px;min-width:0}
+    .arrearsTitle{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .arrearsMeta{font-size:11px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tag{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:4px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      font-size:11px;color:var(--muted);
+    }
 
     /* Modal */
     .modalOverlay{
@@ -276,14 +315,12 @@
             </div>
             <div class="actions">
               <button class="btn primary" onclick="openAction('report')">📅 Reporter</button>
-              <button class="btn danger" onclick="openAction('nsf')">❌ NSF</button>
-              <button class="btn good" onclick="openAction('split')">➗ Répartir souffrance</button>
               <button class="btn" onclick="openAction('manual')">💵 Paiement manuel</button>
               <button class="btn ghost" onclick="resetDemo()">↩️ Reset</button>
             </div>
           </div>
 
-          <div class="hint">Clique une ligne pour la sélectionner. (Démo : actions sur le calendrier + souffrance.)</div>
+          <div class="hint">Clique une ligne pour la sélectionner. NSF se gère dans “Souffrance & événements”.</div>
 
           <div class="tableWrap">
             <table>
@@ -364,10 +401,15 @@
           <div class="panelHeader">
             <div>
               <h2>Souffrance & événements</h2>
-              <small>NSF = paiement + 48$</small>
+              <small>NSF = paiement + 48$ (auto)</small>
             </div>
-            <button class="btn" onclick="openAction('note')">📝 Ajouter note</button>
+            <div class="actions">
+              <!-- ✅ NSF maintenant AU MÊME ENDROIT QUE SOUFFRANCE -->
+              <button class="btn danger" onclick="openAction('nsf')">❌ NSF</button>
+              <button class="btn" onclick="openAction('note')">📝 Ajouter note</button>
+            </div>
           </div>
+
           <div class="section">
             <div class="kv">
               <div class="item">
@@ -379,6 +421,9 @@
                 <div class="v" id="rightNext">15 nov 2024 · <span class="mono">147,92 $</span></div>
               </div>
             </div>
+
+            <!-- ✅ Liste NSF/Souffrance directement ici -->
+            <div class="arrearsBox" id="arrearsList"></div>
 
             <div class="notes" id="events"></div>
           </div>
@@ -406,7 +451,6 @@
   const clamp2 = (n) => Math.round((Number(n)||0)*100)/100;
 
   // ===== "Vérité" calendrier (démo)
-  // NOTE: tu peux remplacer ça plus tard par le vrai calcul Margill.
   const originalSchedule = [
     {i:1,  date:'2024-11-15', total:147.92, interest:  9.62, adhesion:45.00, balance:2156.70},
     {i:2,  date:'2024-11-29', total:147.19, interest: 16.15, adhesion:45.00, balance:2070.66},
@@ -440,7 +484,7 @@
   let state = {
     schedule: [],
     selected: 1,
-    arrearsItems: [], // {id,type,sourceLine,amount,fee,total,status:'OPEN'|'RESOLVED'}
+    arrearsItems: [], // {id,type,sourceLine,amount,fee,total,status:'OPEN'|'RESOLVED', createdAt}
     events: []
   };
 
@@ -450,11 +494,15 @@
       status:'À venir',
       adjustment:0.00,
       paid:false,
-      method:'PAD' // PAD ou VIREMENT
+      method:'PAD'
     }));
     state.selected = 1;
     state.arrearsItems = [];
-    state.events = [{ts:new Date().toISOString(), title:'Dossier chargé', txt:'Reporter = sélectionner lignes + Sélection/AUTO 1-5/TOUS ou ajouter ligne. NSF = souffrance auto (paiement + 48$) + mêmes options.'}];
+    state.events = [{
+      ts:new Date().toISOString(),
+      title:'Dossier chargé',
+      txt:'NSF est maintenant dans la section Souffrance. Souffrance = paiement + 48$ (auto). Traiter = mêmes options que Reporter.'
+    }];
     renderAll();
   }
 
@@ -551,7 +599,45 @@
     `).join('');
   }
 
-  function renderAll(){ renderKPI(); renderTable(); renderEvents(); }
+  // ✅ Liste Souffrance (NSF) dans le panneau Souffrance
+  function renderArrearsList(){
+    const box = document.getElementById('arrearsList');
+    const open = state.arrearsItems
+      .filter(a => a.status === 'OPEN')
+      .sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
+
+    if(!open.length){
+      box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Aucune souffrance ouverte.</div>`;
+      return;
+    }
+
+    box.innerHTML = open.map(a=>{
+      return `
+        <div class="arrearsRow">
+          <div class="arrearsLeft">
+            <div class="arrearsTitle">
+              <span class="tag"><span class="dot bad"></span> NSF</span>
+              &nbsp; Paiement #${a.sourceLine} · <span class="mono">${money(a.total)}</span>
+            </div>
+            <div class="arrearsMeta">
+              Détail: paiement ${money(a.amount)} + frais ${money(a.fee)} · Créé ${new Date(a.createdAt).toLocaleString('fr-CA',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="openArrearsResolver('${a.id}')">⚠️ Traiter</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderAll(){
+    renderKPI();
+    renderTable();
+    renderArrearsList();
+    renderEvents();
+  }
+
   function selectRow(i){ state.selected=i; renderAll(); }
   function logEvent(title, txt){ state.events.push({ts:new Date().toISOString(), title, txt}); }
 
@@ -561,7 +647,7 @@
     document.getElementById('overlay').style.display = 'none';
   }
 
-  // ===== Reporter UI state (Sélection / Auto 1-5 / Tous / NEW)
+  // ===== Reporter UI (Sélection / Auto 1-5 / Tous / NEW)
   function onRepPlanChange(){
     const plan = document.getElementById('repPlan').value;
     const pick = document.getElementById('pickTargets');
@@ -617,7 +703,7 @@
     }
   }
 
-  // ===== Arrears(NSF) UI state (Sélection / Auto 1-5 / Tous / NEW)
+  // ===== Souffrance(NSF) UI (mêmes options que Reporter)
   function onArrPlanChange(){
     const plan = document.getElementById('arrPlan').value;
     const pick = document.getElementById('arrPickTargets');
@@ -683,13 +769,12 @@
 
     title.textContent = ({
       report:'📅 Reporter un paiement',
-      nsf:'❌ Marquer NSF (banque)',
-      split:'➗ Répartir souffrance (manuel)',
+      nsf:'❌ NSF (banque) → Souffrance automatique',
       manual:'💵 Paiement manuel',
       note:'📝 Ajouter une note'
     })[kind] || 'Action';
 
-    // ===== REPORT (sélection libre + AUTO 1-5/TOUS + NEW)
+    // ===== REPORT
     if(kind === 'report'){
       const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
       const targets = ordered.filter(r =>
@@ -747,7 +832,7 @@
               <div class="mono" id="repPreview">Ajout par ligne: —</div>
             </div>
 
-            <div class="listBox" id="targetsBox">
+            <div class="listBox">
               ${targets.map(t=>{
                 const total = clamp2((t.total||0)+(t.adjustment||0));
                 return `
@@ -778,10 +863,8 @@
         </div>
 
         <div class="summary">
-          ✅ Règle : la ligne source devient <b>25,00$</b> (Frais report) et reste <b>PAD</b>.<br/>
-          - Mode “Sélection” : tu coches ce que tu veux, et ça répartit sur ces lignes.<br/>
-          - Modes “Auto” : ça coche pour toi (1–5 / tous), et tu peux ajuster ensuite.<br/>
-          - “+ Ajouter une ligne” : crée un paiement <b>VIREMENT</b>.
+          ✅ La ligne source devient <b>25,00$</b> (Frais report) et reste <b>PAD</b>.<br/>
+          Sélection / Auto 1–5 / Tous / NEW.
         </div>
       `;
 
@@ -795,12 +878,13 @@
       return;
     }
 
-    // ===== NSF (crée souffrance auto : paiement + 48, et ouvre le traitement)
+    // ===== NSF -> Souffrance automatique (paiement + 48$)
+    // NSF est ici parce qu'il est dans la section "Souffrance"
     if(kind === 'nsf'){
       body.innerHTML = `
         <div class="row">
           <div class="field">
-            <label>Ligne sélectionnée (devient NSF)</label>
+            <label>Paiement NSF (ligne sélectionnée dans calendrier)</label>
             <input disabled value="#${row.i} · ${fmtDate(row.date)} · Total ${money((row.total||0)+(row.adjustment||0))}" />
           </div>
           <div class="field">
@@ -809,45 +893,13 @@
           </div>
         </div>
         <div class="summary">
-          Quand la banque confirme NSF : la souffrance s’ajoute automatiquement = <b>paiement</b> + <b>48$</b>.<br/>
-          Ensuite tu peux la répartir sur Sélection / Auto 1–5 / Tous, ou ajouter une ligne VIREMENT (comme Reporter).
+          ✅ Auto: Souffrance = paiement + frais NSF.<br/>
+          Ensuite tu la traites dans Souffrance avec les mêmes options que Reporter.
         </div>
       `;
       foot.innerHTML = `
         <button class="btn" onclick="closeModal()">Annuler</button>
         <button class="btn danger" onclick="applyNSF()">Confirmer NSF</button>
-      `;
-      overlay.style.display = 'flex';
-      return;
-    }
-
-    // ===== Répartir souffrance (manuel) - garde pour test
-    if(kind === 'split'){
-      body.innerHTML = `
-        <div class="row">
-          <div class="field">
-            <label>Souffrance actuelle (total)</label>
-            <input disabled value="${money(arrearsTotal())}" />
-          </div>
-          <div class="field">
-            <label>Répartir sur X prochains paiements (auto)</label>
-            <select id="splitN2">
-              <option value="1">1 paiement</option>
-              <option value="2">2 paiements</option>
-              <option value="3" selected>3 paiements</option>
-              <option value="4">4 paiements</option>
-              <option value="5">5 paiements</option>
-            </select>
-          </div>
-        </div>
-        <div class="summary">
-          Démo : répartit le total de souffrance sur les X prochaines lignes PAD (auto).<br/>
-          (Tes vraies actions NSF se font via l’écran “Traiter souffrance (NSF)”.)
-        </div>
-      `;
-      foot.innerHTML = `
-        <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn good" onclick="applySplitArrearsAuto()">Appliquer</button>
       `;
       overlay.style.display = 'flex';
       return;
@@ -908,8 +960,9 @@
 
     if(!src || amt<=0) return;
 
-    // ligne source devient 25$ PAD
     const old = `#${src.i} (${fmtDate(src.date)})`;
+
+    // ligne source devient 25$ PAD (démo)
     src.status = 'Frais report';
     src.method = 'PAD';
     src.total = fee;
@@ -950,15 +1003,12 @@
       plan.startsWith('AUTO_') ? 'Report (AUTO)' :
       'Report (SÉLECTION)';
 
-    logEvent(label,
-      `Source ${old} → devient ${money(fee)} (PAD). Montant ${money(amt)} réparti sur ${targets.length} paiement(s): +${money(per)} chacun.`
-    );
-
+    logEvent(label, `Source ${old} → devient ${money(fee)} (PAD). Montant ${money(amt)} réparti sur ${targets.length} paiement(s): +${money(per)} chacun.`);
     closeModal();
     renderAll();
   }
 
-  // ===== NSF apply -> create arrears item + open resolver
+  // ===== NSF apply -> crée souffrance auto (paiement + 48$)
   function applyNSF(){
     const row = state.schedule.find(r=>r.i===state.selected);
     const fee = clamp2(Number(document.getElementById('nsfFee').value || 48));
@@ -967,8 +1017,10 @@
     const pay = clamp2((row.total||0) + (row.adjustment||0));
     const total = clamp2(pay + fee);
 
+    // marque la ligne NSF dans le calendrier
     row.status = 'NSF';
 
+    // crée item souffrance OPEN (auto)
     const id = 'A' + Date.now();
     state.arrearsItems.push({
       id,
@@ -977,18 +1029,19 @@
       amount: pay,
       fee: fee,
       total: total,
-      status: 'OPEN'
+      status: 'OPEN',
+      createdAt: new Date().toISOString()
     });
 
-    logEvent('NSF', `NSF sur #${row.i}. Souffrance créée: ${money(pay)} + ${money(fee)} = ${money(total)}.`);
+    logEvent('NSF', `NSF sur #${row.i}. Souffrance auto: ${money(pay)} + ${money(fee)} = ${money(total)}.`);
     closeModal();
     renderAll();
 
-    // Ouvre direct le traitement comme tu veux
+    // tu peux commenter cette ligne si tu veux traiter seulement via le bouton "Traiter" dans Souffrance
     openArrearsResolver(id);
   }
 
-  // ===== Arrears resolver (same options as reporter)
+  // ===== Resolver Souffrance (mêmes options que Reporter)
   function openArrearsResolver(arrearsId){
     const item = state.arrearsItems.find(a => a.id === arrearsId && a.status === 'OPEN');
     if(!item) return;
@@ -1026,7 +1079,7 @@
 
       <div class="row" style="margin-top:10px">
         <div class="field">
-          <label>Mode</label>
+          <label>Mode (identique à Reporter)</label>
           <select id="arrPlan" onchange="onArrPlanChange()">
             <option value="SEL" selected>Répartir sur les lignes cochées</option>
             <option value="AUTO_1">Auto: 1 prochain paiement</option>
@@ -1085,7 +1138,7 @@
 
       <div class="summary">
         Souffrance NSF à traiter : <b>${money(item.total)}</b>.<br/>
-        Même logique que Reporter : Sélection, Auto 1–5, Tous, ou + Ajouter une ligne (VIREMENT).
+        Sélection / Auto 1–5 / Tous / NEW (exactement comme Reporter).
       </div>
     `;
 
@@ -1143,31 +1196,8 @@
       plan.startsWith('AUTO_') ? 'Souffrance (AUTO)' :
       'Souffrance (SÉLECTION)';
 
-    logEvent(label,
-      `Souffrance ${money(amt)} répartie sur ${targets.length} paiement(s): +${money(per)} chacun.`
-    );
+    logEvent(label, `Souffrance ${money(amt)} répartie sur ${targets.length} paiement(s): +${money(per)} chacun.`);
 
-    closeModal();
-    renderAll();
-  }
-
-  // ===== Souffrance "split auto" (optionnel de test)
-  function applySplitArrearsAuto(){
-    const n = Number(document.getElementById('splitN2').value || 3);
-    const total = arrearsTotal();
-    if(total <= 0){ closeModal(); return; }
-
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
-    const targets = ordered.filter(r => !r.paid && r.status !== 'NSF' && (r.method||'PAD') === 'PAD').slice(0,n);
-    if(!targets.length){ closeModal(); return; }
-
-    const per = clamp2(total / targets.length);
-    targets.forEach(t => t.adjustment = clamp2((t.adjustment||0) + per));
-
-    // ferme tous les items OPEN (démo)
-    state.arrearsItems.forEach(a => { if(a.status==='OPEN') a.status='RESOLVED'; });
-
-    logEvent('Répartition souffrance (auto)', `Total ${money(total)} réparti sur ${targets.length} paiement(s): +${money(per)} chacun. Items souffrance fermés.`);
     closeModal();
     renderAll();
   }
@@ -1189,7 +1219,6 @@
           a.status = 'RESOLVED';
           closed++;
         } else {
-          // partiel: on réduit l'item (démo)
           a.total = clamp2(a.total - remaining);
           remaining = 0;
           break;
