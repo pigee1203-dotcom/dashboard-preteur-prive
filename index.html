@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard prêteur privé — V2</title>
+  <title>Dashboard prêteur privé</title>
   <style>
     :root{
       --bg:#0b1220;
-      --stroke:rgba(255,255,255,.12);
+      --stroke:rgba(255,255,255,.10);
       --text:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.70);
       --muted2:rgba(255,255,255,.55);
@@ -19,7 +19,7 @@
       --r:16px;
       --r2:22px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
     *{box-sizing:border-box}
     body{
@@ -27,26 +27,32 @@
       font-family:var(--sans);
       color:var(--text);
       background:
-        radial-gradient(1200px 600px at 20% -10%, rgba(96,165,250,.20), transparent 55%),
-        radial-gradient(900px 600px at 90% 0%, rgba(45,212,191,.14), transparent 55%),
-        radial-gradient(900px 650px at 60% 120%, rgba(251,113,133,.10), transparent 55%),
+        radial-gradient(1200px 600px at 20% -10%, rgba(96,165,250,.25), transparent 55%),
+        radial-gradient(900px 600px at 90% 0%, rgba(45,212,191,.18), transparent 55%),
+        radial-gradient(900px 650px at 60% 120%, rgba(251,113,133,.14), transparent 55%),
         var(--bg);
       min-height:100vh;
     }
-    .wrap{max-width:1200px;margin:0 auto;padding:18px}
-    .top{
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      margin:6px 0 12px;
-    }
-    .brand{display:flex;align-items:center;gap:12px}
+    .wrap{max-width:1200px;margin:0 auto;padding:20px}
+    .topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin:8px 0 16px;}
+    .brand{display:flex;gap:12px;align-items:center;}
     .logo{
-      width:34px;height:34px;border-radius:12px;
+      width:38px;height:38px;border-radius:12px;
       background:linear-gradient(135deg, rgba(96,165,250,.9), rgba(45,212,191,.75));
+      box-shadow:0 12px 30px rgba(96,165,250,.20);
       border:1px solid rgba(255,255,255,.18);
-      box-shadow:0 12px 30px rgba(96,165,250,.18);
     }
-    h1{font-size:16px;margin:0}
-    .sub{color:var(--muted2);font-size:12px;margin-top:2px}
+    .brand h1{font-size:18px;margin:0;line-height:1.2}
+    .brand p{margin:0;color:var(--muted2);font-size:12px}
+    .search{
+      flex:1;max-width:520px;margin:0 14px;
+      display:flex;gap:10px;align-items:center;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      backdrop-filter: blur(10px);
+    }
+    .search input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:14px}
     .pill{
       padding:8px 10px;border-radius:999px;border:1px solid var(--stroke);
       background:rgba(255,255,255,.06);
@@ -55,9 +61,22 @@
     }
     .dot{width:8px;height:8px;border-radius:999px;display:inline-block}
     .dot.good{background:var(--good)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
+    .grid{display:grid;grid-template-columns: 1.2fr 0.8fr;gap:14px;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} .search{display:none} }
+    .cards{display:grid;grid-template-columns: repeat(4, 1fr);gap:12px;margin-bottom:14px;}
+    @media (max-width: 980px){ .cards{grid-template-columns: repeat(2, 1fr)} }
 
-    .grid{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;}
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--stroke);
+      border-radius: var(--r2);
+      padding:12px 12px 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+    .card .label{color:var(--muted2);font-size:12px;display:flex;justify-content:space-between;gap:10px}
+    .card .value{font-size:18px;margin-top:8px;font-weight:700;letter-spacing:.2px}
+    .card .sub{margin-top:8px;color:var(--muted);font-size:12px}
 
     .panel{
       background:rgba(255,255,255,.05);
@@ -67,33 +86,40 @@
       backdrop-filter: blur(14px);
       overflow:hidden;
     }
-    .ph{
-      padding:12px 14px;
+    .panelHeader{
+      padding:14px 14px 10px;
       display:flex;align-items:center;justify-content:space-between;gap:10px;
       border-bottom:1px solid rgba(255,255,255,.08);
       background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
     }
-    .ph h2{margin:0;font-size:13px}
-    .ph small{color:var(--muted2)}
+    .panelHeader h2{margin:0;font-size:14px}
+    .panelHeader small{color:var(--muted2)}
     .actions{display:flex;gap:8px;flex-wrap:wrap}
+
     .btn{
       border:1px solid rgba(255,255,255,.14);
       background:rgba(255,255,255,.07);
       color:var(--text);
-      padding:9px 10px;border-radius:14px;font-size:12px;
-      cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap;
+      padding:9px 10px;
+      border-radius:14px;
+      font-size:12px;
+      cursor:pointer;
+      transition: transform .08s ease, background .12s ease, opacity .12s ease;
+      display:flex;align-items:center;gap:8px;
+      user-select:none;
+      white-space:nowrap;
     }
     .btn:hover{background:rgba(255,255,255,.10)}
+    .btn:active{transform: translateY(1px)}
     .btn.primary{border-color:rgba(96,165,250,.45); background:rgba(96,165,250,.16)}
     .btn.danger{border-color:rgba(251,113,133,.45); background:rgba(251,113,133,.14)}
+    .btn.good{border-color:rgba(45,212,191,.45); background:rgba(45,212,191,.12)}
     .btn.ghost{background:transparent}
     .btn.disabled{opacity:.45; pointer-events:none;}
 
-    .hint{color:var(--muted2);font-size:12px;padding:10px 14px 0}
-
     .tableWrap{overflow:auto}
     table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;}
-    th, td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;white-space:nowrap;}
+    th, td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;white-space:nowrap;}
     th{
       position:sticky;top:0;z-index:2;
       background:rgba(10,18,32,.85);
@@ -109,51 +135,74 @@
       display:inline-flex;align-items:center;gap:8px;
       color:var(--muted);
     }
-    .mono{font-family:var(--mono)}
-    .section{padding:14px}
-    .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .item{
+    .rightCol{display:flex;flex-direction:column;gap:14px;}
+    .section{padding:14px;}
+    .kv{display:grid;grid-template-columns: 1fr 1fr;gap:10px;margin-top:10px;}
+    .kv .item{
       padding:10px;border-radius:16px;
       background:rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.10);
     }
-    .k{color:var(--muted2);font-size:11px}
-    .v{margin-top:6px;font-weight:700}
-    .box{
-      margin-top:12px;padding:10px;border-radius:18px;
+    .kv .k{color:var(--muted2);font-size:11px}
+    .kv .v{margin-top:6px;font-weight:700}
+    .mono{font-family:var(--mono)}
+
+    .notes{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+    .note{
+      padding:10px;border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .note .meta{color:var(--muted2);font-size:11px;display:flex;justify-content:space-between}
+    .note .txt{margin-top:6px;color:var(--text);font-size:12.5px}
+
+    .footerBar{
+      display:flex;justify-content:space-between;gap:10px;align-items:center;
+      padding:12px 14px;
+      border-top:1px solid rgba(255,255,255,.08);
+      color:var(--muted2);
+      font-size:12px;
+    }
+    .hint{color:var(--muted2); font-size:12px; padding:10px 14px 0;}
+
+    /* Souffrance list */
+    .arrearsBox{
+      margin-top:12px;
+      padding:10px;
+      border-radius:18px;
       border:1px solid rgba(255,255,255,.10);
       background:rgba(255,255,255,.04);
-      max-height:250px;overflow:auto;
+      max-height:260px;
+      overflow:auto;
     }
-    .rowA{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      padding:10px;border-radius:16px;
+    .arrearsRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px;
+      border-radius:16px;
       border:1px solid rgba(255,255,255,.10);
       background:rgba(255,255,255,.03);
       margin-bottom:8px;
     }
-    .rowA:hover{background:rgba(255,255,255,.05)}
+    .arrearsRow:hover{background:rgba(255,255,255,.05)}
+    .arrearsLeft{display:flex;flex-direction:column;gap:4px;min-width:0}
+    .arrearsTitle{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .arrearsMeta{font-size:11px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .tag{
       display:inline-flex;align-items:center;gap:8px;
       padding:4px 8px;border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
       font-size:11px;color:var(--muted);
     }
-    .calc{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:6px}
-    .calc b{color:var(--text)}
-    .events{display:flex;flex-direction:column;gap:8px;margin-top:12px;max-height:260px;overflow:auto}
-    .note{
-      padding:10px 12px;border-radius:12px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
-    }
-    .note .meta{color:var(--muted2);font-size:11px;display:flex;justify-content:space-between;gap:8px}
-    .note .txt{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.4}
 
     /* Modal */
     .modalOverlay{
-      position:fixed;inset:0;background:rgba(0,0,0,.55);
-      display:none;align-items:center;justify-content:center;padding:16px;
+      position:fixed;inset:0;
+      background:rgba(0,0,0,.55);
+      display:none;align-items:center;justify-content:center;
+      padding:16px;
     }
     .modal{
       width:min(760px, 100%);
@@ -164,21 +213,19 @@
       backdrop-filter: blur(16px);
       overflow:hidden;
     }
-    .mh{
-      padding:14px;border-bottom:1px solid rgba(255,255,255,.10);
+    .modalHead{
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.10);
       display:flex;justify-content:space-between;align-items:center;gap:10px;
     }
-    .mh h3{margin:0;font-size:14px}
-    .mb{padding:14px;max-height:65vh;overflow-y:auto}
-    .mf{
-      padding:12px 14px;border-top:1px solid rgba(255,255,255,.10);
-      display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;
-    }
+    .modalHead h3{margin:0;font-size:14px}
+    .modalBody{padding:14px}
+    .row{display:grid;grid-template-columns: 1fr 1fr;gap:10px}
+    @media (max-width: 640px){ .row{grid-template-columns:1fr} }
     .field{
       padding:10px;border-radius:16px;
       background:rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.10);
-      margin-bottom:10px;
     }
     .field label{display:block;color:var(--muted2);font-size:11px;margin-bottom:8px}
     .field input, .field select{
@@ -186,92 +233,199 @@
       background:rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.12);
       color:var(--text);
-      padding:10px;border-radius:12px;outline:none;font-size:13px
+      padding:10px 10px;
+      border-radius:12px;
+      outline:none;
+      font-size:13px;
     }
-    .field select option{background:#1a2332;color:#fff}
+    .summary{
+      margin-top:12px;
+      padding:12px;border-radius:18px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:12.5px;
+      line-height:1.45;
+    }
+    .modalFoot{
+      padding:12px 14px;
+      border-top:1px solid rgba(255,255,255,.10);
+      display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;
+    }
     .listBox{
-      padding:8px;border-radius:14px;background:rgba(255,255,255,.04);
+      margin-top:10px;
+      padding:10px;border-radius:16px;
+      background:rgba(255,255,255,.04);
       border:1px solid rgba(255,255,255,.10);
-      max-height:220px;overflow:auto;
+      max-height:260px;
+      overflow:auto;
     }
     .chk{
-      display:grid;grid-template-columns:20px 1fr auto;gap:8px;align-items:center;
-      padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.03);margin-bottom:6px;
+      display:flex;gap:10px;align-items:flex-start;
+      padding:8px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+      margin-bottom:8px;
     }
-    .chk:hover{background:rgba(255,255,255,.06)}
-    .chk .t{font-size:12px;font-weight:500}
-    .chk .m{color:var(--muted2);font-size:11px}
-    .sum{
-      padding:12px;border-radius:18px;border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.04);
-      color:var(--muted);font-size:12.5px;line-height:1.45
+    .chk:hover{background:rgba(255,255,255,.05)}
+    .chk input{margin-top:2px}
+    .chk .t{font-size:12.5px}
+    .chk .m{color:var(--muted2);font-size:11px;margin-top:4px}
+    .inlineInfo{
+      margin-top:10px;
+      color:var(--muted2);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
-    <div class="top">
+    <div class="topbar">
       <div class="brand">
         <div class="logo"></div>
         <div>
-          <h1>Dashboard prêteur privé — V2 (propre)</h1>
-          <div class="sub">Même logique: calendrier + reporter + NSF→souffrance + traitement</div>
+          <h1>Dashboard prêteur privé</h1>
+          <p>Client · Contrat · Calendrier · Souffrance — simple et clair</p>
         </div>
       </div>
-      <div class="pill"><span class="dot warn"></span> Démo</div>
+
+      <div class="search" title="Recherche (mock)">
+        🔎 <input placeholder="Rechercher un client, un contrat, une date…" />
+        <span class="pill"><span class="dot good"></span> Live: mock</span>
+      </div>
+
+      <div class="pill" title="Mode"><span class="dot warn"></span> Mode: Démo</div>
     </div>
+
+    <div class="cards" id="kpi"></div>
 
     <div class="grid">
       <!-- LEFT -->
-      <div class="panel">
-        <div class="ph">
-          <div>
-            <h2>Calendrier des paiements</h2>
-            <small id="subHeader">26 paiements · 14 jours · Adhésion 45,00$</small>
+      <div>
+        <div class="panel">
+          <div class="panelHeader">
+            <div>
+              <h2>Calendrier des paiements</h2>
+              <small id="subHeader">26 paiements · 14 jours · Adhésion 45,00$</small>
+            </div>
+            <div class="actions">
+              <button class="btn primary" onclick="openAction('report')">📅 Reporter</button>
+              <button class="btn" onclick="openAction('manual')">💵 Paiement manuel</button>
+              <button class="btn ghost" onclick="resetDemo()">↩️ Reset</button>
+            </div>
           </div>
-          <div class="actions">
-            <button class="btn primary" onclick="openAction('report')">📅 Reporter</button>
-            <button class="btn danger" onclick="openAction('nsf')">❌ NSF</button>
-            <button class="btn ghost" onclick="resetDemo()">↩️ Reset</button>
-          </div>
-        </div>
-        <div class="hint">Clique une ligne. Reporter = répartir 1–5 / tous / nouvelle ligne virement. NSF = souffrance (paiement + 48$) à traiter.</div>
 
-        <div class="tableWrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th><th>Date</th><th>Type</th><th>Total</th><th>Intérêt</th><th>Adhésion</th><th>Ajustement</th><th>Statut</th><th>Solde avant</th><th>Solde après</th>
-              </tr>
-            </thead>
-            <tbody id="rows"></tbody>
-          </table>
+          <div class="hint">Clique une ligne pour la sélectionner. NSF se gère dans “Souffrance & événements”.</div>
+
+          <div class="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Total</th>
+                  <th>Prêt</th>
+                  <th>Intérêt</th>
+                  <th>Capital</th>
+                  <th>Adhésion</th>
+                  <th>Ajustement</th>
+                  <th>Statut</th>
+                  <th>Solde après</th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+
+          <div class="footerBar">
+            <div>Règles: seulement <b>7</b> ou <b>14</b> jours · Taux nominal <span class="mono">18.99%</span></div>
+            <div class="mono" id="selectedInfo">Sélection: #1</div>
+          </div>
         </div>
       </div>
 
       <!-- RIGHT -->
-      <div>
+      <div class="rightCol">
         <div class="panel">
-          <div class="ph">
+          <div class="panelHeader">
             <div>
-              <h2>Client + Souffrance</h2>
-              <small>NSF est ici (pas une section séparée)</small>
+              <h2>Fiche client</h2>
+              <small>Tout en 1 page</small>
             </div>
             <div class="pill"><span class="dot good"></span> Actif</div>
+          </div>
+          <div class="section">
+            <div class="kv">
+              <div class="item">
+                <div class="k">Client</div>
+                <div class="v">Marc Savoie <span class="mono" style="font-weight:600;color:var(--muted2)">#10023</span></div>
+              </div>
+              <div class="item">
+                <div class="k">Produit</div>
+                <div class="v">Marge de crédit</div>
+              </div>
+              <div class="item">
+                <div class="k">Montant prêt</div>
+                <div class="v mono">2 000,00 $</div>
+              </div>
+              <div class="item">
+                <div class="k">Frais ouverture</div>
+                <div class="v mono">250,00 $</div>
+              </div>
+              <div class="item">
+                <div class="k">Montant financé</div>
+                <div class="v mono">2 250,00 $</div>
+              </div>
+              <div class="item">
+                <div class="k">Fréquence</div>
+                <div class="v">14 jours</div>
+              </div>
+            </div>
+
+            <div class="kv" style="margin-top:12px">
+              <div class="item"><div class="k">Banque (mode)</div><div class="v">PAD / PPA</div></div>
+              <div class="item"><div class="k">Statut PAD</div><div class="v"><span class="dot good"></span> Actif</div></div>
+              <div class="item"><div class="k">Préférence</div><div class="v">Vendredi</div></div>
+              <div class="item"><div class="k">Notes rapides</div><div class="v">✅ Visible ici</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHeader">
+            <div>
+              <h2>Souffrance & événements</h2>
+              <small>NSF = paiement + 48$ (auto)</small>
+            </div>
+            <div class="actions">
+              <!-- ✅ NSF maintenant AU MÊME ENDROIT QUE SOUFFRANCE -->
+              <button class="btn danger" onclick="openAction('nsf')">❌ NSF</button>
+              <button class="btn" onclick="openAction('note')">📝 Ajouter note</button>
+            </div>
           </div>
 
           <div class="section">
             <div class="kv">
-              <div class="item"><div class="k">Client</div><div class="v">Marc Savoie <span class="mono" style="color:var(--muted2)">#10023</span></div></div>
-              <div class="item"><div class="k">Montant financé</div><div class="v mono">2 250,00 $</div></div>
-              <div class="item"><div class="k">Souffrance actuelle</div><div class="v mono" id="rightArrears">0,00 $</div></div>
-              <div class="item"><div class="k">Prochain prélèvement</div><div class="v" id="rightNext">15 nov 2024 · <span class="mono">147,92 $</span></div></div>
+              <div class="item">
+                <div class="k">Souffrance actuelle</div>
+                <div class="v mono" id="rightArrears">0,00 $</div>
+              </div>
+              <div class="item">
+                <div class="k">Prochain prélèvement</div>
+                <div class="v" id="rightNext">15 nov 2024 · <span class="mono">147,92 $</span></div>
+              </div>
             </div>
 
-            <div class="box" id="arrearsList"></div>
+            <!-- ✅ Liste NSF/Souffrance directement ici -->
+            <div class="arrearsBox" id="arrearsList"></div>
 
-            <div class="events" id="events"></div>
+            <div class="notes" id="events"></div>
           </div>
         </div>
       </div>
@@ -281,12 +435,12 @@
   <!-- Modal -->
   <div class="modalOverlay" id="overlay" onclick="closeModal(event)">
     <div class="modal" onclick="event.stopPropagation()">
-      <div class="mh">
+      <div class="modalHead">
         <h3 id="modalTitle">Action</h3>
         <button class="btn" onclick="closeModal()">✕ Fermer</button>
       </div>
-      <div class="mb" id="modalBody"></div>
-      <div class="mf" id="modalFoot"></div>
+      <div class="modalBody" id="modalBody"></div>
+      <div class="modalFoot" id="modalFoot"></div>
     </div>
   </div>
 
@@ -296,7 +450,7 @@
   const fmtDate = (iso) => new Date(iso+'T00:00:00').toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'}).replace('.','');
   const clamp2 = (n) => Math.round((Number(n)||0)*100)/100;
 
-  // ===== Original schedule (ton état actuel)
+  // ===== "Vérité" calendrier (démo)
   const originalSchedule = [
     {i:1,  date:'2024-11-15', total:147.92, interest:  9.62, adhesion:45.00, balance:2156.70},
     {i:2,  date:'2024-11-29', total:147.19, interest: 16.15, adhesion:45.00, balance:2070.66},
@@ -326,182 +480,88 @@
     {i:26, date:'2025-10-26', total:132.17, interest:  0.42, adhesion:45.00, balance:   0.00},
   ];
 
-  function getPaymentFrequency(){
-    const dates = originalSchedule.map(r => new Date(r.date+'T00:00:00')).sort((a,b)=>a-b);
-    const diff = Math.round((dates[1]-dates[0])/(1000*60*60*24));
-    return diff <= 10 ? 7 : 14;
-  }
-  function getAdhesionFee(){ return getPaymentFrequency() === 7 ? 22.50 : 45.00; }
-
-  const loanConfig = {
-    initialBalance: 2250.00,
-    originDate: '2024-11-07',
-    nominalRate: 0.1899,
-    effectiveRate: 0.1952
+  // ===== State
+  let state = {
+    schedule: [],
+    selected: 1,
+    arrearsItems: [], // {id,type,sourceLine,amount,fee,total,status:'OPEN'|'RESOLVED', createdAt}
+    events: []
   };
 
-  function daysBetween(date1, date2){
-    const d1 = new Date(date1+'T00:00:00');
-    const d2 = new Date(date2+'T00:00:00');
-    return Math.round((d2 - d1) / (1000*60*60*24));
+  function resetDemo(){
+    state.schedule = originalSchedule.map(r => ({
+      ...r,
+      status:'À venir',
+      adjustment:0.00,
+      paid:false,
+      method:'PAD'
+    }));
+    state.selected = 1;
+    state.arrearsItems = [];
+    state.events = [{
+      ts:new Date().toISOString(),
+      title:'Dossier chargé',
+      txt:'NSF est maintenant dans la section Souffrance. Souffrance = paiement + 48$ (auto). Traiter = mêmes options que Reporter.'
+    }];
+    renderAll();
   }
 
-  // ===== State
-  let state = { schedule: [], selected: 1, arrearsItems: [], events: [] };
+  function calcDerived(row){
+    const loanPart = clamp2((row.total||0) - (row.adhesion||0));
+    const capital  = clamp2(loanPart - (row.interest||0));
+    return {loanPart, capital};
+  }
 
   function arrearsTotal(){
-    return clamp2(state.arrearsItems.filter(a=>a.status==='OPEN').reduce((s,a)=>s+(a.total||0),0));
-  }
-  function logEvent(title, txt){ state.events.push({ts:new Date().toISOString(), title, txt}); }
-
-  // ===== Recalc (copie du même comportement que ton fichier)
-  function recalculateBalancesAndInterest(){
-    const dailyRate = loanConfig.effectiveRate / 365;
-    const adhesionFee = getAdhesionFee();
-    const ordered = [...state.schedule].sort((a,b)=> a.date.localeCompare(b.date));
-
-    let hasModifications = false;
-    for(const row of ordered){
-      const orig = originalSchedule.find(o=>o.i===row.i);
-      if((row.adjustment||0)!==0 || row.status==='NSF' || row.status==='Frais report' || !orig || row.ententeApplied){
-        hasModifications = true; break;
-      }
-    }
-    if(!hasModifications){
-      let prevBal = loanConfig.initialBalance;
-      ordered.forEach(row=>{
-        const orig = originalSchedule.find(o=>o.i===row.i);
-        row.balanceBefore = clamp2(prevBal);
-        if(orig){
-          row.interest = orig.interest;
-          row.balance = orig.balance;
-          row.total = orig.total;
-          row.adhesion = orig.adhesion;
-          prevBal = orig.balance;
-        }
-      });
-      state.schedule = ordered; return;
-    }
-
-    const linesToRedistribute = [];
-    for(let idx=0; idx<ordered.length; idx++){
-      const row = ordered[idx];
-      if(row.status==='NSF' || row.status==='Frais report') continue;
-      if((row.adjustment||0)!==0 || row.ententeApplied) continue;
-      linesToRedistribute.push({idx,row});
-    }
-
-    let tempBalance = loanConfig.initialBalance;
-    let prevDate = loanConfig.originDate;
-
-    for(const row of ordered){
-      const orig = originalSchedule.find(o=>o.i===row.i);
-      const days = Math.max(1, daysBetween(prevDate, row.date));
-
-      if(row.status==='Frais report' || row.status==='NSF'){ prevDate=row.date; continue; }
-
-      const interest = clamp2(tempBalance * dailyRate * days);
-
-      let totalCollect;
-      if(row.ententeApplied){
-        totalCollect = row.total || 0;
-      } else {
-        const baseTotal = orig ? orig.total : (row.total || 0);
-        totalCollect = clamp2(baseTotal + (row.adjustment||0));
-      }
-
-      const adhesion = row.adhesion || (orig ? orig.adhesion : adhesionFee);
-      const loanPart = clamp2(totalCollect - adhesion);
-      const capitalPaid = Math.max(0, clamp2(loanPart - interest));
-      tempBalance = clamp2(tempBalance - capitalPaid);
-      prevDate = row.date;
-    }
-
-    const deficit = tempBalance;
-    const numLines = linesToRedistribute.length;
-    const adjustmentPerLine = numLines>0 ? clamp2(deficit/numLines) : 0;
-
-    let runningBalance = loanConfig.initialBalance;
-    prevDate = loanConfig.originDate;
-
-    for(const row of ordered){
-      const orig = originalSchedule.find(o=>o.i===row.i);
-      const days = Math.max(1, daysBetween(prevDate, row.date));
-      row.balanceBefore = clamp2(runningBalance);
-
-      if(row.status==='Frais report'){
-        row.interest = 0; row.balance = clamp2(runningBalance);
-        prevDate = row.date; continue;
-      }
-      if(row.status==='NSF'){
-        row.interest = clamp2(runningBalance * dailyRate * days);
-        row.balance = clamp2(runningBalance);
-        prevDate = row.date; continue;
-      }
-
-      row.interest = clamp2(runningBalance * dailyRate * days);
-
-      const baseTotal = orig ? orig.total : (row.total || 0);
-      const adhesion = row.adhesion || (orig ? orig.adhesion : adhesionFee);
-      row.adhesion = adhesion;
-
-      const hasAdj = (row.adjustment||0)!==0;
-      const hasEnt = row.ententeApplied===true;
-
-      if(hasEnt){
-        const totalCollect = row.total || 0;
-        const loanPart = clamp2(totalCollect - adhesion);
-        const capitalPaid = Math.max(0, clamp2(loanPart - row.interest));
-        runningBalance = clamp2(runningBalance - capitalPaid);
-      } else if(hasAdj){
-        row.total = baseTotal;
-        const totalCollect = clamp2(baseTotal + row.adjustment);
-        const loanPart = clamp2(totalCollect - adhesion);
-        const capitalPaid = Math.max(0, clamp2(loanPart - row.interest));
-        runningBalance = clamp2(runningBalance - capitalPaid);
-      } else {
-        const newLoanPart = clamp2((baseTotal - adhesion) + adjustmentPerLine);
-        row.total = clamp2(newLoanPart + adhesion);
-        const capitalPaid = Math.max(0, clamp2(newLoanPart - row.interest));
-        runningBalance = clamp2(runningBalance - capitalPaid);
-      }
-
-      row.balance = clamp2(runningBalance);
-      prevDate = row.date;
-    }
-
-    let lastIdx = -1;
-    for(let i=ordered.length-1;i>=0;i--){
-      if(ordered[i].status!=='NSF' && ordered[i].status!=='Frais report'){ lastIdx=i; break; }
-    }
-    if(lastIdx>=0 && ordered[lastIdx].balance!==0){
-      const lastRow = ordered[lastIdx];
-      const rem = lastRow.balance;
-      const currentLoanPart = clamp2(lastRow.total - lastRow.adhesion);
-      const newLoanPart = clamp2(currentLoanPart + rem);
-      lastRow.total = clamp2(newLoanPart + lastRow.adhesion);
-      lastRow.balance = 0;
-    }
-
-    state.schedule = ordered;
+    return clamp2(state.arrearsItems
+      .filter(a => a.status === 'OPEN')
+      .reduce((s,a)=> s + (a.total || 0), 0));
   }
 
-  // ===== Render
+  function renderKPI(){
+    const financed = 2250.00;
+    const interestTotal = 220.02; // démo
+    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
+    const next = ordered.find(r => !r.paid) || ordered[0];
+    const aTotal = arrearsTotal();
+
+    const kpis = [
+      {label:'Solde contrat', dot:'good', value: money(next?.balance ?? 0), sub:'Solde après la ligne'},
+      {label:'Souffrance', dot: aTotal>0?'bad':'good', value: money(aTotal), sub:'NSF = paiement + 48$'},
+      {label:'Montant financé', dot:'warn', value: money(financed), sub:'Inclut frais ouverture financés'},
+      {label:'Intérêt total', dot:'warn', value: money(interestTotal), sub:'Somme des intérêts (démo)'}
+    ];
+
+    document.getElementById('kpi').innerHTML = kpis.map(k=>`
+      <div class="card">
+        <div class="label"><span>${k.label}</span><span class="dot ${k.dot}"></span></div>
+        <div class="value">${k.value}</div>
+        <div class="sub">${k.sub}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('rightArrears').textContent = money(aTotal);
+    document.getElementById('rightNext').innerHTML =
+      `${fmtDate(next.date)} · <span class="mono">${money((next.total||0)+(next.adjustment||0))}</span>`;
+  }
+
   function renderTable(){
     const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
     const tbody = document.getElementById('rows');
 
     tbody.innerHTML = ordered.map(r=>{
       const sel = r.i===state.selected;
-      const totalToCollect = clamp2((r.total||0)+(r.adjustment||0));
+      const {loanPart, capital} = calcDerived(r);
+      const totalToCollect = clamp2((r.total||0) + (r.adjustment||0));
+
       const statusDot =
-        r.status==='NSF' ? 'bad' :
-        r.status==='Frais report' ? 'warn' :
+        r.status === 'NSF' ? 'bad' :
+        r.status === 'Frais report' ? 'warn' :
         (r.paid ? 'good' : 'warn');
 
       const statusLabel =
-        r.status==='NSF' ? 'NSF' :
-        r.status==='Frais report' ? 'Frais report' :
+        r.status === 'NSF' ? 'NSF' :
+        r.status === 'Frais report' ? 'Frais report' :
         (r.paid ? 'Payé' : 'À venir');
 
       return `
@@ -510,81 +570,196 @@
           <td>${fmtDate(r.date)}</td>
           <td>${r.method||'PAD'}</td>
           <td class="mono">${money(totalToCollect)}</td>
+          <td class="mono">${money(loanPart)}</td>
           <td class="mono">${money(r.interest||0)}</td>
+          <td class="mono">${money(capital)}</td>
           <td class="mono">${money(r.adhesion||0)}</td>
           <td class="mono">${money(r.adjustment||0)}</td>
           <td><span class="status"><span class="dot ${statusDot}"></span>${statusLabel}</span></td>
-          <td class="mono">${money(r.balanceBefore||0)}</td>
           <td class="mono">${money(r.balance||0)}</td>
         </tr>
       `;
     }).join('');
 
-    const next = ordered.find(x=>!x.paid) || ordered[0];
-    document.getElementById('rightArrears').textContent = money(arrearsTotal());
-    document.getElementById('rightNext').innerHTML = `${fmtDate(next.date)} · <span class="mono">${money((next.total||0)+(next.adjustment||0))}</span>`;
+    const row = state.schedule.find(r=>r.i===state.selected) || ordered[0];
+    document.getElementById('selectedInfo').textContent =
+      `Sélection: #${row.i} · ${fmtDate(row.date)} · Total ${money((row.total||0)+(row.adjustment||0))}`;
   }
 
+  function renderEvents(){
+    const items = [...state.events].slice(-7).reverse();
+    document.getElementById('events').innerHTML = items.map(e=>`
+      <div class="note">
+        <div class="meta">
+          <span>${e.title}</span>
+          <span class="mono">${new Date(e.ts).toLocaleString('fr-CA',{hour:'2-digit',minute:'2-digit',year:'numeric',month:'2-digit',day:'2-digit'})}</span>
+        </div>
+        <div class="txt">${e.txt}</div>
+      </div>
+    `).join('');
+  }
+
+  // ✅ Liste Souffrance (NSF) dans le panneau Souffrance
   function renderArrearsList(){
     const box = document.getElementById('arrearsList');
-    if(!box) return;
-
     const open = state.arrearsItems
-      .filter(a=>a.status==='OPEN')
-      .sort((a,b)=> new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      .filter(a => a.status === 'OPEN')
+      .sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
 
-    if(open.length===0){
+    if(!open.length){
       box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Aucune souffrance ouverte.</div>`;
       return;
     }
 
     box.innerHTML = open.map(a=>{
-      const dateStr = new Date(a.createdAt).toLocaleString('fr-CA',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
       return `
-        <div class="rowA">
-          <div style="min-width:0">
-            <div style="display:flex;gap:8px;align-items:center">
+        <div class="arrearsRow">
+          <div class="arrearsLeft">
+            <div class="arrearsTitle">
               <span class="tag"><span class="dot bad"></span> NSF</span>
-              <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Ligne #${a.sourceLine}</span>
+              &nbsp; Paiement #${a.sourceLine} · <span class="mono">${money(a.total)}</span>
             </div>
-            <div class="calc">${money(a.amount)} + ${money(a.fee)} = <b>${money(a.total)}</b></div>
-            <div style="color:var(--muted2);font-size:11px;margin-top:4px">${dateStr}</div>
+            <div class="arrearsMeta">
+              Détail: paiement ${money(a.amount)} + frais ${money(a.fee)} · Créé ${new Date(a.createdAt).toLocaleString('fr-CA',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
+            </div>
           </div>
           <div class="actions">
-            <button class="btn danger" onclick="openArrearsResolver('${a.id}')">Traiter</button>
+            <button class="btn primary" onclick="openArrearsResolver('${a.id}')">⚠️ Traiter</button>
           </div>
         </div>
       `;
     }).join('');
   }
 
-  function renderEvents(){
-    const items = [...state.events].slice(-12).reverse();
-    const el = document.getElementById('events');
-    el.innerHTML = items.map(e=>{
-      const d = new Date(e.ts);
-      return `
-        <div class="note">
-          <div class="meta">
-            <span>${e.title}</span>
-            <span class="mono">${d.toLocaleDateString('fr-CA',{day:'2-digit',month:'short'})} ${d.toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'})}</span>
-          </div>
-          <div class="txt">${e.txt}</div>
-        </div>
-      `;
-    }).join('');
+  function renderAll(){
+    renderKPI();
+    renderTable();
+    renderArrearsList();
+    renderEvents();
   }
 
-  function renderAll(){ renderTable(); renderArrearsList(); renderEvents(); }
   function selectRow(i){ state.selected=i; renderAll(); }
+  function logEvent(title, txt){ state.events.push({ts:new Date().toISOString(), title, txt}); }
 
-  // ===== Modal helpers
+  // ===== MODAL helpers
   function closeModal(ev){
     if(ev && ev.target && ev.target.id !== 'overlay') return;
-    document.getElementById('overlay').style.display='none';
+    document.getElementById('overlay').style.display = 'none';
   }
 
-  // ===== Actions (minimal mais identique dans l’esprit)
+  // ===== Reporter UI (Sélection / Auto 1-5 / Tous / NEW)
+  function onRepPlanChange(){
+    const plan = document.getElementById('repPlan').value;
+    const pick = document.getElementById('pickTargets');
+    const nl = document.getElementById('newLine');
+    const confirm = document.getElementById('repConfirm');
+
+    document.querySelectorAll('.tchk').forEach(c => c.checked = false);
+
+    if(plan === 'NEW'){
+      pick.style.display = 'none';
+      nl.style.display = 'block';
+      document.getElementById('repNeed').textContent = 'Mode: ajout d’une ligne VIREMENT';
+      document.getElementById('repPreview').textContent = 'Ajout par ligne: —';
+      confirm.classList.remove('disabled');
+      return;
+    }
+
+    pick.style.display = 'block';
+    nl.style.display = 'none';
+
+    if(plan === 'ALL' || plan.startsWith('AUTO_')){
+      const n = plan === 'ALL' ? 9999 : Number(plan.replace('AUTO_',''));
+      const boxes = Array.from(document.querySelectorAll('.tchk')).slice(0, n);
+      boxes.forEach(b => b.checked = true);
+    }
+
+    validateRepSelection();
+  }
+
+  function validateRepSelection(){
+    const plan = document.getElementById('repPlan').value;
+    const confirm = document.getElementById('repConfirm');
+    const amt = clamp2(Number(document.getElementById('repAmt').value || 0));
+
+    if(plan === 'NEW'){
+      if(amt > 0) confirm.classList.remove('disabled');
+      else confirm.classList.add('disabled');
+      return;
+    }
+
+    const checked = Array.from(document.querySelectorAll('.tchk')).filter(x=>x.checked);
+    const count = checked.length;
+
+    document.getElementById('repNeed').textContent = `Sélection: ${count} ligne(s)`;
+
+    if(count > 0 && amt > 0){
+      const per = clamp2(amt / count);
+      document.getElementById('repPreview').textContent = `Ajout par ligne: ${money(per)}`;
+      confirm.classList.remove('disabled');
+    } else {
+      document.getElementById('repPreview').textContent = 'Ajout par ligne: —';
+      confirm.classList.add('disabled');
+    }
+  }
+
+  // ===== Souffrance(NSF) UI (mêmes options que Reporter)
+  function onArrPlanChange(){
+    const plan = document.getElementById('arrPlan').value;
+    const pick = document.getElementById('arrPickTargets');
+    const nl = document.getElementById('arrNewLine');
+    const confirm = document.getElementById('arrConfirm');
+
+    document.querySelectorAll('.arrchk').forEach(c => c.checked = false);
+
+    if(plan === 'NEW'){
+      pick.style.display = 'none';
+      nl.style.display = 'block';
+      document.getElementById('arrNeed').textContent = 'Mode: ajout d’une ligne VIREMENT';
+      document.getElementById('arrPreview').textContent = 'Ajout par ligne: —';
+      confirm.classList.remove('disabled');
+      return;
+    }
+
+    pick.style.display = 'block';
+    nl.style.display = 'none';
+
+    if(plan === 'ALL' || plan.startsWith('AUTO_')){
+      const n = plan === 'ALL' ? 9999 : Number(plan.replace('AUTO_',''));
+      const boxes = Array.from(document.querySelectorAll('.arrchk')).slice(0, n);
+      boxes.forEach(b => b.checked = true);
+    }
+
+    validateArrSelection();
+  }
+
+  function validateArrSelection(){
+    const plan = document.getElementById('arrPlan').value;
+    const confirm = document.getElementById('arrConfirm');
+    const amt = clamp2(Number(document.getElementById('arrAmt').value || 0));
+
+    if(plan === 'NEW'){
+      if(amt > 0) confirm.classList.remove('disabled');
+      else confirm.classList.add('disabled');
+      return;
+    }
+
+    const checked = Array.from(document.querySelectorAll('.arrchk')).filter(x=>x.checked);
+    const count = checked.length;
+
+    document.getElementById('arrNeed').textContent = `Sélection: ${count} ligne(s)`;
+
+    if(count > 0 && amt > 0){
+      const per = clamp2(amt / count);
+      document.getElementById('arrPreview').textContent = `Ajout par ligne: ${money(per)}`;
+      confirm.classList.remove('disabled');
+    } else {
+      document.getElementById('arrPreview').textContent = 'Ajout par ligne: —';
+      confirm.classList.add('disabled');
+    }
+  }
+
+  // ===== Open modal
   function openAction(kind){
     const row = state.schedule.find(r=>r.i===state.selected) || state.schedule[0];
     const overlay = document.getElementById('overlay');
@@ -592,109 +767,283 @@
     const body = document.getElementById('modalBody');
     const foot = document.getElementById('modalFoot');
 
-    if(kind==='nsf'){
-      title.textContent = '❌ NSF → Souffrance automatique';
-      const pay = clamp2((row.total||0)+(row.adjustment||0));
+    title.textContent = ({
+      report:'📅 Reporter un paiement',
+      nsf:'❌ NSF (banque) → Souffrance automatique',
+      manual:'💵 Paiement manuel',
+      note:'📝 Ajouter une note'
+    })[kind] || 'Action';
+
+    // ===== REPORT
+    if(kind === 'report'){
+      const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
+      const targets = ordered.filter(r =>
+        r.i !== row.i &&
+        !r.paid &&
+        r.status !== 'NSF' &&
+        (r.method||'PAD') === 'PAD'
+      );
+
+      const dateOptions = ordered
+        .filter(r => !r.paid && r.status !== 'NSF')
+        .map(r => `<option value="${r.date}">${fmtDate(r.date)}</option>`)
+        .join('');
+
       body.innerHTML = `
-        <div class="field">
-          <label>Ligne NSF</label>
-          <input disabled value="#${row.i} · ${fmtDate(row.date)} · ${money(pay)}" />
+        <div class="row">
+          <div class="field">
+            <label>Ligne reportée (source) — devient 25,00$ PAD</label>
+            <input disabled value="#${row.i} · ${fmtDate(row.date)} · ${money((row.total||0)+(row.adjustment||0))}" />
+          </div>
+          <div class="field">
+            <label>Montant à déplacer</label>
+            <input id="repAmt" type="number" step="0.01"
+              value="${clamp2((row.total||0)+(row.adjustment||0))}"
+              oninput="validateRepSelection()" />
+          </div>
         </div>
-        <div class="field">
-          <label>Frais NSF</label>
-          <input id="nsfFee" type="number" step="0.01" value="48.00" />
+
+        <div class="row" style="margin-top:10px">
+          <div class="field">
+            <label>Mode</label>
+            <select id="repPlan" onchange="onRepPlanChange()">
+              <option value="SEL" selected>Répartir sur les lignes cochées</option>
+              <option value="AUTO_1">Auto: 1 prochain paiement</option>
+              <option value="AUTO_2">Auto: 2 prochains paiements</option>
+              <option value="AUTO_3">Auto: 3 prochains paiements</option>
+              <option value="AUTO_4">Auto: 4 prochains paiements</option>
+              <option value="AUTO_5">Auto: 5 prochains paiements</option>
+              <option value="ALL">Auto: tous les paiements à venir</option>
+              <option value="NEW">+ Ajouter une ligne de paiement (VIREMENT)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Frais de report (prélevés sur la ligne source)</label>
+            <input disabled value="25.00" />
+          </div>
         </div>
-        <div class="sum">Souffrance = paiement + frais NSF. Elle sera visible à droite.</div>
+
+        <div id="pickTargets" style="margin-top:10px">
+          <div class="field">
+            <label>Sélectionne les lignes où tu ajoutes le montant</label>
+
+            <div class="inlineInfo">
+              <div id="repNeed">Sélection: 0 ligne(s)</div>
+              <div class="mono" id="repPreview">Ajout par ligne: —</div>
+            </div>
+
+            <div class="listBox">
+              ${targets.map(t=>{
+                const total = clamp2((t.total||0)+(t.adjustment||0));
+                return `
+                  <div class="chk">
+                    <input type="checkbox" class="tchk" value="${t.i}" onchange="validateRepSelection()"/>
+                    <div>
+                      <div class="t"><b>#${t.i}</b> · ${fmtDate(t.date)} · Total ${money(total)}</div>
+                      <div class="m">PAD · Ajustement actuel: ${money(t.adjustment||0)}</div>
+                    </div>
+                  </div>
+                `;
+              }).join('') || `<div class="m">Aucune ligne PAD disponible.</div>`}
+            </div>
+          </div>
+        </div>
+
+        <div id="newLine" style="margin-top:10px; display:none">
+          <div class="row">
+            <div class="field">
+              <label>Date du virement</label>
+              <select id="newDate">${dateOptions}</select>
+            </div>
+            <div class="field">
+              <label>Type</label>
+              <input disabled value="VIREMENT (cash à venir)" />
+            </div>
+          </div>
+        </div>
+
+        <div class="summary">
+          ✅ La ligne source devient <b>25,00$</b> (Frais report) et reste <b>PAD</b>.<br/>
+          Sélection / Auto 1–5 / Tous / NEW.
+        </div>
+      `;
+
+      foot.innerHTML = `
+        <button class="btn" onclick="closeModal()">Annuler</button>
+        <button class="btn primary disabled" id="repConfirm" onclick="applyReportV4()">Confirmer</button>
+      `;
+
+      overlay.style.display = 'flex';
+      setTimeout(()=> onRepPlanChange(), 0);
+      return;
+    }
+
+    // ===== NSF -> Souffrance automatique (paiement + 48$)
+    // NSF est ici parce qu'il est dans la section "Souffrance"
+    if(kind === 'nsf'){
+      body.innerHTML = `
+        <div class="row">
+          <div class="field">
+            <label>Paiement NSF (ligne sélectionnée dans calendrier)</label>
+            <input disabled value="#${row.i} · ${fmtDate(row.date)} · Total ${money((row.total||0)+(row.adjustment||0))}" />
+          </div>
+          <div class="field">
+            <label>Frais NSF (banque)</label>
+            <input id="nsfFee" type="number" step="0.01" value="48.00" />
+          </div>
+        </div>
+        <div class="summary">
+          ✅ Auto: Souffrance = paiement + frais NSF.<br/>
+          Ensuite tu la traites dans Souffrance avec les mêmes options que Reporter.
+        </div>
       `;
       foot.innerHTML = `
         <button class="btn" onclick="closeModal()">Annuler</button>
         <button class="btn danger" onclick="applyNSF()">Confirmer NSF</button>
       `;
-      overlay.style.display='flex';
+      overlay.style.display = 'flex';
       return;
     }
 
-    if(kind==='report'){
-      title.textContent = '📅 Reporter un paiement';
-      const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date)||a.i-b.i));
-      const targets = ordered.filter(r=> r.i!==row.i && !r.paid && r.status!=='NSF' && r.status!=='Frais report' && (r.method||'PAD')==='PAD');
-
+    // ===== Paiement manuel
+    if(kind === 'manual'){
       body.innerHTML = `
-        <div class="field">
-          <label>Ligne source</label>
-          <input disabled value="#${row.i} · ${fmtDate(row.date)}" />
+        <div class="row">
+          <div class="field">
+            <label>Montant reçu</label>
+            <input id="manualAmt" type="number" step="0.01" value="148.00" />
+          </div>
+          <div class="field">
+            <label>Appliquer à</label>
+            <select id="manualTo">
+              <option value="arrears" selected>Souffrance (réduire)</option>
+              <option value="note">Note seulement</option>
+            </select>
+          </div>
         </div>
-        <div class="field">
-          <label>Montant à déplacer</label>
-          <input id="repAmt" type="number" step="0.01" value="${clamp2((row.total||0)+(row.adjustment||0))}" />
+        <div class="summary">
+          Démo : “Souffrance” = ferme des items OPEN (FIFO) jusqu’à épuisement du montant.
         </div>
-        <div class="field">
-          <label>Répartir sur</label>
-          <select id="repPlan">
-            <option value="AUTO_1">1 paiement</option>
-            <option value="AUTO_2">2 paiements</option>
-            <option value="AUTO_3">3 paiements</option>
-            <option value="AUTO_4">4 paiements</option>
-            <option value="AUTO_5">5 paiements</option>
-            <option value="ALL">TOUS les paiements à venir</option>
-          </select>
-        </div>
-        <div class="sum">Règle: la ligne source devient “Frais report” (25$), et le montant est réparti (+ ajustement) sur les lignes cibles.</div>
       `;
       foot.innerHTML = `
         <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn primary" onclick="applyReportV4()">Confirmer</button>
+        <button class="btn primary" onclick="applyManual()">Enregistrer</button>
       `;
-      overlay.style.display='flex';
+      overlay.style.display = 'flex';
+      return;
+    }
+
+    // ===== Note
+    if(kind === 'note'){
+      body.innerHTML = `
+        <div class="field">
+          <label>Note</label>
+          <input id="noteTxt" placeholder="Ex: client reporte au prochain vendredi…" />
+        </div>
+        <div class="summary">Les notes restent dans l’historique (audit).</div>
+      `;
+      foot.innerHTML = `
+        <button class="btn" onclick="closeModal()">Annuler</button>
+        <button class="btn primary" onclick="applyNote()">Ajouter</button>
+      `;
+      overlay.style.display = 'flex';
       return;
     }
   }
 
+  // ===== REPORT apply
+  function applyReportV4(){
+    const fee = 25.00;
+    const src = state.schedule.find(r=>r.i===state.selected);
+    const amt = clamp2(Number(document.getElementById('repAmt').value || 0));
+    const plan = document.getElementById('repPlan').value;
+
+    if(!src || amt<=0) return;
+
+    const old = `#${src.i} (${fmtDate(src.date)})`;
+
+    // ligne source devient 25$ PAD (démo)
+    src.status = 'Frais report';
+    src.method = 'PAD';
+    src.total = fee;
+    src.adjustment = 0.00;
+    src.interest = 0.00;
+    src.adhesion = 0.00;
+
+    if(plan === 'NEW'){
+      const d = document.getElementById('newDate').value;
+      const maxI = Math.max(...state.schedule.map(r=>r.i));
+      state.schedule.push({
+        i: maxI + 1,
+        date: d,
+        total: amt,
+        interest: 0.00,
+        adhesion: 0.00,
+        balance: 0.00,
+        adjustment: 0.00,
+        status:'À venir',
+        paid:false,
+        method:'VIREMENT'
+      });
+      logEvent('Report (VIREMENT)', `Source ${old} → devient ${money(fee)} (PAD). Nouvelle ligne VIREMENT ${fmtDate(d)} créée pour ${money(amt)}.`);
+      closeModal();
+      renderAll();
+      return;
+    }
+
+    const ids = Array.from(document.querySelectorAll('.tchk')).filter(x=>x.checked).map(x=>Number(x.value));
+    const targets = state.schedule.filter(r => ids.includes(r.i));
+    if(!targets.length) return;
+
+    const per = clamp2(amt / targets.length);
+    targets.forEach(t => t.adjustment = clamp2((t.adjustment||0) + per));
+
+    const label =
+      plan === 'ALL' ? 'Report (AUTO-TOUS)' :
+      plan.startsWith('AUTO_') ? 'Report (AUTO)' :
+      'Report (SÉLECTION)';
+
+    logEvent(label, `Source ${old} → devient ${money(fee)} (PAD). Montant ${money(amt)} réparti sur ${targets.length} paiement(s): +${money(per)} chacun.`);
+    closeModal();
+    renderAll();
+  }
+
+  // ===== NSF apply -> crée souffrance auto (paiement + 48$)
   function applyNSF(){
     const row = state.schedule.find(r=>r.i===state.selected);
     const fee = clamp2(Number(document.getElementById('nsfFee').value || 48));
-    const pay = clamp2((row.total||0)+(row.adjustment||0));
+    if(!row) return;
+
+    const pay = clamp2((row.total||0) + (row.adjustment||0));
     const total = clamp2(pay + fee);
 
-    row.status='NSF';
+    // marque la ligne NSF dans le calendrier
+    row.status = 'NSF';
 
-    const id='A'+Date.now();
-    state.arrearsItems.push({id,type:'NSF',sourceLine:row.i,amount:pay,fee,total,status:'OPEN',createdAt:new Date().toISOString()});
-    logEvent('NSF', `NSF sur #${row.i}. Souffrance: ${money(pay)} + ${money(fee)} = ${money(total)}.`);
+    // crée item souffrance OPEN (auto)
+    const id = 'A' + Date.now();
+    state.arrearsItems.push({
+      id,
+      type: 'NSF',
+      sourceLine: row.i,
+      amount: pay,
+      fee: fee,
+      total: total,
+      status: 'OPEN',
+      createdAt: new Date().toISOString()
+    });
 
-    recalculateBalancesAndInterest();
+    logEvent('NSF', `NSF sur #${row.i}. Souffrance auto: ${money(pay)} + ${money(fee)} = ${money(total)}.`);
     closeModal();
     renderAll();
+
+    // tu peux commenter cette ligne si tu veux traiter seulement via le bouton "Traiter" dans Souffrance
+    openArrearsResolver(id);
   }
 
-  function applyReportV4(){
-    const row = state.schedule.find(r=>r.i===state.selected);
-    const fee = 25.00;
-    const amt = clamp2(Number(document.getElementById('repAmt').value||0));
-    const plan = document.getElementById('repPlan').value;
-
-    row.status='Frais report';
-    row.total=0; row.adjustment=0; row.interest=0; row.adhesion=0; row.method='PAD';
-    row.nsfReportFee = fee;
-
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date)||a.i-b.i))
-      .filter(r=> !r.paid && r.status!=='NSF' && r.status!=='Frais report' && (r.method||'PAD')==='PAD');
-
-    const n = plan==='ALL' ? ordered.length : Number(plan.replace('AUTO_',''));
-    const targets = ordered.slice(0, n);
-
-    const per = clamp2(amt / targets.length);
-    targets.forEach(t=> t.adjustment = clamp2((t.adjustment||0) + per));
-
-    logEvent('Report', `Source #${row.i} → frais ${money(fee)}. Montant ${money(amt)} réparti sur ${targets.length} ligne(s): +${money(per)}.`);
-
-    recalculateBalancesAndInterest();
-    closeModal();
-    renderAll();
-  }
-
-  function openArrearsResolver(id){
-    const item = state.arrearsItems.find(a=>a.id===id && a.status==='OPEN');
+  // ===== Resolver Souffrance (mêmes options que Reporter)
+  function openArrearsResolver(arrearsId){
+    const item = state.arrearsItems.find(a => a.id === arrearsId && a.status === 'OPEN');
     if(!item) return;
 
     const overlay = document.getElementById('overlay');
@@ -702,84 +1051,211 @@
     const body = document.getElementById('modalBody');
     const foot = document.getElementById('modalFoot');
 
-    title.textContent='⚠️ Traiter la souffrance';
+    title.textContent = '⚠️ Traiter la souffrance (NSF)';
 
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date)||a.i-b.i))
-      .filter(r=> !r.paid && r.status!=='NSF' && r.status!=='Frais report' && (r.method||'PAD')==='PAD');
+    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
+    const targets = ordered.filter(r =>
+      !r.paid &&
+      r.status !== 'NSF' &&
+      (r.method||'PAD') === 'PAD'
+    );
+
+    const dateOptions = ordered
+      .filter(r => !r.paid && r.status !== 'NSF')
+      .map(r => `<option value="${r.date}">${fmtDate(r.date)}</option>`)
+      .join('');
 
     body.innerHTML = `
-      <div class="field">
-        <label>Souffrance</label>
-        <input disabled value="${money(item.total)} (ligne #${item.sourceLine})" />
+      <div class="row">
+        <div class="field">
+          <label>Souffrance NSF (auto)</label>
+          <input disabled value="Paiement #${item.sourceLine} : ${money(item.amount)} + ${money(item.fee)} = ${money(item.total)}" />
+        </div>
+        <div class="field">
+          <label>Montant à répartir</label>
+          <input id="arrAmt" type="number" step="0.01" value="${clamp2(item.total)}" oninput="validateArrSelection()" />
+        </div>
       </div>
-      <div class="field">
-        <label>Répartir sur</label>
-        <select id="arrPlan">
-          <option value="AUTO_1">1 paiement</option>
-          <option value="AUTO_2">2 paiements</option>
-          <option value="AUTO_3">3 paiements</option>
-          <option value="AUTO_4">4 paiements</option>
-          <option value="AUTO_5">5 paiements</option>
-          <option value="ALL">TOUS les paiements à venir</option>
-        </select>
+
+      <div class="row" style="margin-top:10px">
+        <div class="field">
+          <label>Mode (identique à Reporter)</label>
+          <select id="arrPlan" onchange="onArrPlanChange()">
+            <option value="SEL" selected>Répartir sur les lignes cochées</option>
+            <option value="AUTO_1">Auto: 1 prochain paiement</option>
+            <option value="AUTO_2">Auto: 2 prochains paiements</option>
+            <option value="AUTO_3">Auto: 3 prochains paiements</option>
+            <option value="AUTO_4">Auto: 4 prochains paiements</option>
+            <option value="AUTO_5">Auto: 5 prochains paiements</option>
+            <option value="ALL">Auto: tous les paiements à venir</option>
+            <option value="NEW">+ Ajouter une ligne de paiement (VIREMENT)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Règle</label>
+          <input disabled value="Souffrance = paiement NSF + 48$" />
+        </div>
       </div>
-      <div class="sum">Ça ajoute un ajustement sur les prochains paiements, puis ferme l’item OPEN.</div>
+
+      <div id="arrPickTargets" style="margin-top:10px">
+        <div class="field">
+          <label>Sélectionne les lignes où tu ajoutes la souffrance</label>
+
+          <div class="inlineInfo">
+            <div id="arrNeed">Sélection: 0 ligne(s)</div>
+            <div class="mono" id="arrPreview">Ajout par ligne: —</div>
+          </div>
+
+          <div class="listBox">
+            ${targets.map(t=>{
+              const totalLine = clamp2((t.total||0)+(t.adjustment||0));
+              return `
+                <div class="chk">
+                  <input type="checkbox" class="arrchk" value="${t.i}" onchange="validateArrSelection()"/>
+                  <div>
+                    <div class="t"><b>#${t.i}</b> · ${fmtDate(t.date)} · Total ${money(totalLine)}</div>
+                    <div class="m">PAD · Ajustement actuel: ${money(t.adjustment||0)}</div>
+                  </div>
+                </div>
+              `;
+            }).join('') || `<div class="m">Aucune ligne PAD disponible.</div>`}
+          </div>
+        </div>
+      </div>
+
+      <div id="arrNewLine" style="margin-top:10px; display:none">
+        <div class="row">
+          <div class="field">
+            <label>Date du virement</label>
+            <select id="arrNewDate">${dateOptions}</select>
+          </div>
+          <div class="field">
+            <label>Type</label>
+            <input disabled value="VIREMENT (cash à venir)" />
+          </div>
+        </div>
+      </div>
+
+      <div class="summary">
+        Souffrance NSF à traiter : <b>${money(item.total)}</b>.<br/>
+        Sélection / Auto 1–5 / Tous / NEW (exactement comme Reporter).
+      </div>
     `;
 
     foot.innerHTML = `
       <button class="btn" onclick="closeModal()">Annuler</button>
-      <button class="btn primary" onclick="applyArrearsResolve('${id}')">Confirmer</button>
+      <button class="btn primary disabled" id="arrConfirm" onclick="applyArrearsResolve('${item.id}')">Confirmer</button>
     `;
-    overlay.style.display='flex';
+
+    overlay.style.display = 'flex';
+    setTimeout(()=> onArrPlanChange(), 0);
   }
 
   function applyArrearsResolve(id){
-    const item = state.arrearsItems.find(a=>a.id===id && a.status==='OPEN');
+    const item = state.arrearsItems.find(a => a.id === id && a.status === 'OPEN');
     if(!item) return;
 
     const plan = document.getElementById('arrPlan').value;
+    const amt = clamp2(Number(document.getElementById('arrAmt').value || item.total));
+    if(amt <= 0) return;
 
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date)||a.i-b.i))
-      .filter(r=> !r.paid && r.status!=='NSF' && r.status!=='Frais report' && (r.method||'PAD')==='PAD');
+    if(plan === 'NEW'){
+      const d = document.getElementById('arrNewDate').value;
+      const maxI = Math.max(...state.schedule.map(r=>r.i));
+      state.schedule.push({
+        i: maxI + 1,
+        date: d,
+        total: amt,
+        interest: 0.00,
+        adhesion: 0.00,
+        balance: 0.00,
+        adjustment: 0.00,
+        status:'À venir',
+        paid:false,
+        method:'VIREMENT'
+      });
 
-    const n = plan==='ALL' ? ordered.length : Number(plan.replace('AUTO_',''));
-    const targets = ordered.slice(0, n);
+      item.status = 'RESOLVED';
+      logEvent('Souffrance (VIREMENT)', `Souffrance ${money(amt)} déplacée en nouvelle ligne VIREMENT (${fmtDate(d)}).`);
+      closeModal();
+      renderAll();
+      return;
+    }
 
-    const per = clamp2(item.total / targets.length);
-    targets.forEach(t=> t.adjustment = clamp2((t.adjustment||0) + per));
+    const ids = Array.from(document.querySelectorAll('.arrchk')).filter(x=>x.checked).map(x=>Number(x.value));
+    const targets = state.schedule.filter(r => ids.includes(r.i));
+    if(!targets.length) return;
 
-    item.status='RESOLVED';
-    logEvent('Souffrance traitée', `${money(item.total)} réparti sur ${targets.length} paiement(s): +${money(per)}.`);
+    const per = clamp2(amt / targets.length);
+    targets.forEach(t => t.adjustment = clamp2((t.adjustment||0) + per));
 
-    recalculateBalancesAndInterest();
+    item.status = 'RESOLVED';
+
+    const label =
+      plan === 'ALL' ? 'Souffrance (AUTO-TOUS)' :
+      plan.startsWith('AUTO_') ? 'Souffrance (AUTO)' :
+      'Souffrance (SÉLECTION)';
+
+    logEvent(label, `Souffrance ${money(amt)} répartie sur ${targets.length} paiement(s): +${money(per)} chacun.`);
+
     closeModal();
     renderAll();
   }
 
-  function resetDemo(){
-    state.schedule = originalSchedule.map(r=>({ ...r, status:'À venir', adjustment:0, paid:false, method:'PAD' }));
-    state.selected = 1;
-    state.arrearsItems = [];
-    state.events = [{
-      ts:new Date().toISOString(),
-      title:'Dossier chargé (V2)',
-      txt:'V2 = page allégée. Même logique que ton index: Reporter + NSF→Souffrance + traitement.'
-    }];
+  // ===== Paiement manuel : ferme des items souffrance OPEN FIFO
+  function applyManual(){
+    const amt = clamp2(Number(document.getElementById('manualAmt').value || 0));
+    const to = document.getElementById('manualTo').value;
+    if(amt<=0){ closeModal(); return; }
+
+    if(to === 'arrears'){
+      let remaining = amt;
+      let closed = 0;
+
+      for(const a of state.arrearsItems){
+        if(a.status !== 'OPEN') continue;
+        if(remaining >= a.total){
+          remaining = clamp2(remaining - a.total);
+          a.status = 'RESOLVED';
+          closed++;
+        } else {
+          a.total = clamp2(a.total - remaining);
+          remaining = 0;
+          break;
+        }
+      }
+
+      logEvent('Paiement manuel', `Paiement ${money(amt)} appliqué à la souffrance. Items fermés: ${closed}. Reste non utilisé: ${money(remaining)}.`);
+    } else {
+      logEvent('Paiement manuel', `Paiement reçu ${money(amt)} (note seulement).`);
+    }
+
+    closeModal();
     renderAll();
   }
 
-  // init
+  // ===== Notes
+  function applyNote(){
+    const txt = (document.getElementById('noteTxt').value || '').trim();
+    if(!txt){ closeModal(); return; }
+    logEvent('Note', txt);
+    closeModal();
+    renderAll();
+  }
+
+  // ===== Init
   resetDemo();
 
-  // expose
-  window.openAction=openAction;
-  window.applyNSF=applyNSF;
-  window.applyReportV4=applyReportV4;
-  window.openArrearsResolver=openArrearsResolver;
-  window.applyArrearsResolve=applyArrearsResolve;
-  window.closeModal=closeModal;
-  window.selectRow=selectRow;
-  window.resetDemo=resetDemo;
+  // expose for inline handlers
+  window.onRepPlanChange = onRepPlanChange;
+  window.validateRepSelection = validateRepSelection;
+  window.applyReportV4 = applyReportV4;
+
+  window.onArrPlanChange = onArrPlanChange;
+  window.validateArrSelection = validateArrSelection;
+  window.applyArrearsResolve = applyArrearsResolve;
+
+  window.openArrearsResolver = openArrearsResolver;
 </script>
 </body>
 </html>
