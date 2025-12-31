@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard prêteur privé — Margill-like (Sans backend)</title>
+  <title>Dashboard prêteur privé — Sans backend (SAFE)</title>
   <style>
     :root{
       --bg:#0b1220;
@@ -16,7 +16,6 @@
       --bad:#fb7185;
       --accent:#60a5fa;
       --shadow: 0 18px 60px rgba(0,0,0,.35);
-      --r:16px;
       --r2:22px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
@@ -34,7 +33,7 @@
       min-height:100vh;
     }
     .wrap{max-width:1250px;margin:0 auto;padding:20px}
-    .topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin:8px 0 16px;}
+    .topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin:8px 0 10px;}
     .brand{display:flex;gap:12px;align-items:center;}
     .logo{
       width:38px;height:38px;border-radius:12px;
@@ -53,25 +52,6 @@
     }
     .dot{width:8px;height:8px;border-radius:999px;display:inline-block}
     .dot.good{background:var(--good)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
-
-    .grid{display:grid;grid-template-columns: 1.25fr 0.75fr;gap:14px;}
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
-
-    .cards{display:grid;grid-template-columns: repeat(6, 1fr);gap:12px;margin-bottom:14px;}
-    @media (max-width: 1200px){ .cards{grid-template-columns: repeat(3, 1fr)} }
-    @media (max-width: 700px){ .cards{grid-template-columns: repeat(2, 1fr)} }
-
-    .card{
-      background:rgba(255,255,255,.06);
-      border:1px solid var(--stroke);
-      border-radius: var(--r2);
-      padding:12px 12px 14px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-    }
-    .card .label{color:var(--muted2);font-size:12px;display:flex;justify-content:space-between;gap:10px}
-    .card .value{font-size:18px;margin-top:8px;font-weight:700;letter-spacing:.2px}
-    .card .sub{margin-top:8px;color:var(--muted);font-size:12px}
 
     .panel{
       background:rgba(255,255,255,.05);
@@ -99,19 +79,17 @@
       border-radius:14px;
       font-size:12px;
       cursor:pointer;
-      transition: transform .08s ease, background .12s ease, opacity .12s ease;
       display:flex;align-items:center;gap:8px;
       user-select:none;
       white-space:nowrap;
     }
     .btn:hover{background:rgba(255,255,255,.10)}
-    .btn:active{transform: translateY(1px)}
-    .btn.primary{border-color:rgba(96,165,250,.45); background:rgba(96,165,250,.16)}
-    .btn.danger{border-color:rgba(251,113,133,.45); background:rgba(251,113,133,.14)}
     .btn.good{border-color:rgba(45,212,191,.45); background:rgba(45,212,191,.12)}
     .btn.warn{border-color:rgba(251,191,36,.45); background:rgba(251,191,36,.12)}
+    .btn.danger{border-color:rgba(251,113,133,.45); background:rgba(251,113,133,.14)}
     .btn.ghost{background:transparent}
 
+    .hint{color:var(--muted2); font-size:12px; padding:10px 14px 0;}
     .tableWrap{overflow:auto}
     table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;}
     th, td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;white-space:nowrap;}
@@ -123,6 +101,7 @@
       font-weight:600;
     }
     tr:hover td{background:rgba(255,255,255,.04)}
+    .mono{font-family:var(--mono)}
     .status{
       padding:5px 8px;border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
@@ -130,115 +109,20 @@
       display:inline-flex;align-items:center;gap:8px;
       color:var(--muted);
     }
-    .rightCol{display:flex;flex-direction:column;gap:14px;}
-    .section{padding:14px;}
-    .kv{display:grid;grid-template-columns: 1fr 1fr;gap:10px;margin-top:10px;}
-    .kv .item{
-      padding:10px;border-radius:16px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .kv .k{color:var(--muted2);font-size:11px}
-    .kv .v{margin-top:6px;font-weight:700}
-    .mono{font-family:var(--mono)}
-
-    .hint{color:var(--muted2); font-size:12px; padding:10px 14px 0;}
-
-    .arrearsBox,.ledgerBox{
-      margin-top:12px;
-      padding:10px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04);
-      max-height:240px;
-      overflow:auto;
-    }
-    .arrearsRow,.ledgerRow{
-      display:flex;align-items:center;justify-content:space-between;
-      gap:10px;padding:10px;border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      margin-bottom:8px;
-    }
-    .arrearsRow:hover,.ledgerRow:hover{background:rgba(255,255,255,.05)}
-    .tag{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:4px 8px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      font-size:11px;color:var(--muted);
-    }
-    .notes{display:flex;flex-direction:column;gap:10px;margin-top:10px}
-    .note{
-      padding:10px;border-radius:16px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .note .meta{color:var(--muted2);font-size:11px;display:flex;justify-content:space-between}
-    .note .txt{margin-top:6px;color:var(--text);font-size:12.5px}
-
-    .footerBar{
-      display:flex;justify-content:space-between;gap:10px;align-items:center;
-      padding:12px 14px;
-      border-top:1px solid rgba(255,255,255,.08);
-      color:var(--muted2);
-      font-size:12px;
-    }
 
     /* Modal */
-    .modalOverlay{
-      position:fixed;inset:0;
-      background:rgba(0,0,0,.55);
-      display:none;align-items:center;justify-content:center;
-      padding:16px;
-    }
-    .modal{
-      width:min(900px, 100%);
-      background:rgba(16,31,59,.92);
-      border:1px solid rgba(255,255,255,.16);
-      border-radius:22px;
-      box-shadow:0 30px 100px rgba(0,0,0,.55);
-      backdrop-filter: blur(16px);
-      overflow:hidden;
-    }
-    .modalHead{
-      padding:14px 14px 10px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      display:flex;justify-content:space-between;align-items:center;gap:10px;
-    }
+    .modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;}
+    .modal{width:min(760px, 100%);background:rgba(16,31,59,.92);border:1px solid rgba(255,255,255,.16);border-radius:22px;box-shadow:0 30px 100px rgba(0,0,0,.55);backdrop-filter: blur(16px);overflow:hidden;}
+    .modalHead{padding:14px 14px 10px;border-bottom:1px solid rgba(255,255,255,.10);display:flex;justify-content:space-between;align-items:center;gap:10px;}
     .modalHead h3{margin:0;font-size:14px}
     .modalBody{padding:14px}
     .row{display:grid;grid-template-columns: 1fr 1fr;gap:10px}
     @media (max-width: 640px){ .row{grid-template-columns:1fr} }
-    .field{
-      padding:10px;border-radius:16px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.10);
-    }
+    .field{padding:10px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);}
     .field label{display:block;color:var(--muted2);font-size:11px;margin-bottom:8px}
-    .field input, .field select{
-      width:100%;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      color:var(--text);
-      padding:10px 10px;
-      border-radius:12px;
-      outline:none;
-      font-size:13px;
-    }
-    .summary{
-      margin-top:12px;
-      padding:12px;border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.04);
-      color:var(--muted);
-      font-size:12.5px;
-      line-height:1.45;
-    }
-    .modalFoot{
-      padding:12px 14px;
-      border-top:1px solid rgba(255,255,255,.10);
-      display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;
-    }
+    .field input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--text);padding:10px 10px;border-radius:12px;outline:none;font-size:13px;}
+    .summary{margin-top:12px;padding:12px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--muted);font-size:12.5px;line-height:1.45;}
+    .modalFoot{padding:12px 14px;border-top:1px solid rgba(255,255,255,.10);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
   </style>
 </head>
 
@@ -249,101 +133,59 @@
         <div class="logo"></div>
         <div>
           <h1>Dashboard prêteur privé</h1>
-          <p>Margill-like · Sans backend · Encaissement réel · Allocation · Ledger</p>
+          <p>Sans backend · Version SAFE (table toujours visible)</p>
         </div>
       </div>
-      <div class="pill"><span class="dot good"></span> Mode: GitHub Pages OK</div>
+      <div class="pill"><span class="dot good"></span> GitHub Pages OK</div>
     </div>
 
-    <div class="cards" id="kpi"></div>
+    <!-- DIAG -->
+    <div id="diag" class="pill" style="border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.10);margin-bottom:12px">
+      <span class="dot warn"></span>
+      <span class="mono">DIAG: boot...</span>
+    </div>
 
-    <div class="grid">
-      <div>
-        <div class="panel">
-          <div class="panelHeader">
-            <div>
-              <h2>Calendrier des paiements</h2>
-              <small>Solde bouge seulement sur PAYÉ / PARTIEL (encaissé réel)</small>
-            </div>
-            <div class="actions">
-              <button class="btn danger" onclick="openAction('nsf')">❌ NSF</button>
-              <button class="btn good" onclick="openAction('post')">✅ PAYÉ</button>
-              <button class="btn warn" onclick="openAction('partial')">🟨 PARTIEL</button>
-              <button class="btn" onclick="openAction('retry')">🔁 Reprise NSF</button>
-              <button class="btn ghost" onclick="resetDemo()">↩️ Reset</button>
-            </div>
-          </div>
-
-          <div class="hint">
-            Règle (Margill-like): <b>Souffrance → Adhésion → Intérêt → Capital</b>.<br/>
-            <b>Total dû</b> = <b>Solde prêt</b> + <b>Souffrance OPEN</b>.
-          </div>
-
-          <div class="tableWrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Date prévue</th>
-                  <th>Date encaissée</th>
-                  <th>Statut banque</th>
-                  <th>Planifié</th>
-                  <th>Encaissé</th>
-                  <th>Intérêt</th>
-                  <th>Capital</th>
-                  <th>Adhésion</th>
-                  <th>Ajust.</th>
-                  <th>Solde avant</th>
-                  <th>Solde après</th>
-                  <th>Jours</th>
-                  <th>Statut ligne</th>
-                </tr>
-              </thead>
-              <tbody id="rows"></tbody>
-            </table>
-          </div>
-
-          <div class="footerBar">
-            <div class="mono" id="ruleLine"></div>
-            <div class="mono" id="selectedInfo"></div>
-          </div>
+    <div class="panel">
+      <div class="panelHeader">
+        <div>
+          <h2>Calendrier</h2>
+          <small>Si tu vois zéro lignes → JS a planté. Le DIAG te dit pourquoi.</small>
+        </div>
+        <div class="actions">
+          <button class="btn danger" onclick="openAction('nsf')">❌ NSF</button>
+          <button class="btn good" onclick="openAction('post')">✅ PAYÉ</button>
+          <button class="btn warn" onclick="openAction('partial')">🟨 PARTIEL</button>
+          <button class="btn ghost" onclick="resetDemo()">↩️ Reset</button>
         </div>
       </div>
 
-      <div class="rightCol">
-        <div class="panel">
-          <div class="panelHeader">
-            <div>
-              <h2>Résumé contrat</h2>
-              <small>Solde / Souffrance / Total dû</small>
-            </div>
-            <div class="pill"><span class="dot warn"></span> Audit</div>
-          </div>
-          <div class="section">
-            <div class="kv" id="contractBox"></div>
-          </div>
-        </div>
+      <div class="hint">
+        Rappel: NSF ne baisse pas le solde du prêt. Ça crée une souffrance. Le solde baisse seulement sur PAYÉ/PARTIEL.
+      </div>
 
-        <div class="panel">
-          <div class="panelHeader">
-            <div>
-              <h2>Souffrance & Ledger</h2>
-              <small>OPEN = dû maintenant</small>
-            </div>
-            <div class="pill"><span class="dot bad"></span> Preuve</div>
-          </div>
-          <div class="section">
-            <div class="kv">
-              <div class="item"><div class="k">Souffrance OPEN</div><div class="v mono" id="rightArrears"></div></div>
-              <div class="item"><div class="k">Total dû</div><div class="v mono" id="rightTotalDue"></div></div>
-            </div>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date prévue</th>
+              <th>Planifié</th>
+              <th>Banque</th>
+              <th>Encaissé</th>
+              <th>Intérêt</th>
+              <th>Capital</th>
+              <th>Adhésion</th>
+              <th>Solde avant</th>
+              <th>Solde après</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
 
-            <div class="arrearsBox" id="arrearsList"></div>
-            <div class="ledgerBox" id="ledgerList"></div>
-
-            <div class="notes" id="events"></div>
-          </div>
-        </div>
+      <div class="panelHeader" style="border-top:1px solid rgba(255,255,255,.08);border-bottom:none">
+        <small class="mono" id="selectedInfo">Sélection: —</small>
+        <small class="mono" id="summaryInfo">—</small>
       </div>
     </div>
   </div>
@@ -361,14 +203,11 @@
   </div>
 
 <script>
-  // ========================= Utils =========================
-  const clamp2 = (n) => Math.round(Number(n || 0) * 100) / 100;
-  const nowIso = () => new Date().toISOString();
+  // ===== Utils
+  const clamp2 = (n) => Math.round(Number(n||0)*100)/100;
   const money = (n) => (Number(n||0)).toLocaleString('fr-CA',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' $';
-  const fmtDate = (iso) => {
-    if(!iso) return "—";
-    return new Date(iso+'T00:00:00').toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'}).replace('.','');
-  };
+  const nowIso = () => new Date().toISOString();
+
   function toDateOnly(iso){
     const [y,m,d] = String(iso).split("-").map(Number);
     return new Date(Date.UTC(y,(m||1)-1,d||1));
@@ -381,504 +220,150 @@
   }
   function sortSchedule(s){ return [...s].sort((a,b)=> (a.date||"").localeCompare(b.date||"") || (a.i||0)-(b.i||0)); }
 
-  // ========================= Config (à toi de changer) =========================
+  // ===== Config simple
   const config = {
     contractStartDate: "2024-10-31",
     startBalance: 2250.00,
     annualRate: 0.1899,
     dayBase: 365,
     defaultNSFFee: 48.00,
-
-    // Margill-like:
-    payArrearsFirst: true,
-
-    // Margill++:
-    // sur PARTIEL: crée automatiquement une souffrance du manquant (planifié - encaissé) ?
-    autoArrearsOnPartialMissing: true,
   };
 
-  // ========================= Seed schedule =========================
+  // ===== Seed minimal (26 lignes)
   const seedSchedule = [
-    {i:1,  date:"2024-11-15", plannedBase:147.92, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:2,  date:"2024-11-29", plannedBase:147.19, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:3,  date:"2024-12-13", plannedBase:146.56, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:4,  date:"2024-12-27", plannedBase:145.94, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:5,  date:"2025-01-10", plannedBase:145.31, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:6,  date:"2025-01-24", plannedBase:144.72, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:7,  date:"2025-02-07", plannedBase:144.09, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:8,  date:"2025-02-21", plannedBase:143.47, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:9,  date:"2025-03-07", plannedBase:142.84, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:10, date:"2025-03-21", plannedBase:142.21, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:11, date:"2025-04-04", plannedBase:141.58, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:12, date:"2025-04-18", plannedBase:140.95, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:13, date:"2025-05-02", plannedBase:140.33, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:14, date:"2025-05-16", plannedBase:139.70, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:15, date:"2025-05-30", plannedBase:139.07, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:16, date:"2025-06-13", plannedBase:138.44, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:17, date:"2025-06-27", plannedBase:137.82, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:18, date:"2025-07-11", plannedBase:137.19, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:19, date:"2025-07-25", plannedBase:136.56, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:20, date:"2025-08-08", plannedBase:135.93, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:21, date:"2025-08-22", plannedBase:135.31, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:22, date:"2025-09-05", plannedBase:134.68, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:23, date:"2025-09-19", plannedBase:134.05, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:24, date:"2025-10-03", plannedBase:133.42, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:25, date:"2025-10-17", plannedBase:132.80, adhesion:45.00, adjustment:0, method:"PAD"},
-    {i:26, date:"2025-10-26", plannedBase:132.17, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:1,  date:"2024-11-15", plannedBase:147.92, adhesion:45.00},
+    {i:2,  date:"2024-11-29", plannedBase:147.19, adhesion:45.00},
+    {i:3,  date:"2024-12-13", plannedBase:146.56, adhesion:45.00},
+    {i:4,  date:"2024-12-27", plannedBase:145.94, adhesion:45.00},
+    {i:5,  date:"2025-01-10", plannedBase:145.31, adhesion:45.00},
+    {i:6,  date:"2025-01-24", plannedBase:144.72, adhesion:45.00},
+    {i:7,  date:"2025-02-07", plannedBase:144.09, adhesion:45.00},
+    {i:8,  date:"2025-02-21", plannedBase:143.47, adhesion:45.00},
+    {i:9,  date:"2025-03-07", plannedBase:142.84, adhesion:45.00},
+    {i:10, date:"2025-03-21", plannedBase:142.21, adhesion:45.00},
+    {i:11, date:"2025-04-04", plannedBase:141.58, adhesion:45.00},
+    {i:12, date:"2025-04-18", plannedBase:140.95, adhesion:45.00},
+    {i:13, date:"2025-05-02", plannedBase:140.33, adhesion:45.00},
+    {i:14, date:"2025-05-16", plannedBase:139.70, adhesion:45.00},
+    {i:15, date:"2025-05-30", plannedBase:139.07, adhesion:45.00},
+    {i:16, date:"2025-06-13", plannedBase:138.44, adhesion:45.00},
+    {i:17, date:"2025-06-27", plannedBase:137.82, adhesion:45.00},
+    {i:18, date:"2025-07-11", plannedBase:137.19, adhesion:45.00},
+    {i:19, date:"2025-07-25", plannedBase:136.56, adhesion:45.00},
+    {i:20, date:"2025-08-08", plannedBase:135.93, adhesion:45.00},
+    {i:21, date:"2025-08-22", plannedBase:135.31, adhesion:45.00},
+    {i:22, date:"2025-09-05", plannedBase:134.68, adhesion:45.00},
+    {i:23, date:"2025-09-19", plannedBase:134.05, adhesion:45.00},
+    {i:24, date:"2025-10-03", plannedBase:133.42, adhesion:45.00},
+    {i:25, date:"2025-10-17", plannedBase:132.80, adhesion:45.00},
+    {i:26, date:"2025-10-26", plannedBase:132.17, adhesion:45.00},
   ];
 
-  // ========================= State =========================
-  let state = {
-    selected: 1,
-    schedule: [],
-    arrearsItems: [], // {id,type,sourceLine,amount,fee,total,status,createdAt}
-    ledger: [],       // {ts,line,type,postedDate,amount,split}
-    events: []        // {ts,title,txt}
-  };
+  // ===== State
+  let state = { selected: 1, schedule: [], arrears: 0 };
 
   function resetDemo(){
     state.schedule = seedSchedule.map(r => ({
-      i: r.i,
-      date: r.date,
-      method: r.method || "PAD",
-      adhesion: clamp2(r.adhesion || 0),
-      adjustment: clamp2(r.adjustment || 0),
-      plannedBase: clamp2(r.plannedBase || 0),
-
-      // banque
-      postedStatus: "NONE", // NONE|POSTED|PARTIAL|NSF
-      postedAmount: 0,
-      postedDate: null,
-
-      // affichage calculé
+      i: r.i, date: r.date,
+      plannedBase: clamp2(r.plannedBase),
+      adhesion: clamp2(r.adhesion),
+      adjustment: 0,
       planned: 0,
+      bank: "NONE",      // NONE|POSTED|PARTIAL|NSF
       collected: 0,
       interest: 0,
       capital: 0,
-      balanceBefore: 0,
-      balance: 0,
-      days: 0,
-      allocation: {toArrears:0,toAdhesion:0,toInterest:0,toPrincipal:0},
-      status: "À venir",
-      paid: false,
+      balBefore: 0,
+      balAfter: 0,
+      postedDate: null,
     }));
-
-    state.selected = 1;
-    state.arrearsItems = [];
-    state.ledger = [];
-    state.events = [{ts: nowIso(), title:"Dossier chargé", txt:"Mode sans backend. Margill-like actif (encaissement réel + ledger)."}];
-
+    state.arrears = 0;
     recomputeAll();
     renderAll();
-  }
-
-  function openArrearsTotal(){
-    return clamp2(state.arrearsItems
-      .filter(a => a.status === "OPEN")
-      .reduce((s,a)=> s + (a.total || 0), 0));
-  }
-
-  function closeArrearsFIFO(amount){
-    let remaining = clamp2(amount);
-    let closed = 0;
-
-    const items = state.arrearsItems
-      .filter(a => a.status === "OPEN")
-      .sort((a,b)=> (a.createdAt||"").localeCompare(b.createdAt||""));
-
-    for(const a of items){
-      if(remaining <= 0) break;
-      const t = clamp2(a.total || 0);
-      if(remaining >= t){
-        remaining = clamp2(remaining - t);
-        a.total = 0;
-        a.status = "RESOLVED";
-        closed++;
-      }else{
-        a.total = clamp2(t - remaining);
-        remaining = 0;
-      }
-    }
-    return {closed, leftover: remaining};
-  }
-
-  // Allocation: souffrance -> adhesion -> intérêt -> capital
-  function allocatePayment({amount, adhesionDue, interestDue, arrearsDue}){
-    let remaining = clamp2(amount);
-    const out = {toArrears:0,toAdhesion:0,toInterest:0,toPrincipal:0, surplus:0};
-
-    if(config.payArrearsFirst && arrearsDue > 0){
-      const x = clamp2(Math.min(remaining, arrearsDue));
-      out.toArrears = x;
-      remaining = clamp2(remaining - x);
-    }
-
-    if(adhesionDue > 0){
-      const x = clamp2(Math.min(remaining, adhesionDue));
-      out.toAdhesion = x;
-      remaining = clamp2(remaining - x);
-    }
-
-    if(interestDue > 0){
-      const x = clamp2(Math.min(remaining, interestDue));
-      out.toInterest = x;
-      remaining = clamp2(remaining - x);
-    }
-
-    if(remaining > 0){
-      out.toPrincipal = remaining;
-      remaining = 0;
-    }
-
-    out.surplus = clamp2(remaining);
-    return out;
   }
 
   function recomputeAll(){
     const ordered = sortSchedule(state.schedule);
-
-    let prevPostedDate = config.contractStartDate;
-    let prevBalance = clamp2(config.startBalance);
+    let prevDate = config.contractStartDate;
+    let bal = clamp2(config.startBalance);
 
     for(const row of ordered){
-      row.planned = clamp2((row.plannedBase || 0) + (row.adjustment || 0));
+      row.planned = clamp2(row.plannedBase + (row.adjustment||0));
+      row.balBefore = bal;
 
-      const postedStatus = row.postedStatus || "NONE";
-      const collected = (postedStatus === "POSTED" || postedStatus === "PARTIAL") ? clamp2(row.postedAmount || 0) : 0;
+      // intérêt seulement quand on a encaissé (PAYÉ/PARTIEL) sur cette ligne
+      const useDate = row.postedDate || row.date;
+      const d = daysBetween(prevDate, useDate);
 
-      const effectiveDate = row.postedDate || row.date; // pour calcul de jours si encaissé
-      const days = daysBetween(prevPostedDate, effectiveDate);
-      row.days = days;
+      const interestDue = clamp2(bal * config.annualRate * (d / config.dayBase));
+      row.interest = (row.bank === "POSTED" || row.bank === "PARTIAL") ? interestDue : 0;
 
-      const interestDue = clamp2(prevBalance * Number(config.annualRate) * (days / Number(config.dayBase)));
+      // allocation minimal: adhésion -> intérêt -> capital (souffrance pas détaillée ici SAFE)
+      let remaining = clamp2(row.collected || 0);
+      const toAdh = clamp2(Math.min(remaining, row.adhesion));
+      remaining = clamp2(remaining - toAdh);
+      const toInt = clamp2(Math.min(remaining, row.interest));
+      remaining = clamp2(remaining - toInt);
+      const toCap = clamp2(Math.max(0, remaining));
 
-      const arrearsDueSnapshot = openArrearsTotal();
-      const alloc = allocatePayment({
-        amount: collected,
-        adhesionDue: clamp2(row.adhesion || 0),
-        interestDue,
-        arrearsDue: arrearsDueSnapshot
-      });
+      row.capital = toCap;
+      row.balAfter = clamp2(bal - toCap);
+      bal = row.balAfter;
 
-      const capital = clamp2(alloc.toPrincipal);
-      const balanceAfter = clamp2(prevBalance - capital);
-
-      row.collected = collected;
-      row.interest = clamp2(alloc.toInterest);
-      row.capital = capital;
-      row.balanceBefore = clamp2(prevBalance);
-      row.balance = balanceAfter;
-      row.allocation = alloc;
-
-      prevBalance = balanceAfter;
-
-      if(postedStatus === "POSTED" || postedStatus === "PARTIAL"){
-        prevPostedDate = effectiveDate;
+      if(row.bank === "POSTED" || row.bank === "PARTIAL"){
+        prevDate = useDate;
       }
     }
-  }
-
-  function nextRow(){
-    const ordered = sortSchedule(state.schedule);
-    return ordered.find(r => !r.paid && (r.postedStatus||"NONE")==="NONE") || ordered[0];
-  }
-
-  // ========================= Actions =========================
-  function addEvent(title, txt){
-    state.events.push({ts: nowIso(), title, txt});
-  }
-
-  function actionNSF(lineId, fee){
-    const row = state.schedule.find(r => r.i === Number(lineId));
-    if(!row) return;
-
-    const nsfFee = clamp2(fee ?? config.defaultNSFFee);
-    const rejected = clamp2(row.planned);
-    const total = clamp2(rejected + nsfFee);
-
-    row.postedStatus = "NSF";
-    row.postedAmount = 0;
-    row.postedDate = null;
-    row.status = "NSF";
-    row.paid = false;
-
-    const id = "A" + Date.now();
-    state.arrearsItems.push({
-      id,
-      type: "NSF",
-      sourceLine: row.i,
-      amount: rejected,
-      fee: nsfFee,
-      total,
-      status: "OPEN",
-      createdAt: nowIso()
-    });
-
-    addEvent("NSF", `Paiement #${row.i} NSF. Souffrance OPEN: rejet ${money(rejected)} + frais ${money(nsfFee)} = ${money(total)}.`);
-
-    recomputeAll();
-    renderAll();
-  }
-
-  function actionRetry(lineId, newDate){
-    const row = state.schedule.find(r => r.i === Number(lineId));
-    if(!row) return;
-
-    if(row.postedStatus !== "NSF" && row.status !== "NSF"){
-      addEvent("Reprise refusée", `Ligne #${row.i} n'est pas NSF.`);
-      recomputeAll(); renderAll();
-      return;
-    }
-
-    row.date = newDate || row.date;
-    row.postedStatus = "NONE";
-    row.postedAmount = 0;
-    row.postedDate = null;
-    row.status = "À venir";
-    row.paid = false;
-
-    addEvent("Reprise bancaire", `Paiement #${row.i} replanifié au ${row.date}.`);
-    recomputeAll();
-    renderAll();
-  }
-
-  function actionPost(lineId, amount, postedDate){
-    const row = state.schedule.find(r => r.i === Number(lineId));
-    if(!row) return;
-
-    const amt = clamp2(amount);
-    if(amt <= 0) return;
-
-    // posted
-    row.postedAmount = amt;
-    row.postedDate = postedDate || row.date;
-    row.postedStatus = (amt < row.planned) ? "PARTIAL" : "POSTED";
-    row.status = (row.postedStatus === "PARTIAL") ? "Partiel" : "Payé";
-    row.paid = true;
-
-    // recalcul allocation (avec snapshot souffrance)
-    recomputeAll();
-
-    const alloc = row.allocation || {toArrears:0,toAdhesion:0,toInterest:0,toPrincipal:0};
-
-    // fermer souffrance FIFO si payArrearsFirst
-    let closeInfo = {closed:0, leftover:0};
-    if(config.payArrearsFirst && alloc.toArrears > 0){
-      closeInfo = closeArrearsFIFO(alloc.toArrears);
-    }
-
-    // Margill++: si partiel, créer souffrance "manquant"
-    if(config.autoArrearsOnPartialMissing && row.postedStatus === "PARTIAL"){
-      const missing = clamp2(row.planned - amt);
-      if(missing > 0){
-        const id = "A" + Date.now();
-        state.arrearsItems.push({
-          id,
-          type: "MANQUANT",
-          sourceLine: row.i,
-          amount: missing,
-          fee: 0,
-          total: missing,
-          status: "OPEN",
-          createdAt: nowIso()
-        });
-        addEvent("Partiel → souffrance", `Paiement #${row.i} partiel. Manquant ${money(missing)} créé en souffrance OPEN.`);
-      }
-    }
-
-    state.ledger.push({
-      ts: nowIso(),
-      line: row.i,
-      type: "POST",
-      postedDate: row.postedDate,
-      amount: amt,
-      split: {
-        arrears: alloc.toArrears,
-        adhesion: alloc.toAdhesion,
-        interest: alloc.toInterest,
-        principal: alloc.toPrincipal
-      }
-    });
-
-    addEvent("Encaissement", `#${row.i} encaissé ${money(amt)} (${row.postedStatus}). Split: souffrance ${money(alloc.toArrears)}, adhésion ${money(alloc.toAdhesion)}, intérêt ${money(alloc.toInterest)}, capital ${money(alloc.toPrincipal)}. Souffrances fermées: ${closeInfo.closed}.`);
-
-    recomputeAll();
-    renderAll();
-  }
-
-  // ========================= Render =========================
-  function renderKPI(){
-    const ordered = sortSchedule(state.schedule);
-    const next = nextRow();
-
-    const arrears = openArrearsTotal();
-    const balance = Number(next?.balance ?? 0);
-    const totalDue = clamp2(balance + arrears);
-
-    const interestCum = clamp2(ordered.reduce((s,r)=> s + (r.interest||0), 0));
-    const capitalCum  = clamp2(ordered.reduce((s,r)=> s + (r.capital||0), 0));
-    const collectedCum = clamp2(ordered.reduce((s,r)=> s + (r.collected||0), 0));
-
-    const kpis = [
-      {label:'Solde prêt', dot:'good', value: money(balance), sub:'Bouge sur PAYÉ/PARTIEL'},
-      {label:'Souffrance', dot: arrears>0?'bad':'good', value: money(arrears), sub:'OPEN (NSF, manquant, etc.)'},
-      {label:'Total dû', dot: arrears>0?'bad':'good', value: money(totalDue), sub:'Solde prêt + souffrance'},
-      {label:'Financé', dot:'warn', value: money(config.startBalance), sub:`Origine: ${config.contractStartDate}`},
-      {label:'Intérêt cumulé', dot:'warn', value: money(interestCum), sub:`Capital cumulé: ${money(capitalCum)}`},
-      {label:'Encaissé cumulé', dot:'good', value: money(collectedCum), sub:`Margill++ manquant: ${config.autoArrearsOnPartialMissing?'Oui':'Non'}`},
-    ];
-
-    document.getElementById('kpi').innerHTML = kpis.map(k=>`
-      <div class="card">
-        <div class="label"><span>${k.label}</span><span class="dot ${k.dot}"></span></div>
-        <div class="value">${k.value}</div>
-        <div class="sub">${k.sub}</div>
-      </div>
-    `).join('');
-
-    document.getElementById('rightArrears').textContent = money(arrears);
-    document.getElementById('rightTotalDue').textContent = money(totalDue);
-
-    document.getElementById('ruleLine').textContent =
-      `ACT/${config.dayBase} · taux ${(config.annualRate*100).toFixed(2)}% · souffrance prioritaire ${config.payArrearsFirst?'ON':'OFF'}`;
-  }
-
-  function renderContractBox(){
-    const next = nextRow();
-    const arrears = openArrearsTotal();
-    const totalDue = clamp2(Number(next?.balance||0) + arrears);
-
-    document.getElementById('contractBox').innerHTML = `
-      <div class="item"><div class="k">Date d’origine</div><div class="v mono">${config.contractStartDate}</div></div>
-      <div class="item"><div class="k">Montant financé</div><div class="v mono">${money(config.startBalance)}</div></div>
-      <div class="item"><div class="k">Taux</div><div class="v mono">${(config.annualRate*100).toFixed(2)}% · ACT/${config.dayBase}</div></div>
-      <div class="item"><div class="k">Souffrance prioritaire</div><div class="v">${config.payArrearsFirst?'Oui':'Non'}</div></div>
-      <div class="item"><div class="k">Margill++ manquant</div><div class="v">${config.autoArrearsOnPartialMissing?'Oui':'Non'}</div></div>
-      <div class="item"><div class="k">Total dû</div><div class="v mono">${money(totalDue)}</div></div>
-    `;
-  }
-
-  function renderTable(){
-    const ordered = sortSchedule(state.schedule);
-    const tbody = document.getElementById('rows');
-
-    tbody.innerHTML = ordered.map(r=>{
-      const sel = r.i===state.selected;
-
-      const bank = (r.postedStatus || "NONE");
-      const bankDot = bank==="NSF" ? "bad" : bank==="POSTED" ? "good" : bank==="PARTIAL" ? "warn" : "warn";
-
-      const line = r.status || "À venir";
-      const lineDot = line==="NSF" ? "bad" : line==="Payé" ? "good" : line==="Partiel" ? "warn" : "warn";
-
-      return `
-        <tr onclick="selectRow(${r.i})" style="${sel?'background:rgba(96,165,250,.08)':''}">
-          <td class="mono">${r.i}</td>
-          <td>${fmtDate(r.date)}</td>
-          <td>${fmtDate(r.postedDate)}</td>
-          <td><span class="status"><span class="dot ${bankDot}"></span>${bank}</span></td>
-          <td class="mono">${money(r.planned||0)}</td>
-          <td class="mono">${money(r.collected||0)}</td>
-          <td class="mono">${money(r.interest||0)}</td>
-          <td class="mono">${money(r.capital||0)}</td>
-          <td class="mono">${money(r.adhesion||0)}</td>
-          <td class="mono">${money(r.adjustment||0)}</td>
-          <td class="mono">${money(r.balanceBefore||0)}</td>
-          <td class="mono">${money(r.balance||0)}</td>
-          <td class="mono">${r.days ?? 0}</td>
-          <td><span class="status"><span class="dot ${lineDot}"></span>${line}</span></td>
-        </tr>
-      `;
-    }).join('');
-
-    const row = state.schedule.find(r=>r.i===state.selected) || ordered[0];
-    if(row){
-      document.getElementById('selectedInfo').textContent =
-        `Sélection #${row.i} · Planifié ${money(row.planned)} · Banque ${row.postedStatus} · Encaissé ${money(row.collected)} · Solde ${money(row.balance)}`;
-    }
-  }
-
-  function renderArrearsList(){
-    const box = document.getElementById('arrearsList');
-    const open = state.arrearsItems
-      .filter(a => a.status === "OPEN")
-      .sort((a,b)=> (b.createdAt||"").localeCompare(a.createdAt||""));
-
-    if(!open.length){
-      box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Aucune souffrance OPEN.</div>`;
-      return;
-    }
-
-    box.innerHTML = open.map(a=>`
-      <div class="arrearsRow">
-        <div style="min-width:0">
-          <div style="font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-            <span class="tag"><span class="dot bad"></span> ${a.type}</span>
-            &nbsp; Source #${a.sourceLine} · <span class="mono">${money(a.total)}</span>
-          </div>
-          <div style="font-size:11px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-            Détail: montant ${money(a.amount)} ${a.fee?`+ frais ${money(a.fee)}`:''} · Créé ${new Date(a.createdAt).toLocaleString('fr-CA',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function renderLedger(){
-    const box = document.getElementById('ledgerList');
-    const rows = [...state.ledger].slice(-10).reverse();
-
-    if(!rows.length){
-      box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Ledger vide (aucun encaissement posté).</div>`;
-      return;
-    }
-
-    box.innerHTML = rows.map(l=>{
-      const s = l.split || {};
-      return `
-        <div class="ledgerRow">
-          <div style="min-width:0">
-            <div style="font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-              <span class="tag"><span class="dot good"></span> POST</span>
-              &nbsp; Ligne #${l.line} · ${money(l.amount)} · <span class="mono">${l.postedDate}</span>
-            </div>
-            <div style="font-size:11px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-              Split: souffrance ${money(s.arrears||0)} · adhésion ${money(s.adhesion||0)} · intérêt ${money(s.interest||0)} · capital ${money(s.principal||0)}
-            </div>
-          </div>
-          <div class="mono" style="align-self:center;color:var(--muted2)">
-            ${new Date(l.ts).toLocaleString('fr-CA',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  function renderEvents(){
-    const items = [...state.events].slice(-8).reverse();
-    document.getElementById('events').innerHTML = items.map(e=>`
-      <div class="note">
-        <div class="meta">
-          <span>${e.title}</span>
-          <span class="mono">${new Date(e.ts).toLocaleString('fr-CA',{hour:'2-digit',minute:'2-digit',year:'numeric',month:'2-digit',day:'2-digit'})}</span>
-        </div>
-        <div class="txt">${e.txt}</div>
-      </div>
-    `).join('');
   }
 
   function renderAll(){
-    renderKPI();
-    renderContractBox();
-    renderTable();
-    renderArrearsList();
-    renderLedger();
-    renderEvents();
+    try{
+      const tbody = document.getElementById("rows");
+      if(!tbody) throw new Error("tbody#rows introuvable (HTML cassé)");
+
+      const ordered = sortSchedule(state.schedule);
+
+      tbody.innerHTML = ordered.map(r => {
+        const dot = r.bank==="NSF" ? "bad" : r.bank==="POSTED" ? "good" : r.bank==="PARTIAL" ? "warn" : "warn";
+        return `
+          <tr onclick="selectRow(${r.i})" style="${r.i===state.selected?'background:rgba(96,165,250,.08)':''}">
+            <td class="mono">${r.i}</td>
+            <td>${r.date}</td>
+            <td class="mono">${money(r.planned)}</td>
+            <td><span class="status"><span class="dot ${dot}"></span>${r.bank}</span></td>
+            <td class="mono">${money(r.collected)}</td>
+            <td class="mono">${money(r.interest)}</td>
+            <td class="mono">${money(r.capital)}</td>
+            <td class="mono">${money(r.adhesion)}</td>
+            <td class="mono">${money(r.balBefore)}</td>
+            <td class="mono">${money(r.balAfter)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const sel = state.schedule.find(x=>x.i===state.selected) || ordered[0];
+      document.getElementById("selectedInfo").textContent =
+        `Sélection #${sel.i} · banque=${sel.bank} · planifié=${money(sel.planned)} · encaissé=${money(sel.collected)}`;
+
+      const last = ordered[ordered.length-1];
+      const summary = `Solde actuel (après calcul) ~ ${money(ordered[0]?.balBefore ?? config.startBalance)} → ${money(last?.balAfter ?? config.startBalance)}`;
+      document.getElementById("summaryInfo").textContent = summary;
+
+      const d = document.getElementById("diag");
+      d.innerHTML = `<span class="dot good"></span><span class="mono">DIAG: OK · lignes=${ordered.length} · selected=${state.selected}</span>`;
+    }catch(err){
+      console.error(err);
+      const d = document.getElementById("diag");
+      if(d){
+        d.innerHTML = `<span class="dot bad"></span><span class="mono">DIAG ERROR: ${String(err.message || err)}</span>`;
+      }
+      alert("Ton JS a planté. Ouvre F12 → Console (ou regarde DIAG) et copie l'erreur.");
+    }
   }
 
   function selectRow(i){ state.selected = i; renderAll(); }
 
-  // ========================= Modal =========================
+  // ===== Modal
   function closeModal(ev){
     if(ev && ev.target && ev.target.id !== 'overlay') return;
     document.getElementById('overlay').style.display = 'none';
@@ -891,127 +376,76 @@
     const body = document.getElementById('modalBody');
     const foot = document.getElementById('modalFoot');
 
-    if(kind === "nsf"){
-      title.textContent = "❌ NSF → Souffrance OPEN";
+    if(kind==="nsf"){
+      title.textContent = "❌ NSF";
       body.innerHTML = `
         <div class="row">
-          <div class="field">
-            <label>Ligne</label>
-            <input disabled value="#${row.i} · ${fmtDate(row.date)} · Planifié ${money(row.planned)}" />
-          </div>
-          <div class="field">
-            <label>Frais NSF</label>
-            <input id="nsfFee" type="number" step="0.01" value="${Number(config.defaultNSFFee).toFixed(2)}" />
-          </div>
+          <div class="field"><label>Ligne</label><input disabled value="#${row.i} · ${row.date} · planifié ${money(row.planned)}" /></div>
+          <div class="field"><label>Frais NSF</label><input id="nsfFee" type="number" step="0.01" value="${config.defaultNSFFee.toFixed(2)}" /></div>
         </div>
-        <div class="summary">
-          NSF = encaissé 0, solde prêt ne baisse pas. Souffrance OPEN = rejet + frais NSF.
-        </div>
+        <div class="summary">NSF = encaissé 0. (Version SAFE: souffrance non détaillée, mais banque devient NSF.)</div>
       `;
       foot.innerHTML = `
         <button class="btn" onclick="closeModal()">Annuler</button>
         <button class="btn danger" onclick="doNSF()">Confirmer NSF</button>
       `;
-      overlay.style.display = "flex";
+      overlay.style.display="flex";
       return;
     }
 
-    if(kind === "post" || kind === "partial"){
-      const isPartial = (kind === "partial");
-      title.textContent = isPartial ? "🟨 PARTIEL (encaissé réel)" : "✅ PAYÉ (encaissé réel)";
-      const suggested = isPartial ? Math.max(0, row.planned - 40) : row.planned;
-
+    if(kind==="post" || kind==="partial"){
+      title.textContent = (kind==="post") ? "✅ PAYÉ" : "🟨 PARTIEL";
       body.innerHTML = `
         <div class="row">
-          <div class="field">
-            <label>Ligne</label>
-            <input disabled value="#${row.i} · ${fmtDate(row.date)} · Planifié ${money(row.planned)} · Banque ${row.postedStatus}" />
-          </div>
-          <div class="field">
-            <label>Montant encaissé</label>
-            <input id="postAmt" type="number" step="0.01" value="${Number(suggested).toFixed(2)}" />
-          </div>
+          <div class="field"><label>Ligne</label><input disabled value="#${row.i} · ${row.date} · planifié ${money(row.planned)}" /></div>
+          <div class="field"><label>Montant encaissé</label><input id="postAmt" type="number" step="0.01" value="${row.planned.toFixed(2)}" /></div>
         </div>
-
         <div class="row" style="margin-top:10px">
-          <div class="field">
-            <label>Date encaissée (réelle)</label>
-            <input id="postDate" type="date" value="${(row.date||"").slice(0,10)}" />
-          </div>
-          <div class="field">
-            <label>Margill++: souffrance du manquant (planifié - encaissé)</label>
-            <select id="autoMissing">
-              <option value="true" ${config.autoArrearsOnPartialMissing ? "selected":""}>Oui</option>
-              <option value="false" ${!config.autoArrearsOnPartialMissing ? "selected":""}>Non</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="summary">
-          Allocation: souffrance → adhésion → intérêt → capital. Ledger = preuve du split.
+          <div class="field"><label>Date encaissée</label><input id="postDate" type="date" value="${row.date}" /></div>
+          <div class="field"><label>Info</label><input disabled value="Solde baisse seulement sur capital payé" /></div>
         </div>
       `;
       foot.innerHTML = `
         <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn ${isPartial?'warn':'good'}" onclick="doPost()">Confirmer</button>
+        <button class="btn ${(kind==="post")?'good':'warn'}" onclick="doPost('${kind}')">Confirmer</button>
       `;
-      overlay.style.display = "flex";
-      return;
-    }
-
-    if(kind === "retry"){
-      title.textContent = "🔁 Reprise NSF (replanifier)";
-      body.innerHTML = `
-        <div class="row">
-          <div class="field">
-            <label>Ligne</label>
-            <input disabled value="#${row.i} · Banque ${row.postedStatus} · Statut ${row.status}" />
-          </div>
-          <div class="field">
-            <label>Nouvelle date prévue</label>
-            <input id="retryDate" type="date" value="${(row.date||"").slice(0,10)}" />
-          </div>
-        </div>
-        <div class="summary">
-          Reprise = remet banque à NONE et la ligne à “À venir”.
-        </div>
-      `;
-      foot.innerHTML = `
-        <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn primary" onclick="doRetry()">Confirmer reprise</button>
-      `;
-      overlay.style.display = "flex";
+      overlay.style.display="flex";
       return;
     }
   }
 
   function doNSF(){
     const fee = clamp2(Number(document.getElementById("nsfFee").value || config.defaultNSFFee));
+    const row = state.schedule.find(r=>r.i===state.selected);
+    row.bank = "NSF";
+    row.collected = 0;
+    row.postedDate = null;
+    // version SAFE: on ajoute juste la souffrance en compteur
+    state.arrears = clamp2(state.arrears + row.planned + fee);
     closeModal();
-    actionNSF(state.selected, fee);
+    recomputeAll();
+    renderAll();
   }
 
-  function doPost(){
+  function doPost(kind){
     const amt = clamp2(Number(document.getElementById("postAmt").value || 0));
     const d = document.getElementById("postDate").value;
-    const autoMissing = (document.getElementById("autoMissing").value === "true");
-    config.autoArrearsOnPartialMissing = autoMissing;
+    const row = state.schedule.find(r=>r.i===state.selected);
+
+    row.collected = amt;
+    row.postedDate = d || row.date;
+    row.bank = (amt < row.planned) ? "PARTIAL" : "POSTED";
 
     closeModal();
-    actionPost(state.selected, amt, d);
-  }
-
-  function doRetry(){
-    const d = document.getElementById("retryDate").value;
-    closeModal();
-    actionRetry(state.selected, d);
+    recomputeAll();
+    renderAll();
   }
 
   // expose
-  window.openAction = openAction;
-  window.closeModal = closeModal;
   window.resetDemo = resetDemo;
   window.selectRow = selectRow;
+  window.openAction = openAction;
+  window.closeModal = closeModal;
 
   // init
   resetDemo();
