@@ -1,9 +1,3 @@
-// =======================================================
-// server/index.js
-// Backend Express - Prêteur privé (demo fonctionnelle)
-// + Recompute schedule (style Margill): intérêt journalier sur solde avant paiement
-// =======================================================
-
 const express = require("express");
 const cors = require("cors");
 
@@ -13,145 +7,199 @@ const PORT = 8080;
 app.use(cors({ origin: true }));
 app.use(express.json());
 
-// =======================================================
-// Utils
-// =======================================================
+// ======================= Utils =========================
 const clamp2 = (n) => Math.round(Number(n || 0) * 100) / 100;
 const nowIso = () => new Date().toISOString();
 
 function toDateOnly(iso) {
-  // iso: "YYYY-MM-DD"
   const [y, m, d] = String(iso).split("-").map(Number);
   return new Date(Date.UTC(y, (m || 1) - 1, d || 1));
 }
 function daysBetween(d1Iso, d2Iso) {
-  // d2 - d1 in days
   const a = toDateOnly(d1Iso);
   const b = toDateOnly(d2Iso);
   const ms = b.getTime() - a.getTime();
   return Math.max(0, Math.round(ms / (1000 * 60 * 60 * 24)));
 }
 function sortSchedule(schedule) {
-  return [...schedule].sort((a, b) => (a.date || "").localeCompare(b.date || "") || (a.i || 0) - (b.i || 0));
+  return [...schedule].sort(
+    (a, b) => (a.date || "").localeCompare(b.date || "") || (a.i || 0) - (b.i || 0)
+  );
 }
 
-// =======================================================
-// DB mémoire (démo)
-// =======================================================
-const db = {
-  loans: {},
-};
+// ======================= DB mémoire =====================
+const db = { loans: {} };
 
-// =======================================================
-// MOTEUR: recalcul intérêt/capital/solde (style Margill)
-// - intérêt journalier ACT/365 sur SOLDE AVANT paiement
-// - frais adhesion ne portent pas intérêt
-// - adjustment = supplément ajouté à une ligne (souffrance/report)
-// - si ligne est NSF: on considère paiement encaissé = 0 (par défaut)
-//   (tu peux changer via config.nsfCountsAsPaid)
-// =======================================================
+// ======================= Allocation "Margill-like" ======
+// Order: arrears(optional) -> adhesion -> interest -> principal -> surplus
+function allocatePayment({ amount, adhesionDue, interestDue, arrearsDue, payArrearsFirst }) {
+  let remaining = clamp2(amount);
+  const out = { toArrears: 0, toAdhesion: 0, toInterest: 0, toPrincipal: 0, surplus: 0 };
+
+  if (payArrearsFirst && arrearsDue > 0) {
+    const x = clamp2(Math.min(remaining, arrearsDue));
+    out.toArrears = x;
+    remaining = clamp2(remaining - x);
+  }
+
+  if (adhesionDue > 0) {
+    const x = clamp2(Math.min(remaining, adhesionDue));
+    out.toAdhesion = x;
+    remaining = clamp2(remaining - x);
+  }
+
+  if (interestDue > 0) {
+    const x = clamp2(Math.min(remaining, interestDue));
+    out.toInterest = x;
+    remaining = clamp2(remaining - x);
+  }
+
+  if (remaining > 0) {
+    out.toPrincipal = remaining;
+    remaining = 0;
+  }
+
+  out.surplus = clamp2(remaining);
+  return out;
+}
+
+function openArrearsTotal(loan) {
+  return clamp2((loan.arrearsItems || [])
+    .filter(a => a.status === "OPEN")
+    .reduce((s, a) => s + (a.total || 0), 0));
+}
+
+function closeArrearsFIFO(loan, amount) {
+  // ferme des souffrances OPEN en FIFO (comme Margill)
+  let remaining = clamp2(amount);
+  let closed = 0;
+
+  const items = (loan.arrearsItems || []).filter(a => a.status === "OPEN")
+    .sort((a,b)=> (a.createdAt||"").localeCompare(b.createdAt||""));
+
+  for (const a of items) {
+    if (remaining <= 0) break;
+    const t = clamp2(a.total || 0);
+    if (remaining >= t) {
+      remaining = clamp2(remaining - t);
+      a.total = 0;
+      a.status = "RESOLVED";
+      closed++;
+    } else {
+      a.total = clamp2(t - remaining);
+      remaining = 0;
+    }
+  }
+  return { closed, leftover: remaining };
+}
+
+// ======================= Moteur =========================
 function recomputeSchedule(loan) {
   const cfg = loan.config || {};
-  const annualRate = Number(cfg.annualRate ?? 0.1899); // 18.99% = 0.1899
-  const dayBase = Number(cfg.dayBase ?? 365); // ACT/365
-  const startBalance = clamp2(cfg.startBalance ?? 2250.0); // solde de départ du contrat
+  const annualRate = Number(cfg.annualRate ?? 0.1899);
+  const dayBase = Number(cfg.dayBase ?? 365);
+  const startBalance = clamp2(cfg.startBalance ?? 2250);
   const contractStartDate = cfg.contractStartDate || (loan.schedule?.[0]?.date ?? "2024-11-15");
 
-  // comportement NSF:
-  // - false (par défaut) : paiement encaissé = 0 quand status === "NSF"
-  // - true : on laisse la ligne normale (rare en pratique)
-  const nsfCountsAsPaid = Boolean(cfg.nsfCountsAsPaid ?? false);
+  // Param Margill-like: est-ce qu'on applique les paiements à la souffrance en premier
+  const payArrearsFirst = Boolean(cfg.payArrearsFirst ?? true);
 
   const ordered = sortSchedule(loan.schedule);
 
-  let prevDate = contractStartDate;
+  // La date "réelle" de référence = dernier encaissement (postedDate) sinon date contrat
+  let prevPostedDate = contractStartDate;
   let prevBalance = startBalance;
 
+  // On calcule sans muter l'open arrears ici (ledger/arrears traités dans action POST)
   for (const row of ordered) {
-    // jours écoulés
-    const d = daysBetween(prevDate, row.date);
-    row.days = d;
+    const planned = clamp2((row.total || 0) + (row.adjustment || 0));
+    const adhesionDue = clamp2(row.adhesion || 0);
 
-    // paiement encaissé (total + adjustment), SAUF NSF si nsfCountsAsPaid === false
-    const scheduledToCollect = clamp2((row.total || 0) + (row.adjustment || 0));
-    const collected = (row.status === "NSF" && !nsfCountsAsPaid) ? 0 : scheduledToCollect;
+    // Réalité: montant encaissé = postedAmount si POSTED/PARTIAL, sinon 0.
+    const postedStatus = row.postedStatus || "NONE"; // NONE|POSTED|PARTIAL|NSF
+    const postedAmount = clamp2(row.postedAmount || 0);
 
-    // frais adhesion (ne portent pas intérêt)
-    const adhesion = clamp2(row.adhesion || 0);
+    const collected = (postedStatus === "POSTED" || postedStatus === "PARTIAL") ? postedAmount : 0;
 
-    // part "prêt" (ce qui sert à intérêts + capital)
-    const loanPart = clamp2(Math.max(0, collected - adhesion));
+    // Jours basés sur encaissement réel si disponible, sinon date planifiée (pour affichage)
+    const effectiveDate = row.postedDate || row.date;
+    const days = daysBetween(prevPostedDate, effectiveDate);
+    row.days = days;
 
-    // intérêt période sur solde AVANT paiement
-    const interest = clamp2(prevBalance * annualRate * (d / dayBase));
+    // Intérêt sur solde avant
+    const interestDue = clamp2(prevBalance * annualRate * (days / dayBase));
 
-    // capital payé = loanPart - interest (ne peut pas être négatif)
-    // (si loanPart < interest, capital=0 et tu auras un "déficit" dans la réalité;
-    //  ici on laisse capital=0 pour éviter solde qui augmente; la souffrance gère le reste)
-    const capital = clamp2(Math.max(0, loanPart - interest));
+    // Si on paye la souffrance en premier, elle "mange" du paiement encaissé.
+    // Ici on calcule un "arrearsDue snapshot" juste pour affichage.
+    const arrearsDue = openArrearsTotal(loan);
 
-    // solde après
-    const balanceAfter = clamp2(Math.max(0, prevBalance - capital));
+    const alloc = allocatePayment({
+      amount: collected,
+      adhesionDue,
+      interestDue,
+      arrearsDue,
+      payArrearsFirst
+    });
 
-    // écrire sur la ligne
-    row.interest = interest;
-    row.capital = capital; // (champ utile, même si ton UI ne l’affiche pas)
-    row.collected = collected; // info debug/audit
-    row.loanPart = loanPart; // info debug/audit
+    // Capital = ce qui reste vers le principal (alloc.toPrincipal)
+    const capital = clamp2(alloc.toPrincipal);
+
+    const balanceAfter = clamp2(prevBalance - capital);
+
+    row.planned = planned;
+    row.collected = collected;
+    row.loanPart = clamp2(collected - alloc.toArrears); // argent "restant" après souffrance (info)
+    row.interest = clamp2(alloc.toInterest);
+    row.capital = capital;
     row.balanceBefore = clamp2(prevBalance);
     row.balance = balanceAfter;
+    row.allocation = alloc; // pour debug / audit
 
-    // next
     prevBalance = balanceAfter;
-    prevDate = row.date;
+
+    // avance prevPostedDate uniquement si encaissement réel (POSTED/PARTIAL)
+    if (postedStatus === "POSTED" || postedStatus === "PARTIAL") {
+      prevPostedDate = effectiveDate;
+    }
   }
 
-  // réinjecter dans loan.schedule (conserver ordre original par i)
-  // (on modifie déjà les objets de base, donc rien à faire)
   loan._computedAt = nowIso();
 }
 
-// =======================================================
-// Seed d’un dossier
-// =======================================================
+// ======================= Seed ===========================
 function seedLoan(loanId = "demo") {
   if (db.loans[loanId]) return db.loans[loanId];
 
-  // NOTE: ici tes totaux originaux sont conservés,
-  // mais le moteur va recalculer interest/balance à partir de config + dates + paiements.
   const schedule = [
-    { i: 1, date: "2024-11-15", total: 147.92, interest: 9.62, adhesion: 45, balance: 2156.7 },
-    { i: 2, date: "2024-11-29", total: 147.19, interest: 16.15, adhesion: 45, balance: 2070.66 },
-    { i: 3, date: "2024-12-13", total: 146.56, interest: 15.51, adhesion: 45, balance: 1984.61 },
-    { i: 4, date: "2024-12-27", total: 145.94, interest: 14.87, adhesion: 45, balance: 1898.54 },
+    {i:1,  date:"2024-11-15", total:147.92, adhesion:45.00, adjustment:0, status:"À venir", paid:false, method:"PAD"},
+    {i:2,  date:"2024-11-29", total:147.19, adhesion:45.00, adjustment:0, status:"À venir", paid:false, method:"PAD"},
+    {i:3,  date:"2024-12-13", total:146.56, adhesion:45.00, adjustment:0, status:"À venir", paid:false, method:"PAD"},
+    {i:4,  date:"2024-12-27", total:145.94, adhesion:45.00, adjustment:0, status:"À venir", paid:false, method:"PAD"},
   ];
 
   const loan = {
     loanId,
-
-    // ✅ CONFIG “contrat” (c’est ICI que tu contrôles le calcul)
     config: {
-      contractStartDate: "2024-10-31", // date d’origine (utilisée pour calculer jours jusqu’au 1er paiement)
-      startBalance: 2250.0,            // montant financé (ex: prêt + frais ouverture financés)
-      annualRate: 0.1899,              // 18.99%
-      dayBase: 365,                    // ACT/365
-      nsfCountsAsPaid: false,          // NSF = paiement encaissé 0 (recommandé)
+      contractStartDate: "2024-10-31",
+      startBalance: 2250.00,
+      annualRate: 0.1899,
+      dayBase: 365,
+      reportFee: 25.00,
+      defaultNSFFee: 48.00,
+      payArrearsFirst: true, // ✅ Margill-like
     },
-
-    schedule: schedule.map((r) => ({
+    schedule: schedule.map(r => ({
       ...r,
-      adjustment: 0,
-      status: "À venir",
-      paid: false,
-      method: "PAD",
+      postedStatus: "NONE",
+      postedAmount: 0,
+      postedDate: null,
     })),
     arrearsItems: [],
-    events: [{ ts: nowIso(), title: "Dossier chargé", txt: "Backend initialisé" }],
+    events: [{ ts: nowIso(), title: "Dossier chargé", txt: "Backend MAX (encaissement réel + allocation)." }],
+    ledger: [] // Margill-like: lignes comptables
   };
 
-  // ✅ Calcul initial
   recomputeSchedule(loan);
-
   db.loans[loanId] = loan;
   return loan;
 }
@@ -161,23 +209,15 @@ function getLoan(req) {
   return db.loans[loanId] || seedLoan(loanId);
 }
 
-// =======================================================
-// ROUTES
-// =======================================================
+// ======================= ROUTES =========================
+app.get("/api/health", (req, res) => res.json({ ok: true, ts: nowIso() }));
 
-// Health check
-app.get("/api/health", (req, res) => {
-  res.json({ ok: true, ts: nowIso() });
-});
-
-// Charger un dossier
 app.get("/api/loans/:loanId", (req, res) => {
   const loan = getLoan(req);
   recomputeSchedule(loan);
   res.json(loan);
 });
 
-// Reset dossier
 app.post("/api/loans/:loanId/reset", (req, res) => {
   delete db.loans[req.params.loanId];
   const loan = seedLoan(req.params.loanId);
@@ -185,9 +225,7 @@ app.post("/api/loans/:loanId/reset", (req, res) => {
   res.json(loan);
 });
 
-// =======================================================
-// ACTION: NSF → crée une souffrance automatique
-// =======================================================
+// ======================= ACTION: NSF =====================
 app.post("/api/loans/:loanId/actions/nsf", (req, res) => {
   const loan = getLoan(req);
   const { selectedLine, fee } = req.body;
@@ -195,24 +233,23 @@ app.post("/api/loans/:loanId/actions/nsf", (req, res) => {
   const row = loan.schedule.find((r) => r.i === Number(selectedLine));
   if (!row) return res.status(400).json({ error: "ligne_invalide" });
 
-  const nsfFee = clamp2(fee ?? 48);
-
-  // montant "prévu" (ligne) = total + adjustment
+  const nsfFee = clamp2(fee ?? loan.config?.defaultNSFFee ?? 48);
   const paymentPlanned = clamp2((row.total || 0) + (row.adjustment || 0));
-
-  // souffrance = paiement prévu + frais NSF
   const total = clamp2(paymentPlanned + nsfFee);
 
-  // marquer la ligne
+  // Marque banque NSF (encaissé 0)
   row.status = "NSF";
-  row.paid = false;
+  row.postedStatus = "NSF";
+  row.postedAmount = 0;
+  row.postedDate = null;
 
+  // Crée souffrance OPEN
   const arrearsId = "A" + Date.now();
   loan.arrearsItems.push({
     id: arrearsId,
     type: "NSF",
     sourceLine: row.i,
-    amount: paymentPlanned, // paiement rejeté
+    amount: paymentPlanned,
     fee: nsfFee,
     total,
     status: "OPEN",
@@ -222,123 +259,104 @@ app.post("/api/loans/:loanId/actions/nsf", (req, res) => {
   loan.events.push({
     ts: nowIso(),
     title: "NSF",
-    txt: `Paiement #${row.i} NSF. Souffrance ${paymentPlanned}$ + ${nsfFee}$ = ${total}$.`,
+    txt: `Paiement #${row.i} NSF. Souffrance: rejet ${paymentPlanned}$ + frais ${nsfFee}$ = ${total}$.`,
   });
 
-  // ✅ recalcul des intérêts/solde (NSF = encaissé 0 si config.nsfCountsAsPaid=false)
   recomputeSchedule(loan);
-
   res.json({ arrearsId, loan });
 });
 
-// =======================================================
-// ACTION: Traiter / déplacer la souffrance
-// - En pratique: on "place la souffrance à payer" en l'ajoutant dans adjustment de ligne(s)
-// - NEW: créer une ligne VIREMENT
-// =======================================================
-app.post("/api/loans/:loanId/actions/arrears/resolve", (req, res) => {
+// ======================= ACTION: POST (PAYÉ / PARTIEL) ===
+// payload: { lineId, amount, postedDate?, applyToArrearsFirst? }
+app.post("/api/loans/:loanId/actions/post", (req, res) => {
   const loan = getLoan(req);
-  const { arrearsId, amount, targetIds, newDate } = req.body;
+  const { lineId, amount, postedDate, applyToArrearsFirst } = req.body;
 
-  const item = loan.arrearsItems.find((a) => a.id === arrearsId && a.status === "OPEN");
-  if (!item) return res.status(404).json({ error: "souffrance_introuvable" });
+  const row = loan.schedule.find(r => r.i === Number(lineId));
+  if(!row) return res.status(400).json({ error:"ligne_invalide" });
 
-  const amt = clamp2(amount ?? item.total);
-  if (amt <= 0) return res.status(400).json({ error: "montant_invalide" });
+  const amt = clamp2(amount);
+  if(amt <= 0) return res.status(400).json({ error:"montant_invalide" });
 
-  // ---- Cas 1 : Nouvelle ligne (VIREMENT)
-  if (newDate) {
-    const maxI = Math.max(...loan.schedule.map((r) => r.i));
-    loan.schedule.push({
-      i: maxI + 1,
-      date: newDate,
-      total: amt,
-      interest: 0,
-      adhesion: 0,
-      balance: 0,
-      adjustment: 0,
-      status: "À venir",
-      paid: false,
-      method: "VIREMENT",
-    });
-
-    item.status = "RESOLVED";
-    loan.events.push({
-      ts: nowIso(),
-      title: "Souffrance (VIREMENT)",
-      txt: `Souffrance ${amt}$ déplacée en nouvelle ligne VIREMENT (${newDate}).`,
-    });
-
-    recomputeSchedule(loan);
-    return res.json({ ok: true, loan });
+  // met à jour config si override
+  if (typeof applyToArrearsFirst === "boolean") {
+    loan.config.payArrearsFirst = applyToArrearsFirst;
   }
 
-  // ---- Cas 2 : Répartir sur lignes existantes (PAD)
-  const ids = Array.isArray(targetIds) ? targetIds.map(Number) : [];
-  const targets = loan.schedule.filter((r) => ids.includes(r.i));
-  if (!targets.length) return res.status(400).json({ error: "cibles_invalides" });
+  // Marque encaissé
+  row.postedStatus = (amt < clamp2((row.total||0)+(row.adjustment||0))) ? "PARTIAL" : "POSTED";
+  row.postedAmount = amt;
+  row.postedDate = postedDate || row.date;
+  row.status = (row.postedStatus === "PARTIAL") ? "Partiel" : "Payé";
+  row.paid = true;
 
-  const per = clamp2(amt / targets.length);
-  targets.forEach((t) => {
-    t.adjustment = clamp2((t.adjustment || 0) + per);
-  });
-
-  item.status = "RESOLVED";
-  loan.events.push({
-    ts: nowIso(),
-    title: "Souffrance (répartie)",
-    txt: `Souffrance ${amt}$ répartie sur ${targets.length} paiement(s): +${per}$ chacun.`,
-  });
-
-  // ✅ recalcul après modifications
+  // Allocation réelle + ledger
   recomputeSchedule(loan);
 
-  res.json({ ok: true, loan });
+  const alloc = row.allocation || {toArrears:0,toAdhesion:0,toInterest:0,toPrincipal:0};
+
+  // Appliquer à souffrance FIFO si payArrearsFirst ON
+  let closeInfo = { closed: 0, leftover: 0 };
+  if ((loan.config.payArrearsFirst ?? true) && alloc.toArrears > 0) {
+    closeInfo = closeArrearsFIFO(loan, alloc.toArrears);
+  }
+
+  loan.ledger.push({
+    ts: nowIso(),
+    line: row.i,
+    type: "POST",
+    postedDate: row.postedDate,
+    amount: amt,
+    split: {
+      arrears: alloc.toArrears,
+      adhesion: alloc.toAdhesion,
+      interest: alloc.toInterest,
+      principal: alloc.toPrincipal
+    }
+  });
+
+  loan.events.push({
+    ts: nowIso(),
+    title: "Encaissement",
+    txt: `Paiement #${row.i} encaissé ${amt}$ (${row.postedStatus}). Split: souffrance ${alloc.toArrears}$, adhésion ${alloc.toAdhesion}$, intérêt ${alloc.toInterest}$, capital ${alloc.toPrincipal}$. Souffrances fermées: ${closeInfo.closed}.`
+  });
+
+  recomputeSchedule(loan);
+  res.json({ ok:true, loan });
 });
 
-// =======================================================
-// ACTION: Reporter (démo simple) — même logique que ton UI
-// (Ici: tu peux brancher ton front plus tard, on conserve)
-// =======================================================
-app.post("/api/loans/:loanId/actions/report", (req, res) => {
+// ======================= ACTION: RETRY NSF = reprise =====
+// payload: { lineId, newDate }
+app.post("/api/loans/:loanId/actions/retry", (req, res) => {
   const loan = getLoan(req);
-  const { selectedLine, amount, targetIds } = req.body;
+  const { lineId, newDate } = req.body;
 
-  const src = loan.schedule.find((r) => r.i === Number(selectedLine));
-  if (!src) return res.status(400).json({ error: "ligne_invalide" });
+  const row = loan.schedule.find(r => r.i === Number(lineId));
+  if(!row) return res.status(400).json({ error:"ligne_invalide" });
 
-  const amt = clamp2(amount ?? ((src.total || 0) + (src.adjustment || 0)));
-  if (amt <= 0) return res.status(400).json({ error: "montant_invalide" });
+  if(row.postedStatus !== "NSF" && row.status !== "NSF"){
+    return res.status(400).json({ error:"ligne_pas_nsf" });
+  }
 
-  // source devient "frais report" (exemple comme ton UI)
-  const fee = 25;
-  src.status = "Frais report";
-  src.method = "PAD";
-  src.total = fee;
-  src.adjustment = 0;
-  src.adhesion = 0;
-
-  // répartir le montant
-  const ids = Array.isArray(targetIds) ? targetIds.map(Number) : [];
-  const targets = loan.schedule.filter((r) => ids.includes(r.i));
-  if (!targets.length) return res.status(400).json({ error: "cibles_invalides" });
-
-  const per = clamp2(amt / targets.length);
-  targets.forEach((t) => (t.adjustment = clamp2((t.adjustment || 0) + per)));
+  // Margill-like: on "replanifie" la date (la banque réessaie)
+  row.date = newDate || row.date;
+  row.status = "À venir";
+  row.paid = false;
+  row.postedStatus = "NONE";
+  row.postedAmount = 0;
+  row.postedDate = null;
 
   loan.events.push({
     ts: nowIso(),
-    title: "Report",
-    txt: `Report ${amt}$ réparti sur ${targets.length} paiement(s): +${per}$ chacun.`,
+    title: "Reprise bancaire",
+    txt: `Paiement #${row.i} repris / replanifié au ${row.date}.`
   });
 
   recomputeSchedule(loan);
-  res.json({ ok: true, loan });
+  res.json({ ok:true, loan });
 });
 
-// =======================================================
-// Start
-// =======================================================
+// ======================= START ===========================
 app.listen(PORT, () => {
   console.log(`✅ Backend prêt sur http://localhost:${PORT}`);
 });
