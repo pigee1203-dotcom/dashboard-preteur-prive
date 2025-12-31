@@ -1,454 +1,177 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard prêteur privé — Sans backend (SAFE)</title>
-  <style>
-    :root{
-      --bg:#0b1220;
-      --stroke:rgba(255,255,255,.10);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.70);
-      --muted2:rgba(255,255,255,.55);
-      --good:#2dd4bf;
-      --warn:#fbbf24;
-      --bad:#fb7185;
-      --accent:#60a5fa;
-      --shadow: 0 18px 60px rgba(0,0,0,.35);
-      --r2:22px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:var(--sans);
-      color:var(--text);
-      background:
-        radial-gradient(1200px 600px at 20% -10%, rgba(96,165,250,.25), transparent 55%),
-        radial-gradient(900px 600px at 90% 0%, rgba(45,212,191,.18), transparent 55%),
-        radial-gradient(900px 650px at 60% 120%, rgba(251,113,133,.14), transparent 55%),
-        var(--bg);
-      min-height:100vh;
-    }
-    .wrap{max-width:1250px;margin:0 auto;padding:20px}
-    .topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin:8px 0 10px;}
-    .brand{display:flex;gap:12px;align-items:center;}
-    .logo{
-      width:38px;height:38px;border-radius:12px;
-      background:linear-gradient(135deg, rgba(96,165,250,.9), rgba(45,212,191,.75));
-      box-shadow:0 12px 30px rgba(96,165,250,.20);
-      border:1px solid rgba(255,255,255,.18);
-    }
-    .brand h1{font-size:18px;margin:0;line-height:1.2}
-    .brand p{margin:0;color:var(--muted2);font-size:12px}
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dashboard prêteur privé</title>
 
-    .pill{
-      padding:8px 10px;border-radius:999px;border:1px solid var(--stroke);
-      background:rgba(255,255,255,.06);
-      font-size:12px;color:var(--muted);
-      display:flex;gap:8px;align-items:center;white-space:nowrap;
-    }
-    .dot{width:8px;height:8px;border-radius:999px;display:inline-block}
-    .dot.good{background:var(--good)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
+<style>
+:root{
+  --bg:#0b1220;
+  --stroke:rgba(255,255,255,.10);
+  --text:rgba(255,255,255,.92);
+  --muted:rgba(255,255,255,.70);
+  --good:#2dd4bf;
+  --warn:#fbbf24;
+  --bad:#fb7185;
+  --accent:#60a5fa;
+  --mono: ui-monospace, Consolas, monospace;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto;
+  background:var(--bg);
+  color:var(--text);
+}
+.wrap{max-width:1200px;margin:auto;padding:20px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 10px;border-radius:999px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.05);
+  font-size:12px;color:var(--muted)
+}
+.dot{width:8px;height:8px;border-radius:50%}
+.dot.good{background:var(--good)}
+.dot.warn{background:var(--warn)}
+.dot.bad{background:var(--bad)}
 
-    .panel{
-      background:rgba(255,255,255,.05);
-      border:1px solid var(--stroke);
-      border-radius: var(--r2);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-      overflow:hidden;
-    }
-    .panelHeader{
-      padding:14px 14px 10px;
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-    }
-    .panelHeader h2{margin:0;font-size:14px}
-    .panelHeader small{color:var(--muted2)}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
+.panel{
+  border:1px solid var(--stroke);
+  border-radius:16px;
+  background:rgba(255,255,255,.05);
+  overflow:hidden
+}
+.panelHeader{
+  padding:12px 14px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--stroke)
+}
+.btn{
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.06);
+  color:var(--text);
+  font-size:12px;
+  cursor:pointer
+}
+.btn.danger{border-color:rgba(251,113,133,.6);background:rgba(251,113,133,.15)}
+.btn.good{border-color:rgba(45,212,191,.6);background:rgba(45,212,191,.15)}
 
-    .btn{
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.07);
-      color:var(--text);
-      padding:9px 10px;
-      border-radius:14px;
-      font-size:12px;
-      cursor:pointer;
-      display:flex;align-items:center;gap:8px;
-      user-select:none;
-      white-space:nowrap;
-    }
-    .btn:hover{background:rgba(255,255,255,.10)}
-    .btn.good{border-color:rgba(45,212,191,.45); background:rgba(45,212,191,.12)}
-    .btn.warn{border-color:rgba(251,191,36,.45); background:rgba(251,191,36,.12)}
-    .btn.danger{border-color:rgba(251,113,133,.45); background:rgba(251,113,133,.14)}
-    .btn.ghost{background:transparent}
-
-    .hint{color:var(--muted2); font-size:12px; padding:10px 14px 0;}
-    .tableWrap{overflow:auto}
-    table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;}
-    th, td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;white-space:nowrap;}
-    th{
-      position:sticky;top:0;z-index:2;
-      background:rgba(10,18,32,.85);
-      backdrop-filter: blur(12px);
-      color:var(--muted);
-      font-weight:600;
-    }
-    tr:hover td{background:rgba(255,255,255,.04)}
-    .mono{font-family:var(--mono)}
-    .status{
-      padding:5px 8px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      font-size:11px;
-      display:inline-flex;align-items:center;gap:8px;
-      color:var(--muted);
-    }
-
-    /* Modal */
-    .modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;}
-    .modal{width:min(760px, 100%);background:rgba(16,31,59,.92);border:1px solid rgba(255,255,255,.16);border-radius:22px;box-shadow:0 30px 100px rgba(0,0,0,.55);backdrop-filter: blur(16px);overflow:hidden;}
-    .modalHead{padding:14px 14px 10px;border-bottom:1px solid rgba(255,255,255,.10);display:flex;justify-content:space-between;align-items:center;gap:10px;}
-    .modalHead h3{margin:0;font-size:14px}
-    .modalBody{padding:14px}
-    .row{display:grid;grid-template-columns: 1fr 1fr;gap:10px}
-    @media (max-width: 640px){ .row{grid-template-columns:1fr} }
-    .field{padding:10px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);}
-    .field label{display:block;color:var(--muted2);font-size:11px;margin-bottom:8px}
-    .field input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--text);padding:10px 10px;border-radius:12px;outline:none;font-size:13px;}
-    .summary{margin-top:12px;padding:12px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--muted);font-size:12.5px;line-height:1.45;}
-    .modalFoot{padding:12px 14px;border-top:1px solid rgba(255,255,255,.10);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
-  </style>
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:10px;border-bottom:1px solid var(--stroke);white-space:nowrap}
+th{color:var(--muted);text-align:left}
+tr:hover td{background:rgba(255,255,255,.04)}
+.mono{font-family:var(--mono)}
+.status{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 8px;border-radius:999px;
+  border:1px solid var(--stroke);
+  font-size:11px;color:var(--muted)
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <h1>Dashboard prêteur privé</h1>
-          <p>Sans backend · Version SAFE (table toujours visible)</p>
-        </div>
-      </div>
-      <div class="pill"><span class="dot good"></span> GitHub Pages OK</div>
-    </div>
+<div class="wrap">
 
-    <!-- DIAG -->
-    <div id="diag" class="pill" style="border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.10);margin-bottom:12px">
-      <span class="dot warn"></span>
-      <span class="mono">DIAG: boot...</span>
-    </div>
-
-    <div class="panel">
-      <div class="panelHeader">
-        <div>
-          <h2>Calendrier</h2>
-          <small>Si tu vois zéro lignes → JS a planté. Le DIAG te dit pourquoi.</small>
-        </div>
-        <div class="actions">
-          <button class="btn danger" onclick="openAction('nsf')">❌ NSF</button>
-          <button class="btn good" onclick="openAction('post')">✅ PAYÉ</button>
-          <button class="btn warn" onclick="openAction('partial')">🟨 PARTIEL</button>
-          <button class="btn ghost" onclick="resetDemo()">↩️ Reset</button>
-        </div>
-      </div>
-
-      <div class="hint">
-        Rappel: NSF ne baisse pas le solde du prêt. Ça crée une souffrance. Le solde baisse seulement sur PAYÉ/PARTIEL.
-      </div>
-
-      <div class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Date prévue</th>
-              <th>Planifié</th>
-              <th>Banque</th>
-              <th>Encaissé</th>
-              <th>Intérêt</th>
-              <th>Capital</th>
-              <th>Adhésion</th>
-              <th>Solde avant</th>
-              <th>Solde après</th>
-            </tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
-      </div>
-
-      <div class="panelHeader" style="border-top:1px solid rgba(255,255,255,.08);border-bottom:none">
-        <small class="mono" id="selectedInfo">Sélection: —</small>
-        <small class="mono" id="summaryInfo">—</small>
-      </div>
-    </div>
+  <div class="topbar">
+    <h2>Calendrier des paiements</h2>
+    <div class="pill"><span class="dot good"></span> Mode local</div>
   </div>
 
-  <!-- Modal -->
-  <div class="modalOverlay" id="overlay" onclick="closeModal(event)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modalHead">
-        <h3 id="modalTitle">Action</h3>
-        <button class="btn" onclick="closeModal()">✕ Fermer</button>
+  <div class="panel">
+    <div class="panelHeader">
+      <div class="pill"><span class="dot warn"></span> Sélection #<span id="sel">1</span></div>
+      <div>
+        <button class="btn danger" onclick="doNSF()">❌ NSF</button>
+        <button class="btn good" onclick="doPay()">✅ PAYÉ</button>
       </div>
-      <div class="modalBody" id="modalBody"></div>
-      <div class="modalFoot" id="modalFoot"></div>
     </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>Total</th>
+          <th>Intérêt</th>
+          <th>Capital</th>
+          <th>Adhésion</th>
+          <th>Statut</th>
+          <th>Solde après</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
   </div>
+
+</div>
 
 <script>
-  // ===== Utils
-  const clamp2 = (n) => Math.round(Number(n||0)*100)/100;
-  const money = (n) => (Number(n||0)).toLocaleString('fr-CA',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' $';
-  const nowIso = () => new Date().toISOString();
+const money = n => Number(n).toLocaleString('fr-CA',{minimumFractionDigits:2})+' $';
+const rate = 0.1899;
 
-  function toDateOnly(iso){
-    const [y,m,d] = String(iso).split("-").map(Number);
-    return new Date(Date.UTC(y,(m||1)-1,d||1));
-  }
-  function daysBetween(d1Iso, d2Iso){
-    const a = toDateOnly(d1Iso);
-    const b = toDateOnly(d2Iso);
-    const ms = b.getTime() - a.getTime();
-    return Math.max(0, Math.round(ms/(1000*60*60*24)));
-  }
-  function sortSchedule(s){ return [...s].sort((a,b)=> (a.date||"").localeCompare(b.date||"") || (a.i||0)-(b.i||0)); }
+let selected = 1;
+let balance = 2250;
 
-  // ===== Config simple
-  const config = {
-    contractStartDate: "2024-10-31",
-    startBalance: 2250.00,
-    annualRate: 0.1899,
-    dayBase: 365,
-    defaultNSFFee: 48.00,
-  };
+let rows = [
+ {i:1,date:'2024-11-15',total:147.92,adh:45,status:'À venir'},
+ {i:2,date:'2024-11-29',total:147.19,adh:45,status:'À venir'},
+ {i:3,date:'2024-12-13',total:146.56,adh:45,status:'À venir'},
+];
 
-  // ===== Seed minimal (26 lignes)
-  const seedSchedule = [
-    {i:1,  date:"2024-11-15", plannedBase:147.92, adhesion:45.00},
-    {i:2,  date:"2024-11-29", plannedBase:147.19, adhesion:45.00},
-    {i:3,  date:"2024-12-13", plannedBase:146.56, adhesion:45.00},
-    {i:4,  date:"2024-12-27", plannedBase:145.94, adhesion:45.00},
-    {i:5,  date:"2025-01-10", plannedBase:145.31, adhesion:45.00},
-    {i:6,  date:"2025-01-24", plannedBase:144.72, adhesion:45.00},
-    {i:7,  date:"2025-02-07", plannedBase:144.09, adhesion:45.00},
-    {i:8,  date:"2025-02-21", plannedBase:143.47, adhesion:45.00},
-    {i:9,  date:"2025-03-07", plannedBase:142.84, adhesion:45.00},
-    {i:10, date:"2025-03-21", plannedBase:142.21, adhesion:45.00},
-    {i:11, date:"2025-04-04", plannedBase:141.58, adhesion:45.00},
-    {i:12, date:"2025-04-18", plannedBase:140.95, adhesion:45.00},
-    {i:13, date:"2025-05-02", plannedBase:140.33, adhesion:45.00},
-    {i:14, date:"2025-05-16", plannedBase:139.70, adhesion:45.00},
-    {i:15, date:"2025-05-30", plannedBase:139.07, adhesion:45.00},
-    {i:16, date:"2025-06-13", plannedBase:138.44, adhesion:45.00},
-    {i:17, date:"2025-06-27", plannedBase:137.82, adhesion:45.00},
-    {i:18, date:"2025-07-11", plannedBase:137.19, adhesion:45.00},
-    {i:19, date:"2025-07-25", plannedBase:136.56, adhesion:45.00},
-    {i:20, date:"2025-08-08", plannedBase:135.93, adhesion:45.00},
-    {i:21, date:"2025-08-22", plannedBase:135.31, adhesion:45.00},
-    {i:22, date:"2025-09-05", plannedBase:134.68, adhesion:45.00},
-    {i:23, date:"2025-09-19", plannedBase:134.05, adhesion:45.00},
-    {i:24, date:"2025-10-03", plannedBase:133.42, adhesion:45.00},
-    {i:25, date:"2025-10-17", plannedBase:132.80, adhesion:45.00},
-    {i:26, date:"2025-10-26", plannedBase:132.17, adhesion:45.00},
-  ];
+function render(){
+  const tb = document.getElementById('rows');
+  tb.innerHTML = '';
+  let bal = balance;
 
-  // ===== State
-  let state = { selected: 1, schedule: [], arrears: 0 };
+  rows.forEach(r=>{
+    let interest = r.status==='PAYÉ' ? +(bal*rate/26).toFixed(2) : 0;
+    let capital = r.status==='PAYÉ' ? +(r.total-r.adh-interest).toFixed(2) : 0;
+    let after = r.status==='PAYÉ' ? +(bal-capital).toFixed(2) : bal;
 
-  function resetDemo(){
-    state.schedule = seedSchedule.map(r => ({
-      i: r.i, date: r.date,
-      plannedBase: clamp2(r.plannedBase),
-      adhesion: clamp2(r.adhesion),
-      adjustment: 0,
-      planned: 0,
-      bank: "NONE",      // NONE|POSTED|PARTIAL|NSF
-      collected: 0,
-      interest: 0,
-      capital: 0,
-      balBefore: 0,
-      balAfter: 0,
-      postedDate: null,
-    }));
-    state.arrears = 0;
-    recomputeAll();
-    renderAll();
-  }
+    const dot =
+      r.status==='NSF' ? 'bad' :
+      r.status==='PAYÉ' ? 'good' : 'warn';
 
-  function recomputeAll(){
-    const ordered = sortSchedule(state.schedule);
-    let prevDate = config.contractStartDate;
-    let bal = clamp2(config.startBalance);
+    tb.innerHTML += `
+      <tr onclick="select(${r.i})" style="${r.i===selected?'background:rgba(96,165,250,.08)':''}">
+        <td class="mono">${r.i}</td>
+        <td>${r.date}</td>
+        <td class="mono">${money(r.total)}</td>
+        <td class="mono">${money(interest)}</td>
+        <td class="mono">${money(capital)}</td>
+        <td class="mono">${money(r.adh)}</td>
+        <td><span class="status"><span class="dot ${dot}"></span>${r.status}</span></td>
+        <td class="mono">${money(after)}</td>
+      </tr>`;
+    bal = after;
+  });
+}
 
-    for(const row of ordered){
-      row.planned = clamp2(row.plannedBase + (row.adjustment||0));
-      row.balBefore = bal;
+function select(i){
+  selected=i;
+  document.getElementById('sel').textContent=i;
+  render();
+}
 
-      // intérêt seulement quand on a encaissé (PAYÉ/PARTIEL) sur cette ligne
-      const useDate = row.postedDate || row.date;
-      const d = daysBetween(prevDate, useDate);
+function doNSF(){
+  const r = rows.find(x=>x.i===selected);
+  r.status='NSF';
+  render();
+}
 
-      const interestDue = clamp2(bal * config.annualRate * (d / config.dayBase));
-      row.interest = (row.bank === "POSTED" || row.bank === "PARTIAL") ? interestDue : 0;
+function doPay(){
+  const r = rows.find(x=>x.i===selected);
+  r.status='PAYÉ';
+  render();
+}
 
-      // allocation minimal: adhésion -> intérêt -> capital (souffrance pas détaillée ici SAFE)
-      let remaining = clamp2(row.collected || 0);
-      const toAdh = clamp2(Math.min(remaining, row.adhesion));
-      remaining = clamp2(remaining - toAdh);
-      const toInt = clamp2(Math.min(remaining, row.interest));
-      remaining = clamp2(remaining - toInt);
-      const toCap = clamp2(Math.max(0, remaining));
-
-      row.capital = toCap;
-      row.balAfter = clamp2(bal - toCap);
-      bal = row.balAfter;
-
-      if(row.bank === "POSTED" || row.bank === "PARTIAL"){
-        prevDate = useDate;
-      }
-    }
-  }
-
-  function renderAll(){
-    try{
-      const tbody = document.getElementById("rows");
-      if(!tbody) throw new Error("tbody#rows introuvable (HTML cassé)");
-
-      const ordered = sortSchedule(state.schedule);
-
-      tbody.innerHTML = ordered.map(r => {
-        const dot = r.bank==="NSF" ? "bad" : r.bank==="POSTED" ? "good" : r.bank==="PARTIAL" ? "warn" : "warn";
-        return `
-          <tr onclick="selectRow(${r.i})" style="${r.i===state.selected?'background:rgba(96,165,250,.08)':''}">
-            <td class="mono">${r.i}</td>
-            <td>${r.date}</td>
-            <td class="mono">${money(r.planned)}</td>
-            <td><span class="status"><span class="dot ${dot}"></span>${r.bank}</span></td>
-            <td class="mono">${money(r.collected)}</td>
-            <td class="mono">${money(r.interest)}</td>
-            <td class="mono">${money(r.capital)}</td>
-            <td class="mono">${money(r.adhesion)}</td>
-            <td class="mono">${money(r.balBefore)}</td>
-            <td class="mono">${money(r.balAfter)}</td>
-          </tr>
-        `;
-      }).join("");
-
-      const sel = state.schedule.find(x=>x.i===state.selected) || ordered[0];
-      document.getElementById("selectedInfo").textContent =
-        `Sélection #${sel.i} · banque=${sel.bank} · planifié=${money(sel.planned)} · encaissé=${money(sel.collected)}`;
-
-      const last = ordered[ordered.length-1];
-      const summary = `Solde actuel (après calcul) ~ ${money(ordered[0]?.balBefore ?? config.startBalance)} → ${money(last?.balAfter ?? config.startBalance)}`;
-      document.getElementById("summaryInfo").textContent = summary;
-
-      const d = document.getElementById("diag");
-      d.innerHTML = `<span class="dot good"></span><span class="mono">DIAG: OK · lignes=${ordered.length} · selected=${state.selected}</span>`;
-    }catch(err){
-      console.error(err);
-      const d = document.getElementById("diag");
-      if(d){
-        d.innerHTML = `<span class="dot bad"></span><span class="mono">DIAG ERROR: ${String(err.message || err)}</span>`;
-      }
-      alert("Ton JS a planté. Ouvre F12 → Console (ou regarde DIAG) et copie l'erreur.");
-    }
-  }
-
-  function selectRow(i){ state.selected = i; renderAll(); }
-
-  // ===== Modal
-  function closeModal(ev){
-    if(ev && ev.target && ev.target.id !== 'overlay') return;
-    document.getElementById('overlay').style.display = 'none';
-  }
-
-  function openAction(kind){
-    const row = state.schedule.find(r=>r.i===state.selected) || state.schedule[0];
-    const overlay = document.getElementById('overlay');
-    const title = document.getElementById('modalTitle');
-    const body = document.getElementById('modalBody');
-    const foot = document.getElementById('modalFoot');
-
-    if(kind==="nsf"){
-      title.textContent = "❌ NSF";
-      body.innerHTML = `
-        <div class="row">
-          <div class="field"><label>Ligne</label><input disabled value="#${row.i} · ${row.date} · planifié ${money(row.planned)}" /></div>
-          <div class="field"><label>Frais NSF</label><input id="nsfFee" type="number" step="0.01" value="${config.defaultNSFFee.toFixed(2)}" /></div>
-        </div>
-        <div class="summary">NSF = encaissé 0. (Version SAFE: souffrance non détaillée, mais banque devient NSF.)</div>
-      `;
-      foot.innerHTML = `
-        <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn danger" onclick="doNSF()">Confirmer NSF</button>
-      `;
-      overlay.style.display="flex";
-      return;
-    }
-
-    if(kind==="post" || kind==="partial"){
-      title.textContent = (kind==="post") ? "✅ PAYÉ" : "🟨 PARTIEL";
-      body.innerHTML = `
-        <div class="row">
-          <div class="field"><label>Ligne</label><input disabled value="#${row.i} · ${row.date} · planifié ${money(row.planned)}" /></div>
-          <div class="field"><label>Montant encaissé</label><input id="postAmt" type="number" step="0.01" value="${row.planned.toFixed(2)}" /></div>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <div class="field"><label>Date encaissée</label><input id="postDate" type="date" value="${row.date}" /></div>
-          <div class="field"><label>Info</label><input disabled value="Solde baisse seulement sur capital payé" /></div>
-        </div>
-      `;
-      foot.innerHTML = `
-        <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn ${(kind==="post")?'good':'warn'}" onclick="doPost('${kind}')">Confirmer</button>
-      `;
-      overlay.style.display="flex";
-      return;
-    }
-  }
-
-  function doNSF(){
-    const fee = clamp2(Number(document.getElementById("nsfFee").value || config.defaultNSFFee));
-    const row = state.schedule.find(r=>r.i===state.selected);
-    row.bank = "NSF";
-    row.collected = 0;
-    row.postedDate = null;
-    // version SAFE: on ajoute juste la souffrance en compteur
-    state.arrears = clamp2(state.arrears + row.planned + fee);
-    closeModal();
-    recomputeAll();
-    renderAll();
-  }
-
-  function doPost(kind){
-    const amt = clamp2(Number(document.getElementById("postAmt").value || 0));
-    const d = document.getElementById("postDate").value;
-    const row = state.schedule.find(r=>r.i===state.selected);
-
-    row.collected = amt;
-    row.postedDate = d || row.date;
-    row.bank = (amt < row.planned) ? "PARTIAL" : "POSTED";
-
-    closeModal();
-    recomputeAll();
-    renderAll();
-  }
-
-  // expose
-  window.resetDemo = resetDemo;
-  window.selectRow = selectRow;
-  window.openAction = openAction;
-  window.closeModal = closeModal;
-
-  // init
-  resetDemo();
+render();
 </script>
 </body>
 </html>
