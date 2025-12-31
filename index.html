@@ -404,7 +404,6 @@
               <small>NSF = paiement + 48$ (auto)</small>
             </div>
             <div class="actions">
-              <!-- ✅ NSF maintenant AU MÊME ENDROIT QUE SOUFFRANCE -->
               <button class="btn danger" onclick="openAction('nsf')">❌ NSF</button>
               <button class="btn" onclick="openAction('note')">📝 Ajouter note</button>
             </div>
@@ -422,7 +421,6 @@
               </div>
             </div>
 
-            <!-- ✅ Liste NSF/Souffrance directement ici -->
             <div class="arrearsBox" id="arrearsList"></div>
 
             <div class="notes" id="events"></div>
@@ -444,175 +442,193 @@
     </div>
   </div>
 
-<script>
-  // ===== Utilities
-  const money = (n) => (Number(n||0)).toLocaleString('fr-CA',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' $';
-  const fmtDate = (iso) => new Date(iso+'T00:00:00').toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'}).replace('.','');
-  const clamp2 = (n) => Math.round((Number(n)||0)*100)/100;
+  <script>
+    // ===== Utilities
+    const money = (n) => (Number(n||0)).toLocaleString('fr-CA',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' $';
+    const fmtDate = (iso) => new Date(iso+'T00:00:00').toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'}).replace('.','');
+    const clamp2 = (n) => Math.round((Number(n)||0)*100)/100;
 
-  // ===== "Vérité" calendrier (démo)
-  const originalSchedule = [
-    {i:1,  date:'2024-11-15', total:147.92, interest:  9.62, adhesion:45.00, balance:2156.70},
-    {i:2,  date:'2024-11-29', total:147.19, interest: 16.15, adhesion:45.00, balance:2070.66},
-    {i:3,  date:'2024-12-13', total:146.56, interest: 15.51, adhesion:45.00, balance:1984.61},
-    {i:4,  date:'2024-12-27', total:145.94, interest: 14.87, adhesion:45.00, balance:1898.54},
-    {i:5,  date:'2025-01-10', total:145.31, interest: 14.22, adhesion:45.00, balance:1812.45},
-    {i:6,  date:'2025-01-24', total:144.72, interest: 13.61, adhesion:45.00, balance:1726.34},
-    {i:7,  date:'2025-02-07', total:144.09, interest: 12.97, adhesion:45.00, balance:1640.22},
-    {i:8,  date:'2025-02-21', total:143.47, interest: 12.32, adhesion:45.00, balance:1554.07},
-    {i:9,  date:'2025-03-07', total:142.84, interest: 11.67, adhesion:45.00, balance:1467.90},
-    {i:10, date:'2025-03-21', total:142.21, interest: 11.03, adhesion:45.00, balance:1381.72},
-    {i:11, date:'2025-04-04', total:141.58, interest: 10.38, adhesion:45.00, balance:1295.52},
-    {i:12, date:'2025-04-18', total:140.95, interest:  9.73, adhesion:45.00, balance:1209.30},
-    {i:13, date:'2025-05-02', total:140.33, interest:  9.08, adhesion:45.00, balance:1123.05},
-    {i:14, date:'2025-05-16', total:139.70, interest:  8.44, adhesion:45.00, balance:1036.79},
-    {i:15, date:'2025-05-30', total:139.07, interest:  7.79, adhesion:45.00, balance: 950.51},
-    {i:16, date:'2025-06-13', total:138.44, interest:  7.14, adhesion:45.00, balance: 864.21},
-    {i:17, date:'2025-06-27', total:137.82, interest:  6.49, adhesion:45.00, balance: 777.88},
-    {i:18, date:'2025-07-11', total:137.19, interest:  5.84, adhesion:45.00, balance: 691.53},
-    {i:19, date:'2025-07-25', total:136.56, interest:  5.19, adhesion:45.00, balance: 605.16},
-    {i:20, date:'2025-08-08', total:135.93, interest:  4.55, adhesion:45.00, balance: 518.78},
-    {i:21, date:'2025-08-22', total:135.31, interest:  3.90, adhesion:45.00, balance: 432.37},
-    {i:22, date:'2025-09-05', total:134.68, interest:  3.25, adhesion:45.00, balance: 345.94},
-    {i:23, date:'2025-09-19', total:134.05, interest:  2.60, adhesion:45.00, balance: 259.49},
-    {i:24, date:'2025-10-03', total:133.42, interest:  1.95, adhesion:45.00, balance: 173.02},
-    {i:25, date:'2025-10-17', total:132.80, interest:  1.30, adhesion:45.00, balance:  86.52},
-    {i:26, date:'2025-10-26', total:132.17, interest:  0.42, adhesion:45.00, balance:   0.00},
-  ];
+    // ===== API (Option A: backend calcule, front affiche)
+    const API_BASE = "http://localhost:8080/api";
+    const LOAN_ID = "demo";
 
-  // ===== State
-  let state = {
-    schedule: [],
-    selected: 1,
-    arrearsItems: [], // {id,type,sourceLine,amount,fee,total,status:'OPEN'|'RESOLVED', createdAt}
-    events: []
-  };
-
-  function resetDemo(){
-    state.schedule = originalSchedule.map(r => ({
-      ...r,
-      status:'À venir',
-      adjustment:0.00,
-      paid:false,
-      method:'PAD'
-    }));
-    state.selected = 1;
-    state.arrearsItems = [];
-    state.events = [{
-      ts:new Date().toISOString(),
-      title:'Dossier chargé',
-      txt:'NSF est maintenant dans la section Souffrance. Souffrance = paiement + 48$ (auto). Traiter = mêmes options que Reporter.'
-    }];
-    renderAll();
-  }
-
-  function calcDerived(row){
-    const loanPart = clamp2((row.total||0) - (row.adhesion||0));
-    const capital  = clamp2(loanPart - (row.interest||0));
-    return {loanPart, capital};
-  }
-
-  function arrearsTotal(){
-    return clamp2(state.arrearsItems
-      .filter(a => a.status === 'OPEN')
-      .reduce((s,a)=> s + (a.total || 0), 0));
-  }
-
-  function renderKPI(){
-    const financed = 2250.00;
-    const interestTotal = 220.02; // démo
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
-    const next = ordered.find(r => !r.paid) || ordered[0];
-    const aTotal = arrearsTotal();
-
-    const kpis = [
-      {label:'Solde contrat', dot:'good', value: money(next?.balance ?? 0), sub:'Solde après la ligne'},
-      {label:'Souffrance', dot: aTotal>0?'bad':'good', value: money(aTotal), sub:'NSF = paiement + 48$'},
-      {label:'Montant financé', dot:'warn', value: money(financed), sub:'Inclut frais ouverture financés'},
-      {label:'Intérêt total', dot:'warn', value: money(interestTotal), sub:'Somme des intérêts (démo)'}
-    ];
-
-    document.getElementById('kpi').innerHTML = kpis.map(k=>`
-      <div class="card">
-        <div class="label"><span>${k.label}</span><span class="dot ${k.dot}"></span></div>
-        <div class="value">${k.value}</div>
-        <div class="sub">${k.sub}</div>
-      </div>
-    `).join('');
-
-    document.getElementById('rightArrears').textContent = money(aTotal);
-    document.getElementById('rightNext').innerHTML =
-      `${fmtDate(next.date)} · <span class="mono">${money((next.total||0)+(next.adjustment||0))}</span>`;
-  }
-
-  function renderTable(){
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
-    const tbody = document.getElementById('rows');
-
-    tbody.innerHTML = ordered.map(r=>{
-      const sel = r.i===state.selected;
-      const {loanPart, capital} = calcDerived(r);
-      const totalToCollect = clamp2((r.total||0) + (r.adjustment||0));
-
-      const statusDot =
-        r.status === 'NSF' ? 'bad' :
-        r.status === 'Frais report' ? 'warn' :
-        (r.paid ? 'good' : 'warn');
-
-      const statusLabel =
-        r.status === 'NSF' ? 'NSF' :
-        r.status === 'Frais report' ? 'Frais report' :
-        (r.paid ? 'Payé' : 'À venir');
-
-      return `
-        <tr onclick="selectRow(${r.i})" style="${sel?'background:rgba(96,165,250,.08)':''}">
-          <td class="mono">${r.i}</td>
-          <td>${fmtDate(r.date)}</td>
-          <td>${r.method||'PAD'}</td>
-          <td class="mono">${money(totalToCollect)}</td>
-          <td class="mono">${money(loanPart)}</td>
-          <td class="mono">${money(r.interest||0)}</td>
-          <td class="mono">${money(capital)}</td>
-          <td class="mono">${money(r.adhesion||0)}</td>
-          <td class="mono">${money(r.adjustment||0)}</td>
-          <td><span class="status"><span class="dot ${statusDot}"></span>${statusLabel}</span></td>
-          <td class="mono">${money(r.balance||0)}</td>
-        </tr>
-      `;
-    }).join('');
-
-    const row = state.schedule.find(r=>r.i===state.selected) || ordered[0];
-    document.getElementById('selectedInfo').textContent =
-      `Sélection: #${row.i} · ${fmtDate(row.date)} · Total ${money((row.total||0)+(row.adjustment||0))}`;
-  }
-
-  function renderEvents(){
-    const items = [...state.events].slice(-7).reverse();
-    document.getElementById('events').innerHTML = items.map(e=>`
-      <div class="note">
-        <div class="meta">
-          <span>${e.title}</span>
-          <span class="mono">${new Date(e.ts).toLocaleString('fr-CA',{hour:'2-digit',minute:'2-digit',year:'numeric',month:'2-digit',day:'2-digit'})}</span>
-        </div>
-        <div class="txt">${e.txt}</div>
-      </div>
-    `).join('');
-  }
-
-  // ✅ Liste Souffrance (NSF) dans le panneau Souffrance
-  function renderArrearsList(){
-    const box = document.getElementById('arrearsList');
-    const open = state.arrearsItems
-      .filter(a => a.status === 'OPEN')
-      .sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
-
-    if(!open.length){
-      box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Aucune souffrance ouverte.</div>`;
-      return;
+    async function apiGetLoan(){
+      const r = await fetch(`${API_BASE}/loans/${LOAN_ID}`);
+      if(!r.ok) throw new Error("GET loan failed");
+      return await r.json();
+    }
+    async function apiReset(){
+      const r = await fetch(`${API_BASE}/loans/${LOAN_ID}/reset`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" }
+      });
+      if(!r.ok) throw new Error("RESET failed");
+      return await r.json();
+    }
+    async function apiNSF(selectedLine, fee){
+      const r = await fetch(`${API_BASE}/loans/${LOAN_ID}/actions/nsf`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ selectedLine, fee })
+      });
+      if(!r.ok) throw new Error("NSF failed");
+      return await r.json();
+    }
+    async function apiResolveArrears(payload){
+      const r = await fetch(`${API_BASE}/loans/${LOAN_ID}/actions/arrears/resolve`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      if(!r.ok) throw new Error("Resolve arrears failed");
+      return await r.json();
     }
 
-    box.innerHTML = open.map(a=>{
-      return `
+    // ===== State (vient du backend)
+    let state = {
+      schedule: [],
+      selected: 1,
+      arrearsItems: [],
+      events: [],
+      config: {}
+    };
+
+    async function loadLoan(){
+      const loan = await apiGetLoan();
+      state.schedule = (loan.schedule || []).map(r => ({
+        ...r,
+        adjustment: Number(r.adjustment||0),
+        status: r.status || "À venir",
+        paid: Boolean(r.paid),
+        method: r.method || "PAD"
+      }));
+      state.arrearsItems = loan.arrearsItems || [];
+      state.events = loan.events || [];
+      state.config = loan.config || {};
+
+      // Ajuste sélection si elle n’existe plus
+      if(!state.schedule.find(r=>r.i===state.selected)){
+        state.selected = state.schedule?.[0]?.i || 1;
+      }
+      renderAll();
+    }
+
+    async function resetDemo(){
+      await apiReset();
+      await loadLoan();
+    }
+
+    // ===== Helpers UI
+    function calcDerived(row){
+      const collected = clamp2((row.total||0) + (row.adjustment||0));
+      const loanPart = clamp2(Math.max(0, collected - (row.adhesion||0)));
+      const capital  = clamp2(row.capital ?? (loanPart - (row.interest||0))); // backend peut fournir row.capital
+      return { loanPart, capital, collected };
+    }
+
+    function arrearsTotal(){
+      return clamp2((state.arrearsItems||[])
+        .filter(a => a.status === 'OPEN')
+        .reduce((s,a)=> s + (a.total || 0), 0));
+    }
+
+    function renderKPI(){
+      const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
+      const next = ordered.find(r => !r.paid) || ordered[0];
+      const aTotal = arrearsTotal();
+
+      const financed = Number(state.config?.startBalance || 0);
+      const interestTotal = clamp2(ordered.reduce((s,r)=> s + (r.interest||0), 0));
+
+      const kpis = [
+        {label:'Solde contrat', dot:'good', value: money(next?.balance ?? 0), sub:'Solde après la ligne'},
+        {label:'Souffrance', dot: aTotal>0?'bad':'good', value: money(aTotal), sub:'NSF = paiement + 48$'},
+        {label:'Montant financé', dot:'warn', value: money(financed), sub:'Solde de départ (config)'},
+        {label:'Intérêt cumulatif', dot:'warn', value: money(interestTotal), sub:'Somme intérêts (calculé)'}
+      ];
+
+      document.getElementById('kpi').innerHTML = kpis.map(k=>`
+        <div class="card">
+          <div class="label"><span>${k.label}</span><span class="dot ${k.dot}"></span></div>
+          <div class="value">${k.value}</div>
+          <div class="sub">${k.sub}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('rightArrears').textContent = money(aTotal);
+      if(next){
+        document.getElementById('rightNext').innerHTML =
+          `${fmtDate(next.date)} · <span class="mono">${money((next.total||0)+(next.adjustment||0))}</span>`;
+      }
+    }
+
+    function renderTable(){
+      const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
+      const tbody = document.getElementById('rows');
+
+      tbody.innerHTML = ordered.map(r=>{
+        const sel = r.i===state.selected;
+        const {loanPart, capital, collected} = calcDerived(r);
+
+        const statusDot =
+          r.status === 'NSF' ? 'bad' :
+          r.status === 'Frais report' ? 'warn' :
+          (r.paid ? 'good' : 'warn');
+
+        const statusLabel =
+          r.status === 'NSF' ? 'NSF' :
+          r.status === 'Frais report' ? 'Frais report' :
+          (r.paid ? 'Payé' : 'À venir');
+
+        return `
+          <tr onclick="selectRow(${r.i})" style="${sel?'background:rgba(96,165,250,.08)':''}">
+            <td class="mono">${r.i}</td>
+            <td>${fmtDate(r.date)}</td>
+            <td>${r.method||'PAD'}</td>
+            <td class="mono">${money(collected)}</td>
+            <td class="mono">${money(loanPart)}</td>
+            <td class="mono">${money(r.interest||0)}</td>
+            <td class="mono">${money(capital)}</td>
+            <td class="mono">${money(r.adhesion||0)}</td>
+            <td class="mono">${money(r.adjustment||0)}</td>
+            <td><span class="status"><span class="dot ${statusDot}"></span>${statusLabel}</span></td>
+            <td class="mono">${money(r.balance||0)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      const row = state.schedule.find(r=>r.i===state.selected) || ordered[0];
+      if(row){
+        document.getElementById('selectedInfo').textContent =
+          `Sélection: #${row.i} · ${fmtDate(row.date)} · Total ${money((row.total||0)+(row.adjustment||0))}`;
+      }
+    }
+
+    function renderEvents(){
+      const items = [...(state.events||[])].slice(-7).reverse();
+      document.getElementById('events').innerHTML = items.map(e=>`
+        <div class="note">
+          <div class="meta">
+            <span>${e.title}</span>
+            <span class="mono">${new Date(e.ts).toLocaleString('fr-CA',{hour:'2-digit',minute:'2-digit',year:'numeric',month:'2-digit',day:'2-digit'})}</span>
+          </div>
+          <div class="txt">${e.txt}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderArrearsList(){
+      const box = document.getElementById('arrearsList');
+      const open = (state.arrearsItems||[])
+        .filter(a => a.status === 'OPEN')
+        .sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
+
+      if(!open.length){
+        box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Aucune souffrance ouverte.</div>`;
+        return;
+      }
+
+      box.innerHTML = open.map(a=>`
         <div class="arrearsRow">
           <div class="arrearsLeft">
             <div class="arrearsTitle">
@@ -627,162 +643,141 @@
             <button class="btn primary" onclick="openArrearsResolver('${a.id}')">⚠️ Traiter</button>
           </div>
         </div>
-      `;
-    }).join('');
-  }
-
-  function renderAll(){
-    renderKPI();
-    renderTable();
-    renderArrearsList();
-    renderEvents();
-  }
-
-  function selectRow(i){ state.selected=i; renderAll(); }
-  function logEvent(title, txt){ state.events.push({ts:new Date().toISOString(), title, txt}); }
-
-  // ===== MODAL helpers
-  function closeModal(ev){
-    if(ev && ev.target && ev.target.id !== 'overlay') return;
-    document.getElementById('overlay').style.display = 'none';
-  }
-
-  // ===== Reporter UI (Sélection / Auto 1-5 / Tous / NEW)
-  function onRepPlanChange(){
-    const plan = document.getElementById('repPlan').value;
-    const pick = document.getElementById('pickTargets');
-    const nl = document.getElementById('newLine');
-    const confirm = document.getElementById('repConfirm');
-
-    document.querySelectorAll('.tchk').forEach(c => c.checked = false);
-
-    if(plan === 'NEW'){
-      pick.style.display = 'none';
-      nl.style.display = 'block';
-      document.getElementById('repNeed').textContent = 'Mode: ajout d’une ligne VIREMENT';
-      document.getElementById('repPreview').textContent = 'Ajout par ligne: —';
-      confirm.classList.remove('disabled');
-      return;
+      `).join('');
     }
 
-    pick.style.display = 'block';
-    nl.style.display = 'none';
-
-    if(plan === 'ALL' || plan.startsWith('AUTO_')){
-      const n = plan === 'ALL' ? 9999 : Number(plan.replace('AUTO_',''));
-      const boxes = Array.from(document.querySelectorAll('.tchk')).slice(0, n);
-      boxes.forEach(b => b.checked = true);
+    function renderAll(){
+      renderKPI();
+      renderTable();
+      renderArrearsList();
+      renderEvents();
     }
 
-    validateRepSelection();
-  }
+    function selectRow(i){ state.selected=i; renderAll(); }
 
-  function validateRepSelection(){
-    const plan = document.getElementById('repPlan').value;
-    const confirm = document.getElementById('repConfirm');
-    const amt = clamp2(Number(document.getElementById('repAmt').value || 0));
-
-    if(plan === 'NEW'){
-      if(amt > 0) confirm.classList.remove('disabled');
-      else confirm.classList.add('disabled');
-      return;
+    function closeModal(ev){
+      if(ev && ev.target && ev.target.id !== 'overlay') return;
+      document.getElementById('overlay').style.display = 'none';
     }
 
-    const checked = Array.from(document.querySelectorAll('.tchk')).filter(x=>x.checked);
-    const count = checked.length;
+    // ===== MODAL (report/manual/note/nsf)
+    function openAction(kind){
+      const row = state.schedule.find(r=>r.i===state.selected) || state.schedule[0];
+      const overlay = document.getElementById('overlay');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+      const foot = document.getElementById('modalFoot');
 
-    document.getElementById('repNeed').textContent = `Sélection: ${count} ligne(s)`;
+      title.textContent = ({
+        report:'📅 Reporter un paiement',
+        nsf:'❌ NSF (banque) → Souffrance automatique',
+        manual:'💵 Paiement manuel',
+        note:'📝 Ajouter une note'
+      })[kind] || 'Action';
 
-    if(count > 0 && amt > 0){
-      const per = clamp2(amt / count);
-      document.getElementById('repPreview').textContent = `Ajout par ligne: ${money(per)}`;
-      confirm.classList.remove('disabled');
-    } else {
-      document.getElementById('repPreview').textContent = 'Ajout par ligne: —';
-      confirm.classList.add('disabled');
+      // ===== REPORT (placeholder – si tu veux je le branche au backend après)
+      if(kind === 'report'){
+        body.innerHTML = `<div class="summary">Reporter est encore en mode démo/placeholder ici. Dis-moi et je le branche au backend comme NSF/Souffrance.</div>`;
+        foot.innerHTML = `<button class="btn" onclick="closeModal()">Fermer</button>`;
+        overlay.style.display = 'flex';
+        return;
+      }
+
+      // ===== NSF
+      if(kind === 'nsf'){
+        body.innerHTML = `
+          <div class="row">
+            <div class="field">
+              <label>Paiement NSF (ligne sélectionnée dans calendrier)</label>
+              <input disabled value="#${row.i} · ${fmtDate(row.date)} · Total ${money((row.total||0)+(row.adjustment||0))}" />
+            </div>
+            <div class="field">
+              <label>Frais NSF (banque)</label>
+              <input id="nsfFee" type="number" step="0.01" value="48.00" />
+            </div>
+          </div>
+          <div class="summary">
+            ✅ Auto: Souffrance = paiement + frais NSF.<br/>
+            Ensuite tu la traites dans Souffrance avec les mêmes options que Reporter.
+          </div>
+        `;
+        foot.innerHTML = `
+          <button class="btn" onclick="closeModal()">Annuler</button>
+          <button class="btn danger" onclick="applyNSF()">Confirmer NSF</button>
+        `;
+        overlay.style.display = 'flex';
+        return;
+      }
+
+      // ===== Paiement manuel (local uniquement)
+      if(kind === 'manual'){
+        body.innerHTML = `
+          <div class="row">
+            <div class="field">
+              <label>Montant reçu</label>
+              <input id="manualAmt" type="number" step="0.01" value="148.00" />
+            </div>
+            <div class="field">
+              <label>Appliquer à</label>
+              <select id="manualTo">
+                <option value="arrears" selected>Souffrance (réduire)</option>
+                <option value="note">Note seulement</option>
+              </select>
+            </div>
+          </div>
+          <div class="summary">
+            Démo : “Souffrance” = ferme des items OPEN (FIFO) jusqu’à épuisement du montant.
+          </div>
+        `;
+        foot.innerHTML = `
+          <button class="btn" onclick="closeModal()">Annuler</button>
+          <button class="btn primary" onclick="applyManual()">Enregistrer</button>
+        `;
+        overlay.style.display = 'flex';
+        return;
+      }
+
+      // ===== Note (local uniquement)
+      if(kind === 'note'){
+        body.innerHTML = `
+          <div class="field">
+            <label>Note</label>
+            <input id="noteTxt" placeholder="Ex: client reporte au prochain vendredi…" />
+          </div>
+          <div class="summary">Les notes restent dans l’historique (local). Si tu veux, je le branche au backend après.</div>
+        `;
+        foot.innerHTML = `
+          <button class="btn" onclick="closeModal()">Annuler</button>
+          <button class="btn primary" onclick="applyNote()">Ajouter</button>
+        `;
+        overlay.style.display = 'flex';
+        return;
+      }
     }
-  }
 
-  // ===== Souffrance(NSF) UI (mêmes options que Reporter)
-  function onArrPlanChange(){
-    const plan = document.getElementById('arrPlan').value;
-    const pick = document.getElementById('arrPickTargets');
-    const nl = document.getElementById('arrNewLine');
-    const confirm = document.getElementById('arrConfirm');
-
-    document.querySelectorAll('.arrchk').forEach(c => c.checked = false);
-
-    if(plan === 'NEW'){
-      pick.style.display = 'none';
-      nl.style.display = 'block';
-      document.getElementById('arrNeed').textContent = 'Mode: ajout d’une ligne VIREMENT';
-      document.getElementById('arrPreview').textContent = 'Ajout par ligne: —';
-      confirm.classList.remove('disabled');
-      return;
+    // ===== NSF (API)
+    async function applyNSF(){
+      const fee = clamp2(Number(document.getElementById('nsfFee').value || 48));
+      const line = state.selected;
+      closeModal();
+      await apiNSF(line, fee);
+      await loadLoan();
     }
 
-    pick.style.display = 'block';
-    nl.style.display = 'none';
+    // ===== Resolver Souffrance (API)
+    function openArrearsResolver(arrearsId){
+      const item = (state.arrearsItems||[]).find(a => a.id === arrearsId && a.status === 'OPEN');
+      if(!item) return;
 
-    if(plan === 'ALL' || plan.startsWith('AUTO_')){
-      const n = plan === 'ALL' ? 9999 : Number(plan.replace('AUTO_',''));
-      const boxes = Array.from(document.querySelectorAll('.arrchk')).slice(0, n);
-      boxes.forEach(b => b.checked = true);
-    }
+      const overlay = document.getElementById('overlay');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+      const foot = document.getElementById('modalFoot');
 
-    validateArrSelection();
-  }
+      title.textContent = '⚠️ Traiter la souffrance (NSF)';
 
-  function validateArrSelection(){
-    const plan = document.getElementById('arrPlan').value;
-    const confirm = document.getElementById('arrConfirm');
-    const amt = clamp2(Number(document.getElementById('arrAmt').value || 0));
-
-    if(plan === 'NEW'){
-      if(amt > 0) confirm.classList.remove('disabled');
-      else confirm.classList.add('disabled');
-      return;
-    }
-
-    const checked = Array.from(document.querySelectorAll('.arrchk')).filter(x=>x.checked);
-    const count = checked.length;
-
-    document.getElementById('arrNeed').textContent = `Sélection: ${count} ligne(s)`;
-
-    if(count > 0 && amt > 0){
-      const per = clamp2(amt / count);
-      document.getElementById('arrPreview').textContent = `Ajout par ligne: ${money(per)}`;
-      confirm.classList.remove('disabled');
-    } else {
-      document.getElementById('arrPreview').textContent = 'Ajout par ligne: —';
-      confirm.classList.add('disabled');
-    }
-  }
-
-  // ===== Open modal
-  function openAction(kind){
-    const row = state.schedule.find(r=>r.i===state.selected) || state.schedule[0];
-    const overlay = document.getElementById('overlay');
-    const title = document.getElementById('modalTitle');
-    const body = document.getElementById('modalBody');
-    const foot = document.getElementById('modalFoot');
-
-    title.textContent = ({
-      report:'📅 Reporter un paiement',
-      nsf:'❌ NSF (banque) → Souffrance automatique',
-      manual:'💵 Paiement manuel',
-      note:'📝 Ajouter une note'
-    })[kind] || 'Action';
-
-    // ===== REPORT
-    if(kind === 'report'){
       const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
-      const targets = ordered.filter(r =>
-        r.i !== row.i &&
-        !r.paid &&
-        r.status !== 'NSF' &&
-        (r.method||'PAD') === 'PAD'
-      );
+      const targets = ordered.filter(r => !r.paid && r.status !== 'NSF' && (r.method||'PAD') === 'PAD');
 
       const dateOptions = ordered
         .filter(r => !r.paid && r.status !== 'NSF')
@@ -792,21 +787,19 @@
       body.innerHTML = `
         <div class="row">
           <div class="field">
-            <label>Ligne reportée (source) — devient 25,00$ PAD</label>
-            <input disabled value="#${row.i} · ${fmtDate(row.date)} · ${money((row.total||0)+(row.adjustment||0))}" />
+            <label>Souffrance NSF (auto)</label>
+            <input disabled value="Paiement #${item.sourceLine} : ${money(item.amount)} + ${money(item.fee)} = ${money(item.total)}" />
           </div>
           <div class="field">
-            <label>Montant à déplacer</label>
-            <input id="repAmt" type="number" step="0.01"
-              value="${clamp2((row.total||0)+(row.adjustment||0))}"
-              oninput="validateRepSelection()" />
+            <label>Montant à répartir</label>
+            <input id="arrAmt" type="number" step="0.01" value="${clamp2(item.total)}" oninput="validateArrSelection()" />
           </div>
         </div>
 
         <div class="row" style="margin-top:10px">
           <div class="field">
             <label>Mode</label>
-            <select id="repPlan" onchange="onRepPlanChange()">
+            <select id="arrPlan" onchange="onArrPlanChange()">
               <option value="SEL" selected>Répartir sur les lignes cochées</option>
               <option value="AUTO_1">Auto: 1 prochain paiement</option>
               <option value="AUTO_2">Auto: 2 prochains paiements</option>
@@ -814,32 +807,32 @@
               <option value="AUTO_4">Auto: 4 prochains paiements</option>
               <option value="AUTO_5">Auto: 5 prochains paiements</option>
               <option value="ALL">Auto: tous les paiements à venir</option>
-              <option value="NEW">+ Ajouter une ligne de paiement (VIREMENT)</option>
+              <option value="NEW">+ Ajouter une ligne (VIREMENT)</option>
             </select>
           </div>
           <div class="field">
-            <label>Frais de report (prélevés sur la ligne source)</label>
-            <input disabled value="25.00" />
+            <label>Règle</label>
+            <input disabled value="Souffrance = paiement NSF + 48$" />
           </div>
         </div>
 
-        <div id="pickTargets" style="margin-top:10px">
+        <div id="arrPickTargets" style="margin-top:10px">
           <div class="field">
-            <label>Sélectionne les lignes où tu ajoutes le montant</label>
+            <label>Sélectionne les lignes où tu ajoutes la souffrance</label>
 
             <div class="inlineInfo">
-              <div id="repNeed">Sélection: 0 ligne(s)</div>
-              <div class="mono" id="repPreview">Ajout par ligne: —</div>
+              <div id="arrNeed">Sélection: 0 ligne(s)</div>
+              <div class="mono" id="arrPreview">Ajout par ligne: —</div>
             </div>
 
             <div class="listBox">
               ${targets.map(t=>{
-                const total = clamp2((t.total||0)+(t.adjustment||0));
+                const totalLine = clamp2((t.total||0)+(t.adjustment||0));
                 return `
                   <div class="chk">
-                    <input type="checkbox" class="tchk" value="${t.i}" onchange="validateRepSelection()"/>
+                    <input type="checkbox" class="arrchk" value="${t.i}" onchange="validateArrSelection()"/>
                     <div>
-                      <div class="t"><b>#${t.i}</b> · ${fmtDate(t.date)} · Total ${money(total)}</div>
+                      <div class="t"><b>#${t.i}</b> · ${fmtDate(t.date)} · Total ${money(totalLine)}</div>
                       <div class="m">PAD · Ajustement actuel: ${money(t.adjustment||0)}</div>
                     </div>
                   </div>
@@ -849,11 +842,11 @@
           </div>
         </div>
 
-        <div id="newLine" style="margin-top:10px; display:none">
+        <div id="arrNewLine" style="margin-top:10px; display:none">
           <div class="row">
             <div class="field">
               <label>Date du virement</label>
-              <select id="newDate">${dateOptions}</select>
+              <select id="arrNewDate">${dateOptions}</select>
             </div>
             <div class="field">
               <label>Type</label>
@@ -863,399 +856,157 @@
         </div>
 
         <div class="summary">
-          ✅ La ligne source devient <b>25,00$</b> (Frais report) et reste <b>PAD</b>.<br/>
-          Sélection / Auto 1–5 / Tous / NEW.
+          Souffrance NSF à traiter : <b>${money(item.total)}</b>.
         </div>
       `;
 
       foot.innerHTML = `
         <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn primary disabled" id="repConfirm" onclick="applyReportV4()">Confirmer</button>
+        <button class="btn primary disabled" id="arrConfirm" onclick="applyArrearsResolve('${item.id}')">Confirmer</button>
       `;
 
       overlay.style.display = 'flex';
-      setTimeout(()=> onRepPlanChange(), 0);
-      return;
+      setTimeout(()=> onArrPlanChange(), 0);
     }
 
-    // ===== NSF -> Souffrance automatique (paiement + 48$)
-    // NSF est ici parce qu'il est dans la section "Souffrance"
-    if(kind === 'nsf'){
-      body.innerHTML = `
-        <div class="row">
-          <div class="field">
-            <label>Paiement NSF (ligne sélectionnée dans calendrier)</label>
-            <input disabled value="#${row.i} · ${fmtDate(row.date)} · Total ${money((row.total||0)+(row.adjustment||0))}" />
-          </div>
-          <div class="field">
-            <label>Frais NSF (banque)</label>
-            <input id="nsfFee" type="number" step="0.01" value="48.00" />
-          </div>
-        </div>
-        <div class="summary">
-          ✅ Auto: Souffrance = paiement + frais NSF.<br/>
-          Ensuite tu la traites dans Souffrance avec les mêmes options que Reporter.
-        </div>
-      `;
-      foot.innerHTML = `
-        <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn danger" onclick="applyNSF()">Confirmer NSF</button>
-      `;
-      overlay.style.display = 'flex';
-      return;
-    }
+    function onArrPlanChange(){
+      const plan = document.getElementById('arrPlan').value;
+      const pick = document.getElementById('arrPickTargets');
+      const nl = document.getElementById('arrNewLine');
+      const confirm = document.getElementById('arrConfirm');
 
-    // ===== Paiement manuel
-    if(kind === 'manual'){
-      body.innerHTML = `
-        <div class="row">
-          <div class="field">
-            <label>Montant reçu</label>
-            <input id="manualAmt" type="number" step="0.01" value="148.00" />
-          </div>
-          <div class="field">
-            <label>Appliquer à</label>
-            <select id="manualTo">
-              <option value="arrears" selected>Souffrance (réduire)</option>
-              <option value="note">Note seulement</option>
-            </select>
-          </div>
-        </div>
-        <div class="summary">
-          Démo : “Souffrance” = ferme des items OPEN (FIFO) jusqu’à épuisement du montant.
-        </div>
-      `;
-      foot.innerHTML = `
-        <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn primary" onclick="applyManual()">Enregistrer</button>
-      `;
-      overlay.style.display = 'flex';
-      return;
-    }
+      document.querySelectorAll('.arrchk').forEach(c => c.checked = false);
 
-    // ===== Note
-    if(kind === 'note'){
-      body.innerHTML = `
-        <div class="field">
-          <label>Note</label>
-          <input id="noteTxt" placeholder="Ex: client reporte au prochain vendredi…" />
-        </div>
-        <div class="summary">Les notes restent dans l’historique (audit).</div>
-      `;
-      foot.innerHTML = `
-        <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn primary" onclick="applyNote()">Ajouter</button>
-      `;
-      overlay.style.display = 'flex';
-      return;
-    }
-  }
-
-  // ===== REPORT apply
-  function applyReportV4(){
-    const fee = 25.00;
-    const src = state.schedule.find(r=>r.i===state.selected);
-    const amt = clamp2(Number(document.getElementById('repAmt').value || 0));
-    const plan = document.getElementById('repPlan').value;
-
-    if(!src || amt<=0) return;
-
-    const old = `#${src.i} (${fmtDate(src.date)})`;
-
-    // ligne source devient 25$ PAD (démo)
-    src.status = 'Frais report';
-    src.method = 'PAD';
-    src.total = fee;
-    src.adjustment = 0.00;
-    src.interest = 0.00;
-    src.adhesion = 0.00;
-
-    if(plan === 'NEW'){
-      const d = document.getElementById('newDate').value;
-      const maxI = Math.max(...state.schedule.map(r=>r.i));
-      state.schedule.push({
-        i: maxI + 1,
-        date: d,
-        total: amt,
-        interest: 0.00,
-        adhesion: 0.00,
-        balance: 0.00,
-        adjustment: 0.00,
-        status:'À venir',
-        paid:false,
-        method:'VIREMENT'
-      });
-      logEvent('Report (VIREMENT)', `Source ${old} → devient ${money(fee)} (PAD). Nouvelle ligne VIREMENT ${fmtDate(d)} créée pour ${money(amt)}.`);
-      closeModal();
-      renderAll();
-      return;
-    }
-
-    const ids = Array.from(document.querySelectorAll('.tchk')).filter(x=>x.checked).map(x=>Number(x.value));
-    const targets = state.schedule.filter(r => ids.includes(r.i));
-    if(!targets.length) return;
-
-    const per = clamp2(amt / targets.length);
-    targets.forEach(t => t.adjustment = clamp2((t.adjustment||0) + per));
-
-    const label =
-      plan === 'ALL' ? 'Report (AUTO-TOUS)' :
-      plan.startsWith('AUTO_') ? 'Report (AUTO)' :
-      'Report (SÉLECTION)';
-
-    logEvent(label, `Source ${old} → devient ${money(fee)} (PAD). Montant ${money(amt)} réparti sur ${targets.length} paiement(s): +${money(per)} chacun.`);
-    closeModal();
-    renderAll();
-  }
-
-  // ===== NSF apply -> crée souffrance auto (paiement + 48$)
-  function applyNSF(){
-    const row = state.schedule.find(r=>r.i===state.selected);
-    const fee = clamp2(Number(document.getElementById('nsfFee').value || 48));
-    if(!row) return;
-
-    const pay = clamp2((row.total||0) + (row.adjustment||0));
-    const total = clamp2(pay + fee);
-
-    // marque la ligne NSF dans le calendrier
-    row.status = 'NSF';
-
-    // crée item souffrance OPEN (auto)
-    const id = 'A' + Date.now();
-    state.arrearsItems.push({
-      id,
-      type: 'NSF',
-      sourceLine: row.i,
-      amount: pay,
-      fee: fee,
-      total: total,
-      status: 'OPEN',
-      createdAt: new Date().toISOString()
-    });
-
-    logEvent('NSF', `NSF sur #${row.i}. Souffrance auto: ${money(pay)} + ${money(fee)} = ${money(total)}.`);
-    closeModal();
-    renderAll();
-
-    // tu peux commenter cette ligne si tu veux traiter seulement via le bouton "Traiter" dans Souffrance
-    openArrearsResolver(id);
-  }
-
-  // ===== Resolver Souffrance (mêmes options que Reporter)
-  function openArrearsResolver(arrearsId){
-    const item = state.arrearsItems.find(a => a.id === arrearsId && a.status === 'OPEN');
-    if(!item) return;
-
-    const overlay = document.getElementById('overlay');
-    const title = document.getElementById('modalTitle');
-    const body = document.getElementById('modalBody');
-    const foot = document.getElementById('modalFoot');
-
-    title.textContent = '⚠️ Traiter la souffrance (NSF)';
-
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
-    const targets = ordered.filter(r =>
-      !r.paid &&
-      r.status !== 'NSF' &&
-      (r.method||'PAD') === 'PAD'
-    );
-
-    const dateOptions = ordered
-      .filter(r => !r.paid && r.status !== 'NSF')
-      .map(r => `<option value="${r.date}">${fmtDate(r.date)}</option>`)
-      .join('');
-
-    body.innerHTML = `
-      <div class="row">
-        <div class="field">
-          <label>Souffrance NSF (auto)</label>
-          <input disabled value="Paiement #${item.sourceLine} : ${money(item.amount)} + ${money(item.fee)} = ${money(item.total)}" />
-        </div>
-        <div class="field">
-          <label>Montant à répartir</label>
-          <input id="arrAmt" type="number" step="0.01" value="${clamp2(item.total)}" oninput="validateArrSelection()" />
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:10px">
-        <div class="field">
-          <label>Mode (identique à Reporter)</label>
-          <select id="arrPlan" onchange="onArrPlanChange()">
-            <option value="SEL" selected>Répartir sur les lignes cochées</option>
-            <option value="AUTO_1">Auto: 1 prochain paiement</option>
-            <option value="AUTO_2">Auto: 2 prochains paiements</option>
-            <option value="AUTO_3">Auto: 3 prochains paiements</option>
-            <option value="AUTO_4">Auto: 4 prochains paiements</option>
-            <option value="AUTO_5">Auto: 5 prochains paiements</option>
-            <option value="ALL">Auto: tous les paiements à venir</option>
-            <option value="NEW">+ Ajouter une ligne de paiement (VIREMENT)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Règle</label>
-          <input disabled value="Souffrance = paiement NSF + 48$" />
-        </div>
-      </div>
-
-      <div id="arrPickTargets" style="margin-top:10px">
-        <div class="field">
-          <label>Sélectionne les lignes où tu ajoutes la souffrance</label>
-
-          <div class="inlineInfo">
-            <div id="arrNeed">Sélection: 0 ligne(s)</div>
-            <div class="mono" id="arrPreview">Ajout par ligne: —</div>
-          </div>
-
-          <div class="listBox">
-            ${targets.map(t=>{
-              const totalLine = clamp2((t.total||0)+(t.adjustment||0));
-              return `
-                <div class="chk">
-                  <input type="checkbox" class="arrchk" value="${t.i}" onchange="validateArrSelection()"/>
-                  <div>
-                    <div class="t"><b>#${t.i}</b> · ${fmtDate(t.date)} · Total ${money(totalLine)}</div>
-                    <div class="m">PAD · Ajustement actuel: ${money(t.adjustment||0)}</div>
-                  </div>
-                </div>
-              `;
-            }).join('') || `<div class="m">Aucune ligne PAD disponible.</div>`}
-          </div>
-        </div>
-      </div>
-
-      <div id="arrNewLine" style="margin-top:10px; display:none">
-        <div class="row">
-          <div class="field">
-            <label>Date du virement</label>
-            <select id="arrNewDate">${dateOptions}</select>
-          </div>
-          <div class="field">
-            <label>Type</label>
-            <input disabled value="VIREMENT (cash à venir)" />
-          </div>
-        </div>
-      </div>
-
-      <div class="summary">
-        Souffrance NSF à traiter : <b>${money(item.total)}</b>.<br/>
-        Sélection / Auto 1–5 / Tous / NEW (exactement comme Reporter).
-      </div>
-    `;
-
-    foot.innerHTML = `
-      <button class="btn" onclick="closeModal()">Annuler</button>
-      <button class="btn primary disabled" id="arrConfirm" onclick="applyArrearsResolve('${item.id}')">Confirmer</button>
-    `;
-
-    overlay.style.display = 'flex';
-    setTimeout(()=> onArrPlanChange(), 0);
-  }
-
-  function applyArrearsResolve(id){
-    const item = state.arrearsItems.find(a => a.id === id && a.status === 'OPEN');
-    if(!item) return;
-
-    const plan = document.getElementById('arrPlan').value;
-    const amt = clamp2(Number(document.getElementById('arrAmt').value || item.total));
-    if(amt <= 0) return;
-
-    if(plan === 'NEW'){
-      const d = document.getElementById('arrNewDate').value;
-      const maxI = Math.max(...state.schedule.map(r=>r.i));
-      state.schedule.push({
-        i: maxI + 1,
-        date: d,
-        total: amt,
-        interest: 0.00,
-        adhesion: 0.00,
-        balance: 0.00,
-        adjustment: 0.00,
-        status:'À venir',
-        paid:false,
-        method:'VIREMENT'
-      });
-
-      item.status = 'RESOLVED';
-      logEvent('Souffrance (VIREMENT)', `Souffrance ${money(amt)} déplacée en nouvelle ligne VIREMENT (${fmtDate(d)}).`);
-      closeModal();
-      renderAll();
-      return;
-    }
-
-    const ids = Array.from(document.querySelectorAll('.arrchk')).filter(x=>x.checked).map(x=>Number(x.value));
-    const targets = state.schedule.filter(r => ids.includes(r.i));
-    if(!targets.length) return;
-
-    const per = clamp2(amt / targets.length);
-    targets.forEach(t => t.adjustment = clamp2((t.adjustment||0) + per));
-
-    item.status = 'RESOLVED';
-
-    const label =
-      plan === 'ALL' ? 'Souffrance (AUTO-TOUS)' :
-      plan.startsWith('AUTO_') ? 'Souffrance (AUTO)' :
-      'Souffrance (SÉLECTION)';
-
-    logEvent(label, `Souffrance ${money(amt)} répartie sur ${targets.length} paiement(s): +${money(per)} chacun.`);
-
-    closeModal();
-    renderAll();
-  }
-
-  // ===== Paiement manuel : ferme des items souffrance OPEN FIFO
-  function applyManual(){
-    const amt = clamp2(Number(document.getElementById('manualAmt').value || 0));
-    const to = document.getElementById('manualTo').value;
-    if(amt<=0){ closeModal(); return; }
-
-    if(to === 'arrears'){
-      let remaining = amt;
-      let closed = 0;
-
-      for(const a of state.arrearsItems){
-        if(a.status !== 'OPEN') continue;
-        if(remaining >= a.total){
-          remaining = clamp2(remaining - a.total);
-          a.status = 'RESOLVED';
-          closed++;
-        } else {
-          a.total = clamp2(a.total - remaining);
-          remaining = 0;
-          break;
-        }
+      if(plan === 'NEW'){
+        pick.style.display = 'none';
+        nl.style.display = 'block';
+        document.getElementById('arrNeed').textContent = 'Mode: ajout d’une ligne VIREMENT';
+        document.getElementById('arrPreview').textContent = 'Ajout par ligne: —';
+        confirm.classList.remove('disabled');
+        return;
       }
 
-      logEvent('Paiement manuel', `Paiement ${money(amt)} appliqué à la souffrance. Items fermés: ${closed}. Reste non utilisé: ${money(remaining)}.`);
-    } else {
-      logEvent('Paiement manuel', `Paiement reçu ${money(amt)} (note seulement).`);
+      pick.style.display = 'block';
+      nl.style.display = 'none';
+
+      if(plan === 'ALL' || plan.startsWith('AUTO_')){
+        const n = plan === 'ALL' ? 9999 : Number(plan.replace('AUTO_',''));
+        const boxes = Array.from(document.querySelectorAll('.arrchk')).slice(0, n);
+        boxes.forEach(b => b.checked = true);
+      }
+
+      validateArrSelection();
     }
 
-    closeModal();
-    renderAll();
-  }
+    function validateArrSelection(){
+      const plan = document.getElementById('arrPlan').value;
+      const confirm = document.getElementById('arrConfirm');
+      const amt = clamp2(Number(document.getElementById('arrAmt').value || 0));
 
-  // ===== Notes
-  function applyNote(){
-    const txt = (document.getElementById('noteTxt').value || '').trim();
-    if(!txt){ closeModal(); return; }
-    logEvent('Note', txt);
-    closeModal();
-    renderAll();
-  }
+      if(plan === 'NEW'){
+        if(amt > 0) confirm.classList.remove('disabled');
+        else confirm.classList.add('disabled');
+        return;
+      }
 
-  // ===== Init
-  resetDemo();
+      const checked = Array.from(document.querySelectorAll('.arrchk')).filter(x=>x.checked);
+      const count = checked.length;
 
-  // expose for inline handlers
-  window.onRepPlanChange = onRepPlanChange;
-  window.validateRepSelection = validateRepSelection;
-  window.applyReportV4 = applyReportV4;
+      document.getElementById('arrNeed').textContent = `Sélection: ${count} ligne(s)`;
 
-  window.onArrPlanChange = onArrPlanChange;
-  window.validateArrSelection = validateArrSelection;
-  window.applyArrearsResolve = applyArrearsResolve;
+      if(count > 0 && amt > 0){
+        const per = clamp2(amt / count);
+        document.getElementById('arrPreview').textContent = `Ajout par ligne: ${money(per)}`;
+        confirm.classList.remove('disabled');
+      } else {
+        document.getElementById('arrPreview').textContent = 'Ajout par ligne: —';
+        confirm.classList.add('disabled');
+      }
+    }
 
-  window.openArrearsResolver = openArrearsResolver;
-</script>
+    async function applyArrearsResolve(id){
+      const item = (state.arrearsItems||[]).find(a => a.id === id && a.status === 'OPEN');
+      if(!item) return;
+
+      const plan = document.getElementById('arrPlan').value;
+      const amt = clamp2(Number(document.getElementById('arrAmt').value || item.total));
+      if(amt <= 0) return;
+
+      if(plan === 'NEW'){
+        const d = document.getElementById('arrNewDate').value;
+        closeModal();
+        await apiResolveArrears({ arrearsId: id, amount: amt, newDate: d });
+        await loadLoan();
+        return;
+      }
+
+      const ids = Array.from(document.querySelectorAll('.arrchk')).filter(x=>x.checked).map(x=>Number(x.value));
+      if(!ids.length) return;
+
+      closeModal();
+      await apiResolveArrears({ arrearsId: id, amount: amt, targetIds: ids });
+      await loadLoan();
+    }
+
+    // ===== Notes / manual (local)
+    function logEvent(title, txt){
+      state.events = state.events || [];
+      state.events.push({ ts:new Date().toISOString(), title, txt });
+    }
+    function applyNote(){
+      const txt = (document.getElementById('noteTxt').value || '').trim();
+      if(!txt){ closeModal(); return; }
+      logEvent('Note', txt);
+      closeModal();
+      renderAll();
+    }
+    function applyManual(){
+      const amt = clamp2(Number(document.getElementById('manualAmt').value || 0));
+      const to = document.getElementById('manualTo').value;
+      if(amt<=0){ closeModal(); return; }
+
+      if(to === 'arrears'){
+        let remaining = amt;
+        let closed = 0;
+
+        for(const a of state.arrearsItems){
+          if(a.status !== 'OPEN') continue;
+          if(remaining >= a.total){
+            remaining = clamp2(remaining - a.total);
+            a.status = 'RESOLVED';
+            closed++;
+          } else {
+            a.total = clamp2(a.total - remaining);
+            remaining = 0;
+            break;
+          }
+        }
+
+        logEvent('Paiement manuel', `Paiement ${money(amt)} appliqué à la souffrance. Items fermés: ${closed}. Reste: ${money(remaining)}.`);
+      } else {
+        logEvent('Paiement manuel', `Paiement reçu ${money(amt)} (note seulement).`);
+      }
+
+      closeModal();
+      renderAll();
+    }
+
+    // expose for inline handlers
+    window.openAction = openAction;
+    window.resetDemo = resetDemo;
+    window.closeModal = closeModal;
+    window.selectRow = selectRow;
+
+    window.openArrearsResolver = openArrearsResolver;
+    window.onArrPlanChange = onArrPlanChange;
+    window.validateArrSelection = validateArrSelection;
+    window.applyArrearsResolve = applyArrearsResolve;
+
+    // ===== Init
+    loadLoan().catch(err => {
+      console.error(err);
+      alert("Impossible de joindre le backend. Démarre server/index.js sur le port 8080.");
+    });
+  </script>
 </body>
 </html>
