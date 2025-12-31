@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard prêteur privé — MAX Margill-like</title>
+  <title>Dashboard prêteur privé — Margill-like (Sans backend)</title>
   <style>
     :root{
       --bg:#0b1220;
@@ -45,15 +45,6 @@
     .brand h1{font-size:18px;margin:0;line-height:1.2}
     .brand p{margin:0;color:var(--muted2);font-size:12px}
 
-    .search{
-      flex:1;max-width:560px;margin:0 14px;
-      display:flex;gap:10px;align-items:center;
-      padding:10px 12px;border-radius:14px;
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.06);
-      backdrop-filter: blur(10px);
-    }
-    .search input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:14px}
     .pill{
       padding:8px 10px;border-radius:999px;border:1px solid var(--stroke);
       background:rgba(255,255,255,.06);
@@ -64,9 +55,8 @@
     .dot.good{background:var(--good)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
 
     .grid{display:grid;grid-template-columns: 1.25fr 0.75fr;gap:14px;}
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr} .search{display:none} }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
 
-    /* KPIs */
     .cards{display:grid;grid-template-columns: repeat(6, 1fr);gap:12px;margin-bottom:14px;}
     @media (max-width: 1200px){ .cards{grid-template-columns: repeat(3, 1fr)} }
     @media (max-width: 700px){ .cards{grid-template-columns: repeat(2, 1fr)} }
@@ -121,7 +111,6 @@
     .btn.good{border-color:rgba(45,212,191,.45); background:rgba(45,212,191,.12)}
     .btn.warn{border-color:rgba(251,191,36,.45); background:rgba(251,191,36,.12)}
     .btn.ghost{background:transparent}
-    .btn.disabled{opacity:.45; pointer-events:none;}
 
     .tableWrap{overflow:auto}
     table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;}
@@ -153,6 +142,31 @@
     .kv .v{margin-top:6px;font-weight:700}
     .mono{font-family:var(--mono)}
 
+    .hint{color:var(--muted2); font-size:12px; padding:10px 14px 0;}
+
+    .arrearsBox,.ledgerBox{
+      margin-top:12px;
+      padding:10px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      max-height:240px;
+      overflow:auto;
+    }
+    .arrearsRow,.ledgerRow{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:10px;padding:10px;border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      margin-bottom:8px;
+    }
+    .arrearsRow:hover,.ledgerRow:hover{background:rgba(255,255,255,.05)}
+    .tag{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:4px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      font-size:11px;color:var(--muted);
+    }
     .notes{display:flex;flex-direction:column;gap:10px;margin-top:10px}
     .note{
       padding:10px;border-radius:16px;
@@ -169,64 +183,6 @@
       color:var(--muted2);
       font-size:12px;
     }
-    .hint{color:var(--muted2); font-size:12px; padding:10px 14px 0;}
-
-    /* Souffrance list */
-    .arrearsBox{
-      margin-top:12px;
-      padding:10px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04);
-      max-height:240px;
-      overflow:auto;
-    }
-    .arrearsRow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      margin-bottom:8px;
-    }
-    .arrearsRow:hover{background:rgba(255,255,255,.05)}
-    .arrearsLeft{display:flex;flex-direction:column;gap:4px;min-width:0}
-    .arrearsTitle{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .arrearsMeta{font-size:11px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .tag{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:4px 8px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      font-size:11px;color:var(--muted);
-    }
-
-    /* Ledger */
-    .ledgerBox{
-      margin-top:12px;
-      padding:10px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04);
-      max-height:260px;
-      overflow:auto;
-    }
-    .ledgerRow{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      padding:10px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      margin-bottom:8px;
-    }
-    .ledgerRow:hover{background:rgba(255,255,255,.05)}
-    .ledgerLeft{min-width:0;display:flex;flex-direction:column;gap:4px}
-    .ledgerTitle{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .ledgerMeta{font-size:11px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
     /* Modal */
     .modalOverlay{
@@ -283,16 +239,6 @@
       border-top:1px solid rgba(255,255,255,.10);
       display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;
     }
-
-    .inlineInfo{
-      margin-top:10px;
-      color:var(--muted2);
-      font-size:12px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
   </style>
 </head>
 
@@ -303,41 +249,34 @@
         <div class="logo"></div>
         <div>
           <h1>Dashboard prêteur privé</h1>
-          <p>MAX Margill-like · Encaissement réel · Allocation · Ledger</p>
+          <p>Margill-like · Sans backend · Encaissement réel · Allocation · Ledger</p>
         </div>
       </div>
-
-      <div class="search" title="Recherche (mock)">
-        🔎 <input placeholder="Rechercher un client, un contrat, une date…" />
-        <span class="pill"><span class="dot good"></span> Live: API</span>
-      </div>
-
-      <div class="pill" title="Mode"><span class="dot warn"></span> Mode: Démo</div>
+      <div class="pill"><span class="dot good"></span> Mode: GitHub Pages OK</div>
     </div>
 
     <div class="cards" id="kpi"></div>
 
     <div class="grid">
-      <!-- LEFT -->
       <div>
         <div class="panel">
           <div class="panelHeader">
             <div>
               <h2>Calendrier des paiements</h2>
-              <small id="subHeader">Planifié vs Encaissé · Banque · Solde avant/après · ACT/365</small>
+              <small>Solde bouge seulement sur PAYÉ / PARTIEL (encaissé réel)</small>
             </div>
             <div class="actions">
               <button class="btn danger" onclick="openAction('nsf')">❌ NSF</button>
-              <button class="btn good" onclick="openAction('post')">✅ Payé</button>
-              <button class="btn warn" onclick="openAction('partial')">🟨 Partiel</button>
+              <button class="btn good" onclick="openAction('post')">✅ PAYÉ</button>
+              <button class="btn warn" onclick="openAction('partial')">🟨 PARTIEL</button>
               <button class="btn" onclick="openAction('retry')">🔁 Reprise NSF</button>
               <button class="btn ghost" onclick="resetDemo()">↩️ Reset</button>
             </div>
           </div>
 
           <div class="hint">
-            💡 Margill-like : le paiement encaissé est appliqué <b>Souffrance → Adhésion → Intérêt → Capital</b>.
-            Le <b>Total dû</b> = <b>Solde prêt</b> + <b>Souffrance ouverte</b>.
+            Règle (Margill-like): <b>Souffrance → Adhésion → Intérêt → Capital</b>.<br/>
+            <b>Total dû</b> = <b>Solde prêt</b> + <b>Souffrance OPEN</b>.
           </div>
 
           <div class="tableWrap">
@@ -348,7 +287,6 @@
                   <th>Date prévue</th>
                   <th>Date encaissée</th>
                   <th>Statut banque</th>
-                  <th>Type</th>
                   <th>Planifié</th>
                   <th>Encaissé</th>
                   <th>Intérêt</th>
@@ -366,13 +304,12 @@
           </div>
 
           <div class="footerBar">
-            <div id="ruleLine">ACT/365 · intérêt sur solde avant · encaissement réel (POSTED/PARTIAL/NSF)</div>
-            <div class="mono" id="selectedInfo">Sélection: #1</div>
+            <div class="mono" id="ruleLine"></div>
+            <div class="mono" id="selectedInfo"></div>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT -->
       <div class="rightCol">
         <div class="panel">
           <div class="panelHeader">
@@ -380,7 +317,7 @@
               <h2>Résumé contrat</h2>
               <small>Solde / Souffrance / Total dû</small>
             </div>
-            <div class="pill"><span class="dot good"></span> Actif</div>
+            <div class="pill"><span class="dot warn"></span> Audit</div>
           </div>
           <div class="section">
             <div class="kv" id="contractBox"></div>
@@ -390,26 +327,18 @@
         <div class="panel">
           <div class="panelHeader">
             <div>
-              <h2>Souffrance & événements</h2>
+              <h2>Souffrance & Ledger</h2>
               <small>OPEN = dû maintenant</small>
             </div>
-            <div class="pill"><span class="dot warn"></span> Audit</div>
+            <div class="pill"><span class="dot bad"></span> Preuve</div>
           </div>
-
           <div class="section">
             <div class="kv">
-              <div class="item">
-                <div class="k">Souffrance ouverte</div>
-                <div class="v mono" id="rightArrears">0,00 $</div>
-              </div>
-              <div class="item">
-                <div class="k">Total dû</div>
-                <div class="v mono" id="rightTotalDue">0,00 $</div>
-              </div>
+              <div class="item"><div class="k">Souffrance OPEN</div><div class="v mono" id="rightArrears"></div></div>
+              <div class="item"><div class="k">Total dû</div><div class="v mono" id="rightTotalDue"></div></div>
             </div>
 
             <div class="arrearsBox" id="arrearsList"></div>
-
             <div class="ledgerBox" id="ledgerList"></div>
 
             <div class="notes" id="events"></div>
@@ -432,122 +361,371 @@
   </div>
 
 <script>
-  // ===== Utilities
+  // ========================= Utils =========================
+  const clamp2 = (n) => Math.round(Number(n || 0) * 100) / 100;
+  const nowIso = () => new Date().toISOString();
   const money = (n) => (Number(n||0)).toLocaleString('fr-CA',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' $';
   const fmtDate = (iso) => {
     if(!iso) return "—";
     return new Date(iso+'T00:00:00').toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'}).replace('.','');
   };
-  const clamp2 = (n) => Math.round((Number(n)||0)*100)/100;
+  function toDateOnly(iso){
+    const [y,m,d] = String(iso).split("-").map(Number);
+    return new Date(Date.UTC(y,(m||1)-1,d||1));
+  }
+  function daysBetween(d1Iso, d2Iso){
+    const a = toDateOnly(d1Iso);
+    const b = toDateOnly(d2Iso);
+    const ms = b.getTime() - a.getTime();
+    return Math.max(0, Math.round(ms/(1000*60*60*24)));
+  }
+  function sortSchedule(s){ return [...s].sort((a,b)=> (a.date||"").localeCompare(b.date||"") || (a.i||0)-(b.i||0)); }
 
-  // ===== API
-  const API_BASE = "http://localhost:8080/api";
-  const LOAN_ID = "demo";
+  // ========================= Config (à toi de changer) =========================
+  const config = {
+    contractStartDate: "2024-10-31",
+    startBalance: 2250.00,
+    annualRate: 0.1899,
+    dayBase: 365,
+    defaultNSFFee: 48.00,
 
-  async function apiGetLoan(){
-    const r = await fetch(`${API_BASE}/loans/${LOAN_ID}`);
-    if(!r.ok) throw new Error("GET loan failed");
-    return await r.json();
-  }
-  async function apiReset(){
-    const r = await fetch(`${API_BASE}/loans/${LOAN_ID}/reset`, {
-      method:"POST", headers:{ "Content-Type":"application/json" }
-    });
-    if(!r.ok) throw new Error("RESET failed");
-    return await r.json();
-  }
-  async function apiNSF(selectedLine, fee){
-    const r = await fetch(`${API_BASE}/loans/${LOAN_ID}/actions/nsf`, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ selectedLine, fee })
-    });
-    if(!r.ok) throw new Error("NSF failed");
-    return await r.json();
-  }
-  async function apiPost(payload){
-    const r = await fetch(`${API_BASE}/loans/${LOAN_ID}/actions/post`, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
-    });
-    if(!r.ok) throw new Error("POST failed");
-    return await r.json();
-  }
-  async function apiRetry(payload){
-    const r = await fetch(`${API_BASE}/loans/${LOAN_ID}/actions/retry`, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
-    });
-    if(!r.ok) throw new Error("RETRY failed");
-    return await r.json();
-  }
+    // Margill-like:
+    payArrearsFirst: true,
 
-  // ===== State
-  let state = {
-    schedule: [],
-    selected: 1,
-    arrearsItems: [],
-    events: [],
-    config: {},
-    ledger: []
+    // Margill++:
+    // sur PARTIEL: crée automatiquement une souffrance du manquant (planifié - encaissé) ?
+    autoArrearsOnPartialMissing: true,
   };
 
-  function openArrearsTotal(){
-    return clamp2((state.arrearsItems||[])
-      .filter(a => a.status === "OPEN")
-      .reduce((s,a)=> s + (a.total||0), 0));
-  }
+  // ========================= Seed schedule =========================
+  const seedSchedule = [
+    {i:1,  date:"2024-11-15", plannedBase:147.92, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:2,  date:"2024-11-29", plannedBase:147.19, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:3,  date:"2024-12-13", plannedBase:146.56, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:4,  date:"2024-12-27", plannedBase:145.94, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:5,  date:"2025-01-10", plannedBase:145.31, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:6,  date:"2025-01-24", plannedBase:144.72, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:7,  date:"2025-02-07", plannedBase:144.09, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:8,  date:"2025-02-21", plannedBase:143.47, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:9,  date:"2025-03-07", plannedBase:142.84, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:10, date:"2025-03-21", plannedBase:142.21, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:11, date:"2025-04-04", plannedBase:141.58, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:12, date:"2025-04-18", plannedBase:140.95, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:13, date:"2025-05-02", plannedBase:140.33, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:14, date:"2025-05-16", plannedBase:139.70, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:15, date:"2025-05-30", plannedBase:139.07, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:16, date:"2025-06-13", plannedBase:138.44, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:17, date:"2025-06-27", plannedBase:137.82, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:18, date:"2025-07-11", plannedBase:137.19, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:19, date:"2025-07-25", plannedBase:136.56, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:20, date:"2025-08-08", plannedBase:135.93, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:21, date:"2025-08-22", plannedBase:135.31, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:22, date:"2025-09-05", plannedBase:134.68, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:23, date:"2025-09-19", plannedBase:134.05, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:24, date:"2025-10-03", plannedBase:133.42, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:25, date:"2025-10-17", plannedBase:132.80, adhesion:45.00, adjustment:0, method:"PAD"},
+    {i:26, date:"2025-10-26", plannedBase:132.17, adhesion:45.00, adjustment:0, method:"PAD"},
+  ];
 
-  function nextRow(){
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
-    // prochain "non payé"
-    return ordered.find(r => !r.paid && (r.postedStatus||"NONE")==="NONE") || ordered[0];
-  }
+  // ========================= State =========================
+  let state = {
+    selected: 1,
+    schedule: [],
+    arrearsItems: [], // {id,type,sourceLine,amount,fee,total,status,createdAt}
+    ledger: [],       // {ts,line,type,postedDate,amount,split}
+    events: []        // {ts,title,txt}
+  };
 
-  async function loadLoan(){
-    const loan = await apiGetLoan();
-    state.schedule = (loan.schedule || []).map(r => ({ ...r }));
-    state.arrearsItems = loan.arrearsItems || [];
-    state.events = loan.events || [];
-    state.config = loan.config || {};
-    state.ledger = loan.ledger || [];
+  function resetDemo(){
+    state.schedule = seedSchedule.map(r => ({
+      i: r.i,
+      date: r.date,
+      method: r.method || "PAD",
+      adhesion: clamp2(r.adhesion || 0),
+      adjustment: clamp2(r.adjustment || 0),
+      plannedBase: clamp2(r.plannedBase || 0),
 
-    if(!state.schedule.find(r=>r.i===state.selected)){
-      state.selected = state.schedule?.[0]?.i || 1;
-    }
+      // banque
+      postedStatus: "NONE", // NONE|POSTED|PARTIAL|NSF
+      postedAmount: 0,
+      postedDate: null,
+
+      // affichage calculé
+      planned: 0,
+      collected: 0,
+      interest: 0,
+      capital: 0,
+      balanceBefore: 0,
+      balance: 0,
+      days: 0,
+      allocation: {toArrears:0,toAdhesion:0,toInterest:0,toPrincipal:0},
+      status: "À venir",
+      paid: false,
+    }));
+
+    state.selected = 1;
+    state.arrearsItems = [];
+    state.ledger = [];
+    state.events = [{ts: nowIso(), title:"Dossier chargé", txt:"Mode sans backend. Margill-like actif (encaissement réel + ledger)."}];
+
+    recomputeAll();
     renderAll();
   }
 
-  async function resetDemo(){
-    await apiReset();
-    await loadLoan();
+  function openArrearsTotal(){
+    return clamp2(state.arrearsItems
+      .filter(a => a.status === "OPEN")
+      .reduce((s,a)=> s + (a.total || 0), 0));
   }
 
-  // ===== Render
-  function renderKPI(){
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
-    const next = nextRow();
-    const arrears = openArrearsTotal();
+  function closeArrearsFIFO(amount){
+    let remaining = clamp2(amount);
+    let closed = 0;
 
+    const items = state.arrearsItems
+      .filter(a => a.status === "OPEN")
+      .sort((a,b)=> (a.createdAt||"").localeCompare(b.createdAt||""));
+
+    for(const a of items){
+      if(remaining <= 0) break;
+      const t = clamp2(a.total || 0);
+      if(remaining >= t){
+        remaining = clamp2(remaining - t);
+        a.total = 0;
+        a.status = "RESOLVED";
+        closed++;
+      }else{
+        a.total = clamp2(t - remaining);
+        remaining = 0;
+      }
+    }
+    return {closed, leftover: remaining};
+  }
+
+  // Allocation: souffrance -> adhesion -> intérêt -> capital
+  function allocatePayment({amount, adhesionDue, interestDue, arrearsDue}){
+    let remaining = clamp2(amount);
+    const out = {toArrears:0,toAdhesion:0,toInterest:0,toPrincipal:0, surplus:0};
+
+    if(config.payArrearsFirst && arrearsDue > 0){
+      const x = clamp2(Math.min(remaining, arrearsDue));
+      out.toArrears = x;
+      remaining = clamp2(remaining - x);
+    }
+
+    if(adhesionDue > 0){
+      const x = clamp2(Math.min(remaining, adhesionDue));
+      out.toAdhesion = x;
+      remaining = clamp2(remaining - x);
+    }
+
+    if(interestDue > 0){
+      const x = clamp2(Math.min(remaining, interestDue));
+      out.toInterest = x;
+      remaining = clamp2(remaining - x);
+    }
+
+    if(remaining > 0){
+      out.toPrincipal = remaining;
+      remaining = 0;
+    }
+
+    out.surplus = clamp2(remaining);
+    return out;
+  }
+
+  function recomputeAll(){
+    const ordered = sortSchedule(state.schedule);
+
+    let prevPostedDate = config.contractStartDate;
+    let prevBalance = clamp2(config.startBalance);
+
+    for(const row of ordered){
+      row.planned = clamp2((row.plannedBase || 0) + (row.adjustment || 0));
+
+      const postedStatus = row.postedStatus || "NONE";
+      const collected = (postedStatus === "POSTED" || postedStatus === "PARTIAL") ? clamp2(row.postedAmount || 0) : 0;
+
+      const effectiveDate = row.postedDate || row.date; // pour calcul de jours si encaissé
+      const days = daysBetween(prevPostedDate, effectiveDate);
+      row.days = days;
+
+      const interestDue = clamp2(prevBalance * Number(config.annualRate) * (days / Number(config.dayBase)));
+
+      const arrearsDueSnapshot = openArrearsTotal();
+      const alloc = allocatePayment({
+        amount: collected,
+        adhesionDue: clamp2(row.adhesion || 0),
+        interestDue,
+        arrearsDue: arrearsDueSnapshot
+      });
+
+      const capital = clamp2(alloc.toPrincipal);
+      const balanceAfter = clamp2(prevBalance - capital);
+
+      row.collected = collected;
+      row.interest = clamp2(alloc.toInterest);
+      row.capital = capital;
+      row.balanceBefore = clamp2(prevBalance);
+      row.balance = balanceAfter;
+      row.allocation = alloc;
+
+      prevBalance = balanceAfter;
+
+      if(postedStatus === "POSTED" || postedStatus === "PARTIAL"){
+        prevPostedDate = effectiveDate;
+      }
+    }
+  }
+
+  function nextRow(){
+    const ordered = sortSchedule(state.schedule);
+    return ordered.find(r => !r.paid && (r.postedStatus||"NONE")==="NONE") || ordered[0];
+  }
+
+  // ========================= Actions =========================
+  function addEvent(title, txt){
+    state.events.push({ts: nowIso(), title, txt});
+  }
+
+  function actionNSF(lineId, fee){
+    const row = state.schedule.find(r => r.i === Number(lineId));
+    if(!row) return;
+
+    const nsfFee = clamp2(fee ?? config.defaultNSFFee);
+    const rejected = clamp2(row.planned);
+    const total = clamp2(rejected + nsfFee);
+
+    row.postedStatus = "NSF";
+    row.postedAmount = 0;
+    row.postedDate = null;
+    row.status = "NSF";
+    row.paid = false;
+
+    const id = "A" + Date.now();
+    state.arrearsItems.push({
+      id,
+      type: "NSF",
+      sourceLine: row.i,
+      amount: rejected,
+      fee: nsfFee,
+      total,
+      status: "OPEN",
+      createdAt: nowIso()
+    });
+
+    addEvent("NSF", `Paiement #${row.i} NSF. Souffrance OPEN: rejet ${money(rejected)} + frais ${money(nsfFee)} = ${money(total)}.`);
+
+    recomputeAll();
+    renderAll();
+  }
+
+  function actionRetry(lineId, newDate){
+    const row = state.schedule.find(r => r.i === Number(lineId));
+    if(!row) return;
+
+    if(row.postedStatus !== "NSF" && row.status !== "NSF"){
+      addEvent("Reprise refusée", `Ligne #${row.i} n'est pas NSF.`);
+      recomputeAll(); renderAll();
+      return;
+    }
+
+    row.date = newDate || row.date;
+    row.postedStatus = "NONE";
+    row.postedAmount = 0;
+    row.postedDate = null;
+    row.status = "À venir";
+    row.paid = false;
+
+    addEvent("Reprise bancaire", `Paiement #${row.i} replanifié au ${row.date}.`);
+    recomputeAll();
+    renderAll();
+  }
+
+  function actionPost(lineId, amount, postedDate){
+    const row = state.schedule.find(r => r.i === Number(lineId));
+    if(!row) return;
+
+    const amt = clamp2(amount);
+    if(amt <= 0) return;
+
+    // posted
+    row.postedAmount = amt;
+    row.postedDate = postedDate || row.date;
+    row.postedStatus = (amt < row.planned) ? "PARTIAL" : "POSTED";
+    row.status = (row.postedStatus === "PARTIAL") ? "Partiel" : "Payé";
+    row.paid = true;
+
+    // recalcul allocation (avec snapshot souffrance)
+    recomputeAll();
+
+    const alloc = row.allocation || {toArrears:0,toAdhesion:0,toInterest:0,toPrincipal:0};
+
+    // fermer souffrance FIFO si payArrearsFirst
+    let closeInfo = {closed:0, leftover:0};
+    if(config.payArrearsFirst && alloc.toArrears > 0){
+      closeInfo = closeArrearsFIFO(alloc.toArrears);
+    }
+
+    // Margill++: si partiel, créer souffrance "manquant"
+    if(config.autoArrearsOnPartialMissing && row.postedStatus === "PARTIAL"){
+      const missing = clamp2(row.planned - amt);
+      if(missing > 0){
+        const id = "A" + Date.now();
+        state.arrearsItems.push({
+          id,
+          type: "MANQUANT",
+          sourceLine: row.i,
+          amount: missing,
+          fee: 0,
+          total: missing,
+          status: "OPEN",
+          createdAt: nowIso()
+        });
+        addEvent("Partiel → souffrance", `Paiement #${row.i} partiel. Manquant ${money(missing)} créé en souffrance OPEN.`);
+      }
+    }
+
+    state.ledger.push({
+      ts: nowIso(),
+      line: row.i,
+      type: "POST",
+      postedDate: row.postedDate,
+      amount: amt,
+      split: {
+        arrears: alloc.toArrears,
+        adhesion: alloc.toAdhesion,
+        interest: alloc.toInterest,
+        principal: alloc.toPrincipal
+      }
+    });
+
+    addEvent("Encaissement", `#${row.i} encaissé ${money(amt)} (${row.postedStatus}). Split: souffrance ${money(alloc.toArrears)}, adhésion ${money(alloc.toAdhesion)}, intérêt ${money(alloc.toInterest)}, capital ${money(alloc.toPrincipal)}. Souffrances fermées: ${closeInfo.closed}.`);
+
+    recomputeAll();
+    renderAll();
+  }
+
+  // ========================= Render =========================
+  function renderKPI(){
+    const ordered = sortSchedule(state.schedule);
+    const next = nextRow();
+
+    const arrears = openArrearsTotal();
     const balance = Number(next?.balance ?? 0);
     const totalDue = clamp2(balance + arrears);
 
-    const financed = Number(state.config?.startBalance || 0);
     const interestCum = clamp2(ordered.reduce((s,r)=> s + (r.interest||0), 0));
     const capitalCum  = clamp2(ordered.reduce((s,r)=> s + (r.capital||0), 0));
     const collectedCum = clamp2(ordered.reduce((s,r)=> s + (r.collected||0), 0));
 
-    const payArFirst = Boolean(state.config?.payArrearsFirst ?? true);
-
     const kpis = [
-      {label:'Solde prêt', dot:'good', value: money(balance), sub:'Capital restant (sans souffrance)'},
-      {label:'Souffrance', dot: arrears>0?'bad':'good', value: money(arrears), sub:'OPEN (NSF, frais, etc.)'},
+      {label:'Solde prêt', dot:'good', value: money(balance), sub:'Bouge sur PAYÉ/PARTIEL'},
+      {label:'Souffrance', dot: arrears>0?'bad':'good', value: money(arrears), sub:'OPEN (NSF, manquant, etc.)'},
       {label:'Total dû', dot: arrears>0?'bad':'good', value: money(totalDue), sub:'Solde prêt + souffrance'},
-      {label:'Montant financé', dot:'warn', value: money(financed), sub:'Config startBalance'},
+      {label:'Financé', dot:'warn', value: money(config.startBalance), sub:`Origine: ${config.contractStartDate}`},
       {label:'Intérêt cumulé', dot:'warn', value: money(interestCum), sub:`Capital cumulé: ${money(capitalCum)}`},
-      {label:'Encaissé cumulé', dot:'good', value: money(collectedCum), sub:`Souffrance prioritaire: ${payArFirst?'Oui':'Non'}`},
+      {label:'Encaissé cumulé', dot:'good', value: money(collectedCum), sub:`Margill++ manquant: ${config.autoArrearsOnPartialMissing?'Oui':'Non'}`},
     ];
 
     document.getElementById('kpi').innerHTML = kpis.map(k=>`
@@ -560,66 +738,38 @@
 
     document.getElementById('rightArrears').textContent = money(arrears);
     document.getElementById('rightTotalDue').textContent = money(totalDue);
+
+    document.getElementById('ruleLine').textContent =
+      `ACT/${config.dayBase} · taux ${(config.annualRate*100).toFixed(2)}% · souffrance prioritaire ${config.payArrearsFirst?'ON':'OFF'}`;
   }
 
   function renderContractBox(){
-    const cfg = state.config || {};
     const next = nextRow();
     const arrears = openArrearsTotal();
     const totalDue = clamp2(Number(next?.balance||0) + arrears);
 
-    const html = `
-      <div class="item">
-        <div class="k">Client</div>
-        <div class="v">Marc Savoie <span class="mono" style="font-weight:600;color:var(--muted2)">#10023</span></div>
-      </div>
-      <div class="item">
-        <div class="k">Taux nominal</div>
-        <div class="v mono">${((Number(cfg.annualRate||0)*100).toFixed(2))}% · ACT/${cfg.dayBase||365}</div>
-      </div>
-      <div class="item">
-        <div class="k">Date d'origine</div>
-        <div class="v mono">${cfg.contractStartDate || "—"}</div>
-      </div>
-      <div class="item">
-        <div class="k">Souffrance prioritaire</div>
-        <div class="v">${(cfg.payArrearsFirst ?? true) ? "Oui" : "Non"}</div>
-      </div>
-      <div class="item">
-        <div class="k">Montant financé</div>
-        <div class="v mono">${money(cfg.startBalance||0)}</div>
-      </div>
-      <div class="item">
-        <div class="k">Total dû</div>
-        <div class="v mono">${money(totalDue)}</div>
-      </div>
+    document.getElementById('contractBox').innerHTML = `
+      <div class="item"><div class="k">Date d’origine</div><div class="v mono">${config.contractStartDate}</div></div>
+      <div class="item"><div class="k">Montant financé</div><div class="v mono">${money(config.startBalance)}</div></div>
+      <div class="item"><div class="k">Taux</div><div class="v mono">${(config.annualRate*100).toFixed(2)}% · ACT/${config.dayBase}</div></div>
+      <div class="item"><div class="k">Souffrance prioritaire</div><div class="v">${config.payArrearsFirst?'Oui':'Non'}</div></div>
+      <div class="item"><div class="k">Margill++ manquant</div><div class="v">${config.autoArrearsOnPartialMissing?'Oui':'Non'}</div></div>
+      <div class="item"><div class="k">Total dû</div><div class="v mono">${money(totalDue)}</div></div>
     `;
-    document.getElementById('contractBox').innerHTML = html;
   }
 
   function renderTable(){
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
+    const ordered = sortSchedule(state.schedule);
     const tbody = document.getElementById('rows');
 
     tbody.innerHTML = ordered.map(r=>{
       const sel = r.i===state.selected;
 
       const bank = (r.postedStatus || "NONE");
-      const bankDot =
-        bank === "NSF" ? "bad" :
-        bank === "POSTED" ? "good" :
-        bank === "PARTIAL" ? "warn" : "warn";
+      const bankDot = bank==="NSF" ? "bad" : bank==="POSTED" ? "good" : bank==="PARTIAL" ? "warn" : "warn";
 
-      const lineStatus =
-        r.status === "NSF" ? "NSF" :
-        r.status === "Payé" ? "Payé" :
-        r.status === "Partiel" ? "Partiel" :
-        (r.status || "À venir");
-
-      const lineDot =
-        r.status === "NSF" ? "bad" :
-        r.status === "Payé" ? "good" :
-        r.status === "Partiel" ? "warn" : "warn";
+      const line = r.status || "À venir";
+      const lineDot = line==="NSF" ? "bad" : line==="Payé" ? "good" : line==="Partiel" ? "warn" : "warn";
 
       return `
         <tr onclick="selectRow(${r.i})" style="${sel?'background:rgba(96,165,250,.08)':''}">
@@ -627,7 +777,6 @@
           <td>${fmtDate(r.date)}</td>
           <td>${fmtDate(r.postedDate)}</td>
           <td><span class="status"><span class="dot ${bankDot}"></span>${bank}</span></td>
-          <td>${r.method||'PAD'}</td>
           <td class="mono">${money(r.planned||0)}</td>
           <td class="mono">${money(r.collected||0)}</td>
           <td class="mono">${money(r.interest||0)}</td>
@@ -637,7 +786,7 @@
           <td class="mono">${money(r.balanceBefore||0)}</td>
           <td class="mono">${money(r.balance||0)}</td>
           <td class="mono">${r.days ?? 0}</td>
-          <td><span class="status"><span class="dot ${lineDot}"></span>${lineStatus}</span></td>
+          <td><span class="status"><span class="dot ${lineDot}"></span>${line}</span></td>
         </tr>
       `;
     }).join('');
@@ -645,30 +794,30 @@
     const row = state.schedule.find(r=>r.i===state.selected) || ordered[0];
     if(row){
       document.getElementById('selectedInfo').textContent =
-        `Sélection: #${row.i} · ${fmtDate(row.date)} · Planifié ${money(row.planned||0)} · Banque ${row.postedStatus||"NONE"} · Encaissé ${money(row.collected||0)}`;
+        `Sélection #${row.i} · Planifié ${money(row.planned)} · Banque ${row.postedStatus} · Encaissé ${money(row.collected)} · Solde ${money(row.balance)}`;
     }
   }
 
   function renderArrearsList(){
     const box = document.getElementById('arrearsList');
-    const open = (state.arrearsItems||[])
-      .filter(a => a.status === 'OPEN')
-      .sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
+    const open = state.arrearsItems
+      .filter(a => a.status === "OPEN")
+      .sort((a,b)=> (b.createdAt||"").localeCompare(a.createdAt||""));
 
     if(!open.length){
-      box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Aucune souffrance ouverte.</div>`;
+      box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Aucune souffrance OPEN.</div>`;
       return;
     }
 
     box.innerHTML = open.map(a=>`
       <div class="arrearsRow">
-        <div class="arrearsLeft">
-          <div class="arrearsTitle">
-            <span class="tag"><span class="dot bad"></span> ${a.type || "NSF"}</span>
+        <div style="min-width:0">
+          <div style="font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+            <span class="tag"><span class="dot bad"></span> ${a.type}</span>
             &nbsp; Source #${a.sourceLine} · <span class="mono">${money(a.total)}</span>
           </div>
-          <div class="arrearsMeta">
-            Détail: rejet ${money(a.amount)} + frais ${money(a.fee)} · Créé ${new Date(a.createdAt).toLocaleString('fr-CA',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
+          <div style="font-size:11px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+            Détail: montant ${money(a.amount)} ${a.fee?`+ frais ${money(a.fee)}`:''} · Créé ${new Date(a.createdAt).toLocaleString('fr-CA',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
           </div>
         </div>
       </div>
@@ -677,7 +826,7 @@
 
   function renderLedger(){
     const box = document.getElementById('ledgerList');
-    const rows = [...(state.ledger||[])].slice(-10).reverse();
+    const rows = [...state.ledger].slice(-10).reverse();
 
     if(!rows.length){
       box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Ledger vide (aucun encaissement posté).</div>`;
@@ -688,12 +837,12 @@
       const s = l.split || {};
       return `
         <div class="ledgerRow">
-          <div class="ledgerLeft">
-            <div class="ledgerTitle">
+          <div style="min-width:0">
+            <div style="font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
               <span class="tag"><span class="dot good"></span> POST</span>
-              &nbsp; Ligne #${l.line} · ${money(l.amount)} · <span class="mono">${l.postedDate || "—"}</span>
+              &nbsp; Ligne #${l.line} · ${money(l.amount)} · <span class="mono">${l.postedDate}</span>
             </div>
-            <div class="ledgerMeta">
+            <div style="font-size:11px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
               Split: souffrance ${money(s.arrears||0)} · adhésion ${money(s.adhesion||0)} · intérêt ${money(s.interest||0)} · capital ${money(s.principal||0)}
             </div>
           </div>
@@ -706,7 +855,7 @@
   }
 
   function renderEvents(){
-    const items = [...(state.events||[])].slice(-8).reverse();
+    const items = [...state.events].slice(-8).reverse();
     document.getElementById('events').innerHTML = items.map(e=>`
       <div class="note">
         <div class="meta">
@@ -727,9 +876,9 @@
     renderEvents();
   }
 
-  function selectRow(i){ state.selected=i; renderAll(); }
+  function selectRow(i){ state.selected = i; renderAll(); }
 
-  // ===== Modal
+  // ========================= Modal =========================
   function closeModal(ev){
     if(ev && ev.target && ev.target.id !== 'overlay') return;
     document.getElementById('overlay').style.display = 'none';
@@ -742,45 +891,44 @@
     const body = document.getElementById('modalBody');
     const foot = document.getElementById('modalFoot');
 
-    // ===== NSF
     if(kind === "nsf"){
-      title.textContent = "❌ NSF (banque) → Souffrance OPEN";
+      title.textContent = "❌ NSF → Souffrance OPEN";
       body.innerHTML = `
         <div class="row">
           <div class="field">
             <label>Ligne</label>
-            <input disabled value="#${row.i} · ${fmtDate(row.date)} · Planifié ${money(row.planned||0)}" />
+            <input disabled value="#${row.i} · ${fmtDate(row.date)} · Planifié ${money(row.planned)}" />
           </div>
           <div class="field">
             <label>Frais NSF</label>
-            <input id="nsfFee" type="number" step="0.01" value="${Number(state.config?.defaultNSFFee||48).toFixed(2)}" />
+            <input id="nsfFee" type="number" step="0.01" value="${Number(config.defaultNSFFee).toFixed(2)}" />
           </div>
         </div>
         <div class="summary">
-          NSF = encaissement réel = 0, et création d’une souffrance OPEN = (montant rejeté + frais NSF).
-          Le solde prêt ne baisse pas tant que non encaissé.
+          NSF = encaissé 0, solde prêt ne baisse pas. Souffrance OPEN = rejet + frais NSF.
         </div>
       `;
       foot.innerHTML = `
         <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn danger" onclick="applyNSF()">Confirmer NSF</button>
+        <button class="btn danger" onclick="doNSF()">Confirmer NSF</button>
       `;
       overlay.style.display = "flex";
       return;
     }
 
-    // ===== PAYÉ
-    if(kind === "post"){
-      title.textContent = "✅ Encaissé (PAYÉ) — posted réel";
-      const suggested = clamp2(row.planned || ((row.total||0)+(row.adjustment||0)));
+    if(kind === "post" || kind === "partial"){
+      const isPartial = (kind === "partial");
+      title.textContent = isPartial ? "🟨 PARTIEL (encaissé réel)" : "✅ PAYÉ (encaissé réel)";
+      const suggested = isPartial ? Math.max(0, row.planned - 40) : row.planned;
+
       body.innerHTML = `
         <div class="row">
           <div class="field">
             <label>Ligne</label>
-            <input disabled value="#${row.i} · ${fmtDate(row.date)} · Planifié ${money(row.planned||0)} · Banque ${row.postedStatus||"NONE"}" />
+            <input disabled value="#${row.i} · ${fmtDate(row.date)} · Planifié ${money(row.planned)} · Banque ${row.postedStatus}" />
           </div>
           <div class="field">
-            <label>Montant encaissé (réel)</label>
+            <label>Montant encaissé</label>
             <input id="postAmt" type="number" step="0.01" value="${Number(suggested).toFixed(2)}" />
           </div>
         </div>
@@ -791,77 +939,33 @@
             <input id="postDate" type="date" value="${(row.date||"").slice(0,10)}" />
           </div>
           <div class="field">
-            <label>Souffrance prioritaire ? (Margill-like)</label>
-            <select id="payArFirst">
-              <option value="true" ${(state.config?.payArrearsFirst ?? true) ? "selected" : ""}>Oui (souffrance → adhésion → intérêt → capital)</option>
-              <option value="false" ${!(state.config?.payArrearsFirst ?? true) ? "selected" : ""}>Non (souffrance séparée)</option>
+            <label>Margill++: souffrance du manquant (planifié - encaissé)</label>
+            <select id="autoMissing">
+              <option value="true" ${config.autoArrearsOnPartialMissing ? "selected":""}>Oui</option>
+              <option value="false" ${!config.autoArrearsOnPartialMissing ? "selected":""}>Non</option>
             </select>
           </div>
         </div>
 
         <div class="summary">
-          Ce bouton enregistre l’encaissement réel et écrit dans le Ledger (audit).
-          L’allocation se fait automatiquement.
+          Allocation: souffrance → adhésion → intérêt → capital. Ledger = preuve du split.
         </div>
       `;
       foot.innerHTML = `
         <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn good" onclick="applyPost(false)">Confirmer PAYÉ</button>
+        <button class="btn ${isPartial?'warn':'good'}" onclick="doPost()">Confirmer</button>
       `;
       overlay.style.display = "flex";
       return;
     }
 
-    // ===== PARTIEL
-    if(kind === "partial"){
-      title.textContent = "🟨 Encaissé partiel — posted réel";
-      body.innerHTML = `
-        <div class="row">
-          <div class="field">
-            <label>Ligne</label>
-            <input disabled value="#${row.i} · ${fmtDate(row.date)} · Planifié ${money(row.planned||0)}" />
-          </div>
-          <div class="field">
-            <label>Montant encaissé (partiel)</label>
-            <input id="postAmt" type="number" step="0.01" value="${Number(Math.max(0, (row.planned||0) - 40)).toFixed(2)}" />
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:10px">
-          <div class="field">
-            <label>Date encaissée (réelle)</label>
-            <input id="postDate" type="date" value="${(row.date||"").slice(0,10)}" />
-          </div>
-          <div class="field">
-            <label>Souffrance prioritaire ?</label>
-            <select id="payArFirst">
-              <option value="true" ${(state.config?.payArrearsFirst ?? true) ? "selected" : ""}>Oui</option>
-              <option value="false" ${!(state.config?.payArrearsFirst ?? true) ? "selected" : ""}>Non</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="summary">
-          Un paiement partiel peut laisser de l’intérêt impayé et réduire le capital plus lentement.
-          Tout est visible dans les colonnes et le Ledger.
-        </div>
-      `;
-      foot.innerHTML = `
-        <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn warn" onclick="applyPost(true)">Confirmer PARTIEL</button>
-      `;
-      overlay.style.display = "flex";
-      return;
-    }
-
-    // ===== REPRISE NSF
     if(kind === "retry"){
-      title.textContent = "🔁 Reprise bancaire (NSF → replanifier)";
+      title.textContent = "🔁 Reprise NSF (replanifier)";
       body.innerHTML = `
         <div class="row">
           <div class="field">
             <label>Ligne</label>
-            <input disabled value="#${row.i} · Statut banque ${row.postedStatus||"NONE"} · Statut ligne ${row.status||"—"}" />
+            <input disabled value="#${row.i} · Banque ${row.postedStatus} · Statut ${row.status}" />
           </div>
           <div class="field">
             <label>Nouvelle date prévue</label>
@@ -869,65 +973,48 @@
           </div>
         </div>
         <div class="summary">
-          Reprise = on remet la ligne “À venir” (banque NONE) avec une nouvelle date.
-          Les jours et intérêts se recalculent ensuite selon la vraie date d’encaissement quand tu feras PAYÉ/PARTIEL.
+          Reprise = remet banque à NONE et la ligne à “À venir”.
         </div>
       `;
       foot.innerHTML = `
         <button class="btn" onclick="closeModal()">Annuler</button>
-        <button class="btn primary" onclick="applyRetry()">Confirmer reprise</button>
+        <button class="btn primary" onclick="doRetry()">Confirmer reprise</button>
       `;
       overlay.style.display = "flex";
       return;
     }
   }
 
-  // ===== Apply actions
-  async function applyNSF(){
-    const fee = clamp2(Number(document.getElementById("nsfFee").value || 48));
-    const line = state.selected;
+  function doNSF(){
+    const fee = clamp2(Number(document.getElementById("nsfFee").value || config.defaultNSFFee));
     closeModal();
-    await apiNSF(line, fee);
-    await loadLoan();
+    actionNSF(state.selected, fee);
   }
 
-  async function applyPost(isPartial){
+  function doPost(){
     const amt = clamp2(Number(document.getElementById("postAmt").value || 0));
     const d = document.getElementById("postDate").value;
-    const payArFirst = (document.getElementById("payArFirst").value === "true");
+    const autoMissing = (document.getElementById("autoMissing").value === "true");
+    config.autoArrearsOnPartialMissing = autoMissing;
 
-    if(amt <= 0){
-      alert("Montant invalide.");
-      return;
-    }
     closeModal();
-    await apiPost({
-      lineId: state.selected,
-      amount: amt,
-      postedDate: d,
-      applyToArrearsFirst: payArFirst
-    });
-    await loadLoan();
+    actionPost(state.selected, amt, d);
   }
 
-  async function applyRetry(){
+  function doRetry(){
     const d = document.getElementById("retryDate").value;
     closeModal();
-    await apiRetry({ lineId: state.selected, newDate: d });
-    await loadLoan();
+    actionRetry(state.selected, d);
   }
 
   // expose
   window.openAction = openAction;
-  window.resetDemo = resetDemo;
   window.closeModal = closeModal;
+  window.resetDemo = resetDemo;
   window.selectRow = selectRow;
 
   // init
-  loadLoan().catch(err => {
-    console.error(err);
-    alert("Impossible de joindre le backend. Lance node server/index.js sur le port 8080.");
-  });
+  resetDemo();
 </script>
 </body>
 </html>
