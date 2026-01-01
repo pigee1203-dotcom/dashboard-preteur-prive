@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Dashboard prêteur privé</title>
-
   <style>
     :root{
       --bg:#0f0f12;
@@ -39,22 +38,10 @@
       line-height:1.4;
       -webkit-font-smoothing:antialiased;
     }
+    .app{max-width:1400px;margin:0 auto;padding:16px;display:grid;gap:16px}
 
-    /* === LAYOUT === */
-    .app{
-      max-width:1400px;
-      margin:0 auto;
-      padding:16px;
-      display:grid;
-      gap:16px;
-    }
-
-    /* === TOP BAR - iPhone style === */
     .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
       padding:12px 20px;
       background:linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.04) 100%);
       border:1px solid var(--stroke2);
@@ -64,8 +51,7 @@
     }
     .brand{display:flex;align-items:center;gap:14px}
     .logo{
-      width:44px;height:44px;
-      border-radius:14px;
+      width:44px;height:44px;border-radius:14px;
       background:linear-gradient(135deg, var(--accent), var(--good));
       display:flex;align-items:center;justify-content:center;
       font-size:22px;
@@ -73,28 +59,20 @@
     }
     .brand-text h1{font-size:17px;font-weight:600;letter-spacing:-.02em}
     .brand-text p{font-size:12px;color:var(--muted2);margin-top:2px}
-
     .status-pill{
       display:flex;align-items:center;gap:8px;
       padding:8px 14px;
       background:var(--glass2);
       border:1px solid var(--stroke2);
       border-radius:999px;
-      font-size:12px;
-      font-weight:500;
+      font-size:12px;font-weight:500;
     }
     .status-dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good)}
     .status-pill.demo .status-dot{background:var(--warn);box-shadow:0 0 8px var(--warn)}
 
-    /* === KPI CARDS - Glossy pills === */
-    .kpi-row{
-      display:grid;
-      grid-template-columns:repeat(4, 1fr);
-      gap:12px;
-    }
+    .kpi-row{display:grid;grid-template-columns:repeat(4, 1fr);gap:12px}
     @media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:500px){.kpi-row{grid-template-columns:1fr}}
-
     .kpi-card{
       position:relative;
       padding:16px 18px;
@@ -107,9 +85,7 @@
     }
     .kpi-card::before{
       content:'';
-      position:absolute;
-      top:0;left:0;right:0;
-      height:1px;
+      position:absolute;top:0;left:0;right:0;height:1px;
       background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
     }
     .kpi-card .kpi-label{
@@ -140,15 +116,9 @@
     }
     .kpi-btn:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(251,191,36,.4)}
 
-    /* === MAIN GRID === */
-    .main-grid{
-      display:grid;
-      grid-template-columns:1fr 380px;
-      gap:16px;
-    }
+    .main-grid{display:grid;grid-template-columns:1fr 380px;gap:16px}
     @media(max-width:1100px){.main-grid{grid-template-columns:1fr}}
 
-    /* === PANEL - Glossy card === */
     .panel{
       background:linear-gradient(180deg, var(--glass2) 0%, var(--glass) 100%);
       border:1px solid var(--stroke);
@@ -166,7 +136,6 @@
     .panel-head h2{font-size:15px;font-weight:600}
     .panel-head small{color:var(--muted2);font-size:11px;margin-top:2px}
 
-    /* === ACTION BUTTONS - Pill style === */
     .actions{display:flex;gap:8px;flex-wrap:wrap}
     .btn{
       display:inline-flex;align-items:center;gap:6px;
@@ -200,7 +169,6 @@
     .btn.ghost:hover{background:var(--glass2)}
     .btn.disabled{opacity:.4;pointer-events:none}
 
-    /* === TABLE === */
     .table-wrap{overflow-y:auto;overflow-x:hidden;padding:0;max-height:420px}
     table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;table-layout:fixed}
     th,td{padding:6px 4px;text-align:left;overflow:hidden;text-overflow:ellipsis}
@@ -238,59 +206,17 @@
     }
     .hint{padding:12px 20px;font-size:11px;color:var(--muted2);border-bottom:1px solid var(--stroke)}
 
-    /* === RIGHT COLUMN === */
     .right-col{display:flex;flex-direction:column;gap:16px}
 
-    /* === CLIENT CARD === */
-    .client-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      padding:16px;
-    }
-    .client-item{
-      padding:12px;
-      background:var(--glass);
-      border:1px solid var(--stroke);
-      border-radius:14px;
-    }
+    .client-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px}
+    .client-item{padding:12px;background:var(--glass);border:1px solid var(--stroke);border-radius:14px}
     .client-item .k{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em}
     .client-item .v{margin-top:6px;font-size:13px;font-weight:600}
 
-    /* === ARREARS BOX === */
     .section{padding:16px}
-    .arrearsBox{margin-top:12px;max-height:200px;overflow-y:auto}
-    .arrearsRow{
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      padding:12px;
-      background:var(--glass);
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      margin-bottom:8px;
-    }
-    .arrearsLeft{flex:1}
-    .arrearsTitle{display:flex;align-items:center;gap:8px;font-size:12px}
-    .arrearsCalc{display:flex;align-items:center;gap:6px;margin:6px 0 4px;font-family:var(--mono);font-size:12px}
-    .arrearsCalc .calcItem{color:var(--muted)}
-    .arrearsCalc .calcItem.fee{color:var(--bad)}
-    .arrearsCalc .calcOp{color:var(--muted2);font-size:10px}
-    .arrearsCalc .calcTotal{color:var(--text);font-weight:700;font-size:14px}
-    .arrearsMeta{font-size:10px;color:var(--muted2)}
-    .tag{
-      display:inline-flex;align-items:center;gap:6px;
-      padding:4px 10px;
-      background:rgba(248,113,113,.15);
-      border:1px solid rgba(248,113,113,.25);
-      border-radius:999px;
-      font-size:10px;font-weight:500;
-      color:var(--bad);
-    }
-
-    /* === EVENTS/NOTES === */
     .notes{display:flex;flex-direction:column;gap:8px;margin-top:12px;max-height:250px;overflow-y:auto}
     .note{
-      padding:12px;
-      background:var(--glass);
+      padding:12px;background:var(--glass);
       border:1px solid var(--stroke);
       border-radius:12px;
       border-left:3px solid var(--muted);
@@ -305,14 +231,12 @@
     .note .time{font-size:10px;color:var(--muted2);font-family:var(--mono)}
     .note .txt{margin-top:6px;font-size:11px;color:var(--muted);line-height:1.5}
 
-    /* === MODAL === */
     .modalOverlay{
       position:fixed;inset:0;
       background:rgba(0,0,0,.7);
       backdrop-filter:blur(8px);
       display:none;align-items:center;justify-content:center;
-      padding:20px;
-      z-index:1000;
+      padding:20px;z-index:1000;
     }
     .modal{
       width:min(720px, 100%);
@@ -333,15 +257,13 @@
     .modalBody{padding:20px;max-height:60vh;overflow-y:auto}
     .modalFoot{
       display:flex;justify-content:flex-end;gap:10px;
-      padding:16px 20px;
-      background:var(--glass);
+      padding:16px 20px;background:var(--glass);
       border-top:1px solid var(--stroke);
     }
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     @media(max-width:600px){.row{grid-template-columns:1fr}}
     .field{
-      padding:14px;
-      background:var(--glass);
+      padding:14px;background:var(--glass);
       border:1px solid var(--stroke);
       border-radius:16px;
     }
@@ -359,6 +281,7 @@
     }
     .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--accent)}
     .field select option{background:#1e1e23;color:#fff}
+
     .summary{
       margin-top:16px;
       padding:14px;
@@ -367,6 +290,7 @@
       border-radius:14px;
       font-size:12px;color:var(--muted);
     }
+
     .listBox{
       margin-top:12px;
       padding:10px;
@@ -376,6 +300,7 @@
       max-height:180px;
       overflow-y:auto;
     }
+
     .chk{
       display:grid;grid-template-columns:20px 1fr auto;gap:10px;
       align-items:center;
@@ -399,8 +324,7 @@
 
     .inlineInfo{
       display:grid;grid-template-columns:1fr 1fr;gap:10px;
-      margin:12px 0;
-      padding:12px;
+      margin:12px 0;padding:12px;
       background:rgba(96,165,250,.08);
       border:1px solid rgba(96,165,250,.2);
       border-radius:12px;
@@ -408,18 +332,8 @@
     .inlineInfo .label{font-size:10px;color:var(--muted2);text-transform:uppercase}
     .inlineInfo .value{font-family:var(--mono);font-weight:600;margin-top:4px}
 
-    .nsfCalc{
-      background:var(--glass);
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      overflow:hidden;
-    }
-    .nsfRow{
-      display:grid;grid-template-columns:120px 1fr auto;gap:12px;
-      padding:14px 16px;
-      align-items:center;
-      border-bottom:1px solid var(--stroke);
-    }
+    .nsfCalc{background:var(--glass);border:1px solid var(--stroke);border-radius:14px;overflow:hidden}
+    .nsfRow{display:grid;grid-template-columns:120px 1fr auto;gap:12px;padding:14px 16px;align-items:center;border-bottom:1px solid var(--stroke)}
     .nsfRow:last-child{border-bottom:none}
     .nsfRow.add{background:rgba(248,113,113,.08)}
     .nsfRow.total{background:rgba(248,113,113,.15)}
@@ -429,21 +343,66 @@
     .nsfRow.add .nsfAmount{color:var(--bad)}
     .nsfRow.total .nsfAmount{font-size:18px}
 
-    /* scrollbar */
+    .arrearsBox{margin-top:12px;max-height:200px;overflow-y:auto}
+    .arrearsRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:var(--glass);border:1px solid var(--stroke);border-radius:14px;margin-bottom:8px}
+    .arrearsLeft{flex:1}
+    .arrearsTitle{display:flex;align-items:center;gap:8px;font-size:12px}
+    .arrearsCalc{display:flex;align-items:center;gap:6px;margin:6px 0 4px;font-family:var(--mono);font-size:12px}
+    .arrearsCalc .calcItem{color:var(--muted)}
+    .arrearsCalc .calcItem.fee{color:var(--bad)}
+    .arrearsCalc .calcOp{color:var(--muted2);font-size:10px}
+    .arrearsCalc .calcTotal{color:var(--text);font-weight:700;font-size:14px}
+    .arrearsMeta{font-size:10px;color:var(--muted2)}
+    .tag{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 10px;
+      background:rgba(248,113,113,.15);
+      border:1px solid rgba(248,113,113,.25);
+      border-radius:999px;
+      font-size:10px;font-weight:500;color:var(--bad);
+    }
+
     ::-webkit-scrollbar{width:6px;height:6px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
     ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.25)}
 
-    /* === FLIP CARD === */
-    .flip-container{perspective:1000px; cursor:pointer;}
-    .flip-card{position:relative; width:100%; transition:transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); transform-style:preserve-3d;}
-    .flip-container.flipped .flip-card{transform:rotateY(180deg);}
-    .flip-front, .flip-back{backface-visibility:hidden; -webkit-backface-visibility:hidden;}
-    .flip-front{position:relative;}
-    .flip-back{position:absolute; top:0;left:0;right:0; transform:rotateY(180deg); background:linear-gradient(180deg, var(--glass2) 0%, var(--glass) 100%); border-radius:var(--r2); min-height:100%;}
-    .flip-hint{position:absolute; bottom:8px;right:12px; font-size:10px; color:var(--muted2); display:flex;align-items:center;gap:4px; opacity:0.7; transition:opacity .2s;}
+    .flip-container{perspective:1000px;cursor:pointer}
+    .flip-card{position:relative;width:100%;transition:transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);transform-style:preserve-3d}
+    .flip-container.flipped .flip-card{transform:rotateY(180deg)}
+    .flip-front, .flip-back{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+    .flip-front{position:relative}
+    .flip-back{
+      position:absolute;top:0;left:0;right:0;
+      transform:rotateY(180deg);
+      background:linear-gradient(180deg, var(--glass2) 0%, var(--glass) 100%);
+      border-radius:var(--r2);
+      min-height:100%;
+    }
+    .flip-hint{
+      position:absolute;bottom:8px;right:12px;
+      font-size:10px;color:var(--muted2);
+      display:flex;align-items:center;gap:4px;
+      opacity:0.7;transition:opacity .2s;
+    }
     .flip-container:hover .flip-hint{opacity:1}
+
+    /* ✅ DISQUETTE (bouton icône) */
+    .icon-btn{
+      width:42px;height:42px;
+      display:inline-flex;
+      align-items:center;justify-content:center;
+      border-radius:14px;
+      background:linear-gradient(180deg, rgba(52,211,153,.35) 0%, rgba(52,211,153,.18) 100%);
+      border:1px solid rgba(52,211,153,.55);
+      color:var(--text);
+      cursor:pointer;
+      box-shadow:0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);
+      transition:transform .12s, filter .12s;
+    }
+    .icon-btn:hover{filter:brightness(1.05)}
+    .icon-btn:active{transform:scale(.98)}
+    .icon-btn .ico{font-size:18px;line-height:1}
   </style>
 </head>
 
@@ -464,10 +423,7 @@
       <div class="search-box" style="flex:1;max-width:450px;position:relative">
         <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--glass2);border:1px solid var(--stroke2);border-radius:14px;transition:all .2s" id="searchContainer">
           <span style="font-size:16px">🔍</span>
-          <input
-            type="text"
-            id="clientSearch"
-            placeholder="Rechercher un client (nom, #, téléphone, courriel...)"
+          <input type="text" id="clientSearch" placeholder="Rechercher un client (nom, #, téléphone, courriel...)"
             style="flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:13px"
             oninput="searchClients(this.value)"
             onfocus="document.getElementById('searchContainer').style.borderColor='var(--accent)'"
@@ -554,7 +510,6 @@
                 </div>
                 <div class="status-pill"><span class="status-dot"></span> Actif</div>
               </div>
-
               <div class="client-grid">
                 <div class="client-item"><div class="k">Prénom</div><div class="v">Marc</div></div>
                 <div class="client-item"><div class="k">Nom</div><div class="v">Savoie</div></div>
@@ -568,18 +523,26 @@
                 <div class="client-item"><div class="k">Numéro 2</div><div class="v mono">438-555-9876</div></div>
                 <div class="client-item" style="grid-column:span 2"><div class="k">Courriel</div><div class="v">marc.savoie@email.com</div></div>
               </div>
-
               <div class="flip-hint">🔄 Infos prêt & banque</div>
             </div>
 
             <!-- BACK -->
             <div class="flip-back">
+              <!-- ✅ MODIF: DISQUETTE + SAVE -->
               <div class="panel-head">
                 <div>
                   <h2>Prêt & Banque</h2>
                   <small>Marc Savoie #10023</small>
                 </div>
-                <div class="status-pill"><span class="status-dot"></span> PAD Actif</div>
+
+                <div style="display:flex;align-items:center;gap:10px">
+                  <!-- ✅ LA DISQUETTE -->
+                  <button class="icon-btn" title="Enregistrer" onclick="saveLoanState();event.stopPropagation()">
+                    <span class="ico">💾</span>
+                  </button>
+
+                  <div class="status-pill"><span class="status-dot"></span> PAD Actif</div>
+                </div>
               </div>
 
               <div class="client-grid">
@@ -662,8 +625,10 @@
                 <div class="client-item">
                   <div class="k">Type taux</div>
                   <div class="v">
-                    <select id="rateType" style="background:#1a1a2e;border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px" onclick="event.stopPropagation()">
-                      <option value="annual" style="background:#1a1a2e;color:#fff">Annuel</option>
+                    <select id="rateType"
+                      style="background:#1a1a2e;border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px"
+                      onclick="event.stopPropagation()">
+                      <option value="annual" selected style="background:#1a1a2e;color:#fff">Annuel</option>
                       <option value="monthly" style="background:#1a1a2e;color:#fff">Mensuel</option>
                       <option value="periodic" style="background:#1a1a2e;color:#fff">Par période</option>
                     </select>
@@ -673,24 +638,18 @@
                 <div class="client-item">
                   <div class="k">Fréquence</div>
                   <div class="v">
-                    <select id="paymentFrequency" style="background:#1a1a2e;border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px" onclick="event.stopPropagation()">
+                    <select id="paymentFrequency"
+                      style="background:#1a1a2e;border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px"
+                      onclick="event.stopPropagation()">
                       <option value="7" style="background:#1a1a2e;color:#fff">7 jours</option>
                       <option value="14" selected style="background:#1a1a2e;color:#fff">14 jours</option>
                     </select>
                   </div>
                 </div>
 
-                <!-- ✅ Boutons -->
                 <div class="client-item" style="grid-column:span 2">
                   <button class="btn primary" onclick="updateLoanAmount();event.stopPropagation()" style="width:100%;justify-content:center">
                     🔄 Générer nouveau plan
-                  </button>
-                </div>
-
-                <!-- ✅ AJOUT: ENREGISTRER -->
-                <div class="client-item" style="grid-column:span 2">
-                  <button class="btn good" onclick="saveLoanState();event.stopPropagation()" style="width:100%;justify-content:center">
-                    💾 Enregistrer (montant + plan)
                   </button>
                 </div>
 
@@ -708,6 +667,7 @@
 
               <div class="flip-hint">🔄 Retour fiche client</div>
             </div>
+
           </div>
         </div>
 
@@ -729,6 +689,7 @@
 
       </div>
     </div>
+
   </div>
 
   <!-- Modal -->
@@ -749,95 +710,6 @@
     const fmtDate = (iso) => new Date(iso+'T00:00:00').toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'}).replace('.','');
     const clamp2 = (n) => Math.round((Number(n)||0)*100)/100;
 
-    // ===== ✅ AJOUT: Sauvegarde locale (Prêt & Banque)
-    const STORAGE_KEY = 'dashboard_preteur_state_v1';
-
-    function getLoanFormSnapshot(){
-      const getVal = (id) => (document.getElementById(id)?.value ?? '');
-      return {
-        loanAmount: Number(getVal('loanAmount') || 0),
-        openingFees: Number(getVal('openingFees') || 0),
-        originDate: getVal('originDate'),
-        firstPaymentDate: getVal('firstPaymentDate'),
-        numPayments: parseInt(getVal('numPayments') || '26', 10),
-        desiredPayment: Number(getVal('desiredPayment') || 0),
-        interestRate: Number(getVal('interestRate') || 0),
-        rateType: getVal('rateType') || 'annual',
-        paymentFrequency: parseInt(getVal('paymentFrequency') || '14', 10),
-      };
-    }
-
-    function applyLoanFormSnapshot(s){
-      if(!s) return;
-      const setVal = (id, v) => { const el = document.getElementById(id); if(el != null) el.value = v; };
-
-      setVal('loanAmount', (s.loanAmount ?? 0));
-      setVal('openingFees', (s.openingFees ?? 0));
-      setVal('originDate', (s.originDate ?? ''));
-      setVal('firstPaymentDate', (s.firstPaymentDate ?? ''));
-      setVal('numPayments', (s.numPayments ?? 26));
-      setVal('desiredPayment', (s.desiredPayment ?? 0));
-      setVal('interestRate', (s.interestRate ?? 0));
-      setVal('rateType', (s.rateType ?? 'annual'));
-      setVal('paymentFrequency', (s.paymentFrequency ?? 14));
-
-      if(typeof updateTotalFinanced === 'function') updateTotalFinanced();
-    }
-
-    function saveLoanState(){
-      try{
-        const payload = {
-          savedAt: new Date().toISOString(),
-          form: getLoanFormSnapshot(),
-          loanConfig: loanConfig,
-          state: state,
-          backupBeforeLoanChange: backupBeforeLoanChange
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-        logEvent('💾 Enregistré', 'Prêt & Banque + calendrier sauvegardés (localStorage).');
-        renderAll();
-      }catch(e){
-        alert("Impossible d'enregistrer (stockage bloqué ou plein).");
-      }
-    }
-
-    function loadLoanState(){
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw) return false;
-
-        const payload = JSON.parse(raw);
-        if(!payload || !payload.state || !payload.loanConfig) return false;
-
-        // Restaurer loanConfig sans casser les références
-        loanConfig.initialBalance = payload.loanConfig.initialBalance ?? loanConfig.initialBalance;
-        loanConfig.originDate = payload.loanConfig.originDate ?? loanConfig.originDate;
-        loanConfig.nominalRate = payload.loanConfig.nominalRate ?? loanConfig.nominalRate;
-        loanConfig.effectiveRate = payload.loanConfig.effectiveRate ?? loanConfig.effectiveRate;
-
-        // Restaurer state
-        state.schedule = payload.state.schedule || [];
-        state.selected = payload.state.selected || 1;
-        state.arrearsItems = payload.state.arrearsItems || [];
-        state.events = payload.state.events || [];
-
-        backupBeforeLoanChange = payload.backupBeforeLoanChange || null;
-
-        // Restaurer les champs du formulaire
-        applyLoanFormSnapshot(payload.form);
-
-        // Recalcul de cohérence
-        if(typeof recalculateBalancesAndInterest === 'function'){
-          recalculateBalancesAndInterest();
-        }
-
-        renderAll();
-        return true;
-      }catch(e){
-        return false;
-      }
-    }
-
     // ===== Base de données clients (démo)
     const clientsDB = [
       {id:'10023', prenom:'Marc', nom:'Savoie', tel1:'514-555-1234', tel2:'438-555-9876', courriel:'marc.savoie@email.com', ville:'Montréal', solde:2156.70, statut:'actif'},
@@ -852,6 +724,7 @@
       {id:'10032', prenom:'Catherine', nom:'Fortin', tel1:'514-555-3456', tel2:'', courriel:'cfortin@outlook.com', ville:'Brossard', solde:1750.25, statut:'actif'},
     ];
 
+    // ===== Recherche clients
     function searchClients(query){
       const results = document.getElementById('searchResults');
       if(!query || query.length < 2){
@@ -866,7 +739,7 @@
         (c.prenom + ' ' + c.nom).toLowerCase().includes(q) ||
         (c.nom + ' ' + c.prenom).toLowerCase().includes(q) ||
         c.tel1.includes(q) ||
-        c.tel2.includes(q) ||
+        (c.tel2||'').includes(q) ||
         c.courriel.toLowerCase().includes(q) ||
         c.ville.toLowerCase().includes(q)
       ).slice(0, 8);
@@ -892,8 +765,7 @@
                   <span style="font-size:10px;color:var(--muted2)">${statutLabel}</span>
                 </div>
               </div>
-            </div>
-          `;
+            </div>`;
         }).join('');
       }
       results.style.display = 'block';
@@ -918,6 +790,115 @@
     // ===== Sauvegarde avant modification du prêt
     let backupBeforeLoanChange = null;
 
+    // ✅ PERSISTENCE (LA DISQUETTE)
+    const LS_KEY = 'DASH_LOAN_BANK_V1';
+
+    function readLoanInputs(){
+      const loanAmt = Number(document.getElementById('loanAmount').value) || 0;
+      const fees = Number(document.getElementById('openingFees').value) || 0;
+      const total = clamp2(loanAmt + fees);
+
+      return {
+        loanAmount: clamp2(loanAmt),
+        openingFees: clamp2(fees),
+        totalFinanced: total,
+        originDate: document.getElementById('originDate').value || '2024-11-07',
+        firstPaymentDate: document.getElementById('firstPaymentDate').value || '2024-11-15',
+        numPayments: parseInt(document.getElementById('numPayments').value) || 26,
+        desiredPayment: clamp2(Number(document.getElementById('desiredPayment').value) || 0),
+        interestRate: clamp2(Number(document.getElementById('interestRate').value) || 18.99),
+        rateType: document.getElementById('rateType')?.value || 'annual',
+        paymentFrequency: parseInt(document.getElementById('paymentFrequency').value) || 14
+      };
+    }
+
+    function applyLoanInputs(obj){
+      if(!obj) return;
+      if(obj.loanAmount != null) document.getElementById('loanAmount').value = obj.loanAmount;
+      if(obj.openingFees != null) document.getElementById('openingFees').value = obj.openingFees;
+      if(obj.originDate) document.getElementById('originDate').value = obj.originDate;
+      if(obj.firstPaymentDate) document.getElementById('firstPaymentDate').value = obj.firstPaymentDate;
+      if(obj.numPayments != null) document.getElementById('numPayments').value = obj.numPayments;
+      if(obj.desiredPayment != null) document.getElementById('desiredPayment').value = obj.desiredPayment;
+      if(obj.interestRate != null) document.getElementById('interestRate').value = obj.interestRate;
+      if(obj.rateType) document.getElementById('rateType').value = obj.rateType;
+      if(obj.paymentFrequency != null) document.getElementById('paymentFrequency').value = obj.paymentFrequency;
+
+      updateTotalFinanced();
+    }
+
+    // ✅ DISQUETTE: Enregistrer + recalculer
+    function saveLoanState(){
+      const params = readLoanInputs();
+      if(params.totalFinanced <= 0){
+        alert('Le montant doit être supérieur à 0');
+        return;
+      }
+      if(params.numPayments <= 0){
+        alert('Le nombre de paiements doit être supérieur à 0');
+        return;
+      }
+
+      // Sauvegarder params + schedule (après génération)
+      generateNewPaymentSchedule(params.totalFinanced);
+
+      const payload = {
+        savedAt: new Date().toISOString(),
+        loanConfig: {
+          initialBalance: loanConfig.initialBalance,
+          originDate: loanConfig.originDate,
+          nominalRate: loanConfig.nominalRate,
+          effectiveRate: loanConfig.effectiveRate
+        },
+        inputs: params,
+        state: {
+          schedule: state.schedule,
+          arrearsItems: state.arrearsItems,
+          events: state.events
+        }
+      };
+
+      localStorage.setItem(LS_KEY, JSON.stringify(payload));
+      logEvent('💾 Enregistré', `Nouveau montant sauvegardé: ${money(params.totalFinanced)} · Plan recalculé`);
+      renderAll();
+    }
+
+    function loadLoanState(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return false;
+        const payload = JSON.parse(raw);
+
+        if(payload?.inputs) applyLoanInputs(payload.inputs);
+
+        if(payload?.loanConfig){
+          loanConfig.initialBalance = payload.loanConfig.initialBalance ?? loanConfig.initialBalance;
+          loanConfig.originDate = payload.loanConfig.originDate ?? loanConfig.originDate;
+          loanConfig.nominalRate = payload.loanConfig.nominalRate ?? loanConfig.nominalRate;
+          loanConfig.effectiveRate = payload.loanConfig.effectiveRate ?? loanConfig.effectiveRate;
+        }
+
+        // si schedule sauvegardé -> restaurer exactement
+        if(payload?.state?.schedule?.length){
+          state.schedule = payload.state.schedule;
+          state.arrearsItems = payload.state.arrearsItems || [];
+          state.events = payload.state.events || [];
+          // recalcul sécurité
+          recalculateBalancesAndInterest();
+          renderAll();
+          return true;
+        }
+
+        // sinon, regen
+        const params = readLoanInputs();
+        generateNewPaymentSchedule(params.totalFinanced);
+        return true;
+      }catch(e){
+        console.warn('loadLoanState error', e);
+        return false;
+      }
+    }
+
     // ===== Mettre à jour le montant financé en temps réel
     function updateTotalFinanced(){
       const loanAmt = Number(document.getElementById('loanAmount').value) || 0;
@@ -928,17 +909,13 @@
 
     // ===== Modifier montant du prêt et générer nouveau calendrier
     function updateLoanAmount(){
-      const loanAmt = Number(document.getElementById('loanAmount').value) || 0;
-      const fees = Number(document.getElementById('openingFees').value) || 0;
-      const total = loanAmt + fees;
-
-      const numPay = parseInt(document.getElementById('numPayments').value) || 26;
-      const rate = parseFloat(document.getElementById('interestRate').value) || 18.99;
-      const freq = parseInt(document.getElementById('paymentFrequency').value) || 14;
+      const params = readLoanInputs();
+      const total = params.totalFinanced;
 
       if(total <= 0){ alert('Le montant doit être supérieur à 0'); return; }
-      if(numPay <= 0){ alert('Le nombre de paiements doit être supérieur à 0'); return; }
+      if(params.numPayments <= 0){ alert('Le nombre de paiements doit être supérieur à 0'); return; }
 
+      // Sauvegarder l'état actuel avant modification
       backupBeforeLoanChange = {
         schedule: JSON.parse(JSON.stringify(state.schedule)),
         initialBalance: loanConfig.initialBalance,
@@ -947,12 +924,15 @@
       };
 
       document.getElementById('totalFinanced').textContent = money(total);
+
       loanConfig.initialBalance = total;
 
       generateNewPaymentSchedule(total);
-      logEvent('🔄 Nouveau plan généré', `${money(total)} · ${numPay} paiements · ${rate}% · ${freq}j — Sauvegarde créée`);
+
+      logEvent('🔄 Nouveau plan généré', `${money(total)} · ${params.numPayments} paiements · ${params.interestRate}% · ${params.paymentFrequency}j — Sauvegarde créée`);
     }
 
+    // ===== Générer nouveau calendrier basé sur les paramètres
     function generateNewPaymentSchedule(totalFinanced){
       const numPayments = parseInt(document.getElementById('numPayments').value) || 26;
       const nominalRate = (parseFloat(document.getElementById('interestRate').value) || 18.99) / 100;
@@ -961,8 +941,10 @@
       const firstPaymentDate = document.getElementById('firstPaymentDate').value || '2024-11-15';
       const rateType = document.getElementById('rateType')?.value || 'annual';
 
+      // Adhésion selon fréquence
       const adhesionFee = frequency === 7 ? 22.50 : 45.00;
 
+      // Calculer le taux quotidien selon le type de taux
       let dailyRate;
       if(rateType === 'periodic'){
         dailyRate = nominalRate / frequency;
@@ -1010,6 +992,7 @@
 
         const loanPart = clamp2(capital + interest);
         const payment = clamp2(loanPart + adhesionFee);
+
         const newPrincipalBalance = Math.max(0, clamp2(principalBalance - capital));
 
         newSchedule.push({
@@ -1035,10 +1018,13 @@
       state.schedule = newSchedule;
 
       const totalInterest = clamp2(newSchedule.reduce((sum, r) => sum + r.interest, 0));
-      document.getElementById('subHeader').textContent = `${numPayments} paiements · ${frequency}j · Adh ${money(adhesionFee)} · Int. total: ${money(totalInterest)}`;
+      document.getElementById('subHeader').textContent =
+        `${numPayments} paiements · ${frequency}j · Adh ${money(adhesionFee)} · Int. total: ${money(totalInterest)}`;
+
       renderAll();
     }
 
+    // ===== Restaurer la sauvegarde
     function restoreLoanBackup(){
       if(!backupBeforeLoanChange){
         alert('Aucune sauvegarde disponible');
@@ -1049,6 +1035,7 @@
       state.arrearsItems = backupBeforeLoanChange.arrearsItems;
       loanConfig.initialBalance = backupBeforeLoanChange.initialBalance;
 
+      // Restaurer champs (simple)
       document.getElementById('loanAmount').value = (backupBeforeLoanChange.initialBalance - 250).toFixed(0);
       document.getElementById('openingFees').value = '250';
       document.getElementById('totalFinanced').textContent = money(backupBeforeLoanChange.initialBalance);
@@ -1094,9 +1081,11 @@
       const diff = Math.round((dates[1] - dates[0]) / (1000 * 60 * 60 * 24));
       return diff <= 10 ? 7 : 14;
     }
-    function getAdhesionFee(){ return getPaymentFrequency() === 7 ? 22.50 : 45.00; }
+    function getAdhesionFee(){
+      return getPaymentFrequency() === 7 ? 22.50 : 45.00;
+    }
 
-    // ===== Configuration du prêt (valeurs Margill)
+    // ===== Configuration du prêt
     const loanConfig = {
       initialBalance: 2250.00,
       originDate: '2024-11-07',
@@ -1110,10 +1099,11 @@
       return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
     }
 
-    // ===== Recalcul des soldes et intérêts après modifications (style Margill)
+    // ===== Recalcul Margill
     function recalculateBalancesAndInterest(){
       const dailyRate = loanConfig.effectiveRate / 365;
       const adhesionFee = getAdhesionFee();
+
       const ordered = [...state.schedule].sort((a,b) => a.date.localeCompare(b.date));
 
       let hasModifications = false;
@@ -1121,7 +1111,8 @@
         const row = ordered[i];
         const orig = originalSchedule.find(o => o.i === row.i);
         if((row.adjustment || 0) !== 0 || row.status === 'NSF' || row.status === 'Frais report' || !orig || row.ententeApplied){
-          hasModifications = true; break;
+          hasModifications = true;
+          break;
         }
       }
 
@@ -1143,6 +1134,7 @@
       }
 
       const linesToRedistribute = [];
+      const linesWithAdjustment = [];
       const specialLines = [];
 
       for(let i = 0; i < ordered.length; i++){
@@ -1150,7 +1142,7 @@
         if(row.status === 'NSF' || row.status === 'Frais report'){
           specialLines.push({idx: i, row: row});
         } else if((row.adjustment || 0) !== 0 || row.ententeApplied){
-          // keep
+          linesWithAdjustment.push({idx: i, row: row});
         } else {
           linesToRedistribute.push({idx: i, row: row});
         }
@@ -1204,7 +1196,6 @@
           prevDate = row.date;
           continue;
         }
-
         if(row.status === 'NSF'){
           row.interest = clamp2(runningBalance * dailyRate * days);
           row.balance = clamp2(runningBalance);
@@ -1272,7 +1263,7 @@
       if(!skipConfirm && !confirm('⚠️ Réinitialiser le dossier?\n\nToutes les modifications (ententes, reports, NSF) seront perdues.')){
         return;
       }
-      state.schedule = originalSchedule.map(r => ({ ...r, status:'À venir', adjustment:0.00, paid:false, method:'A_VENIR', ententeApplied: false, nsfReportFee: 0 }));
+      state.schedule = originalSchedule.map(r => ({ ...r, status:'À venir', adjustment:0.00, paid:false, method:'A_VENIR', ententeApplied:false, nsfReportFee:0 }));
       state.selected = 1;
       state.arrearsItems = [];
       state.events = [{ id: 'evt_' + Date.now() + '_init', ts:new Date().toISOString(), title:'🔄 Dossier réinitialisé', txt:'Le dossier a été remis à son état initial.' }];
@@ -1308,7 +1299,7 @@
           <div class="kpi-label"><span>${k.label}</span><span class="kpi-dot ${k.dot}"></span></div>
           <div class="kpi-value">
             ${k.value}
-            ${k.hasBtn ? `<button class="kpi-btn" onclick="openFirstArrears()" title="Répartir la souffrance">📊</button>` : ''}
+            ${k.hasBtn ? `<button class="kpi-btn" onclick="openFirstArrears();event.stopPropagation()" title="Répartir la souffrance">📊</button>` : ''}
           </div>
           <div class="kpi-sub">${k.sub}</div>
         </div>
@@ -1358,16 +1349,28 @@
             <td><span class="status"><span class="dot ${statusDot}"></span>${statusLabel}</span></td>
             <td class="mono">${money(r.balanceBefore||0)}</td>
             <td class="mono">${money(r.balance||0)}</td>
-          </tr>
-        `;
+          </tr>`;
       }).join('');
 
       const row = state.schedule.find(r=>r.i===state.selected) || ordered[0];
-      document.getElementById('selectedInfo').textContent = `Sélection: #${row.i} · ${fmtDate(row.date)} · Total ${money((row.total||0)+(row.adjustment||0))}`;
+      document.getElementById('selectedInfo').textContent =
+        `Sélection: #${row.i} · ${fmtDate(row.date)} · Total ${money((row.total||0)+(row.adjustment||0))}`;
     }
 
     function renderEvents(){
       const items = [...state.events].slice(-15).reverse();
+      const getIcon = (title) => {
+        if(title.includes('Note client')) return '📋';
+        if(title.includes('Report')) return '📅';
+        if(title.includes('NSF')) return '❌';
+        if(title.includes('Paiement')) return '💵';
+        if(title.includes('Souffrance')) return '⚠️';
+        if(title.includes('Note')) return '📝';
+        if(title.includes('Modification')) return '✏️';
+        if(title.includes('Capital')) return '💰';
+        if(title.includes('Entente')) return '📋';
+        return '📋';
+      };
       const getClass = (title) => {
         if(title.includes('Note client')) return 'note-client';
         if(title.includes('Report')) return 'note-report';
@@ -1376,35 +1379,47 @@
         if(title.includes('Souffrance')) return 'note-souffrance';
         return '';
       };
+
       document.getElementById('events').innerHTML = items.map(e=>{
         const d = new Date(e.ts);
         const dateStr = d.toLocaleDateString('fr-CA',{day:'2-digit',month:'short'});
         const timeStr = d.toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'});
+        const eventId = e.id || '';
         return `
-          <div class="note ${getClass(e.title)}" style="cursor:pointer">
+          <div class="note ${getClass(e.title)}"
+            onclick="${eventId ? `openEditNote('${eventId}')` : ''}"
+            style="cursor:pointer;transition:background .15s"
+            onmouseover="this.style.background='rgba(255,255,255,.06)'"
+            onmouseout="this.style.background=''">
             <div class="meta">
-              <span class="title">${e.title}</span>
+              <span class="title"><span class="icon">${getIcon(e.title)}</span> ${e.title}</span>
               <span class="time">${dateStr} · ${timeStr}</span>
             </div>
             <div class="txt">${e.txt}</div>
-          </div>
-        `;
+          </div>`;
       }).join('');
     }
 
     function renderArrearsList(){
       const box = document.getElementById('arrearsList');
-      const open = state.arrearsItems.filter(a => a.status === 'OPEN').sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
+      const open = state.arrearsItems
+        .filter(a => a.status === 'OPEN')
+        .sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
+
       if(!open.length){
         box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Aucune souffrance ouverte.</div>`;
         return;
       }
+
       box.innerHTML = open.map(a=>{
         const dateStr = new Date(a.createdAt).toLocaleString('fr-CA',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
         return `
           <div class="arrearsRow">
             <div class="arrearsLeft">
-              <div class="arrearsTitle"><span class="tag"><span class="dot bad"></span> NSF</span> Ligne #${a.sourceLine}</div>
+              <div class="arrearsTitle">
+                <span class="tag"><span class="dot bad"></span> NSF</span>
+                Ligne #${a.sourceLine}
+              </div>
               <div class="arrearsCalc">
                 <span class="calcItem">${money(a.amount)}</span>
                 <span class="calcOp">+</span>
@@ -1415,11 +1430,10 @@
               <div class="arrearsMeta">${dateStr}</div>
             </div>
             <div class="actions">
-              <button class="btn" onclick="openArrearsResolver('${a.id}')" style="font-size:16px;padding:6px 10px">📊</button>
-              <button class="btn danger" onclick="openArrearsResolver('${a.id}')">Traiter</button>
+              <button class="btn" onclick="openArrearsResolver('${a.id}');event.stopPropagation()" title="Répartir sur plusieurs paiements" style="font-size:16px;padding:6px 10px">📊</button>
+              <button class="btn danger" onclick="openArrearsResolver('${a.id}');event.stopPropagation()">Traiter</button>
             </div>
-          </div>
-        `;
+          </div>`;
       }).join('');
     }
 
@@ -1430,17 +1444,137 @@
       renderEvents();
     }
 
-    function selectRow(i){ state.selected=i; renderAll(); }
+    function selectRow(i){
+      state.selected=i;
+      renderAll();
+    }
+
     function logEvent(title, txt){
       state.events.push({ id: 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2,5), ts: new Date().toISOString(), title, txt });
     }
 
+    // ===== Notes: edit
+    function openEditNote(eventId){
+      const evt = state.events.find(e => e.id === eventId);
+      if(!evt) return;
+
+      const overlay = document.getElementById('overlay');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+      const foot = document.getElementById('modalFoot');
+
+      title.textContent = '📝 Modifier la note';
+
+      const d = new Date(evt.ts);
+      const dateStr = d.toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'});
+      const timeStr = d.toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'});
+
+      body.innerHTML = `
+        <div class="field">
+          <label>Titre</label>
+          <input id="editNoteTitle" value="${(evt.title||'').replace(/"/g,'&quot;')}" />
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label>Contenu</label>
+          <textarea id="editNoteTxt" rows="4" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--stroke2);border-radius:10px;color:var(--text);padding:10px 12px;font-size:13px;resize:vertical;font-family:inherit">${evt.txt||''}</textarea>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--muted2)">
+          Créé le ${dateStr} à ${timeStr}
+        </div>`;
+
+      foot.innerHTML = `
+        <button class="btn danger" onclick="deleteNote('${eventId}')">🗑️ Supprimer</button>
+        <button class="btn" onclick="closeModal()">Annuler</button>
+        <button class="btn primary" onclick="saveEditNote('${eventId}')">Enregistrer</button>`;
+
+      overlay.style.display = 'flex';
+    }
+
+    function saveEditNote(eventId){
+      const evt = state.events.find(e => e.id === eventId);
+      if(!evt) return;
+      evt.title = document.getElementById('editNoteTitle').value || evt.title;
+      evt.txt = document.getElementById('editNoteTxt').value || evt.txt;
+      closeModal();
+      renderAll();
+    }
+
+    function deleteNote(eventId){
+      if(!confirm('Supprimer cette note?')) return;
+      state.events = state.events.filter(e => e.id !== eventId);
+      closeModal();
+      renderAll();
+    }
+
+    // ===== Edit cell
+    function editCell(lineNum, field, value){
+      const row = state.schedule.find(r => r.i === lineNum);
+      if(!row) return;
+
+      if(field === 'date'){
+        row.date = value;
+        logEvent('✏️ Modification', `Ligne #${lineNum}: date modifiée → ${fmtDate(value)}`);
+      } else if(field === 'method'){
+        const oldMethod = row.method;
+        row.method = value;
+
+        // NSF auto si NON_PAYE
+        if(value === 'NON_PAYE' && oldMethod !== 'NON_PAYE'){
+          const nsfFee = 48.00;
+          const paymentAmt = clamp2((row.total || 0) + (row.adjustment || 0));
+          const totalArrears = clamp2(paymentAmt + nsfFee);
+
+          row.nsfReportFee = nsfFee;
+          row.status = 'NSF';
+
+          const arrearsId = 'arr_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+          state.arrearsItems.push({
+            id: arrearsId, type: 'NSF', sourceLine: lineNum,
+            amount: paymentAmt, fee: nsfFee, total: totalArrears,
+            status: 'OPEN', createdAt: new Date().toISOString()
+          });
+
+          logEvent('❌ NSF Automatique', `Ligne #${lineNum}: Paiement non payé → Souffrance ${money(totalArrears)} (${money(paymentAmt)} + ${money(nsfFee)} frais)`);
+        } else {
+          logEvent('✏️ Modification', `Ligne #${lineNum}: type modifié → ${value}`);
+        }
+      } else if(field === 'total'){
+        const newTotal = clamp2(Number(value) || 0);
+        row.total = newTotal;
+        row.adjustment = 0;
+        logEvent('✏️ Modification', `Ligne #${lineNum}: total modifié → ${money(newTotal)}`);
+      } else if(field === 'interest'){
+        row.interest = clamp2(Number(value) || 0);
+        logEvent('✏️ Modification', `Ligne #${lineNum}: intérêt modifié → ${money(row.interest)}`);
+      } else if(field === 'adhesion'){
+        row.adhesion = clamp2(Number(value) || 0);
+        logEvent('✏️ Modification', `Ligne #${lineNum}: adhésion modifiée → ${money(row.adhesion)}`);
+      } else if(field === 'adjustment'){
+        row.adjustment = clamp2(Number(value) || 0);
+        logEvent('✏️ Modification', `Ligne #${lineNum}: ajustement modifié → ${money(row.adjustment)}`);
+      }
+
+      recalculateBalancesAndInterest();
+      renderAll();
+    }
+
+    // ===== Modal close
     function closeModal(ev){
       if(ev && ev.target && ev.target.id !== 'overlay') return;
       document.getElementById('overlay').style.display = 'none';
     }
 
-    // Minimal NSF direct (table)
+    // ===== NSF modal apply
+    function updateNSFTotal(){
+      const row = state.schedule.find(r=>r.i===state.selected);
+      if(!row) return;
+      const pay = clamp2((row.total||0) + (row.adjustment||0));
+      const fee = clamp2(Number(document.getElementById('nsfFee').value || 48));
+      const total = clamp2(pay + fee);
+      document.getElementById('nsfFeeDisplay').textContent = '+ ' + money(fee);
+      document.getElementById('nsfTotalDisplay').textContent = money(total);
+    }
+
     function applyNSFDirect(lineNum, value){
       const fee = clamp2(Number(value) || 0);
       const row = state.schedule.find(r => r.i === lineNum);
@@ -1449,6 +1583,7 @@
       if(fee > 0){
         const pay = clamp2((row.total||0) + (row.adjustment||0));
         const total = clamp2(pay + fee);
+
         row.status = 'NSF';
         row.nsfReportFee = fee;
 
@@ -1457,7 +1592,7 @@
           state.arrearsItems[existingIdx].fee = fee;
           state.arrearsItems[existingIdx].total = total;
         } else {
-          state.arrearsItems.push({ id: 'arr_' + Date.now(), sourceLine: lineNum, amount: pay, fee: fee, total: total, type: 'NSF', status: 'OPEN', createdAt: new Date().toISOString() });
+          state.arrearsItems.push({ id:'arr_' + Date.now(), sourceLine: lineNum, amount: pay, fee, total, type:'NSF', status:'OPEN', createdAt:new Date().toISOString() });
         }
         logEvent('NSF', `NSF manuel sur #${lineNum}. Souffrance: ${money(pay)} + ${money(fee)} = ${money(total)}.`);
       } else {
@@ -1468,45 +1603,430 @@
           logEvent('NSF retiré', `NSF retiré de la ligne #${lineNum}.`);
         }
       }
-
-      recalculateBalancesAndInterest();
       renderAll();
     }
 
-    // Placeholder pour éviter erreur si tu n'as pas encore mis le resolver
+    function applyNSF(){
+      const row = state.schedule.find(r=>r.i===state.selected);
+      const fee = clamp2(Number(document.getElementById('nsfFee').value || 48));
+      if(!row) return;
+
+      const pay = clamp2((row.total||0) + (row.adjustment||0));
+      const total = clamp2(pay + fee);
+
+      row.status = 'NSF';
+      row.nsfReportFee = fee;
+
+      const id = 'A' + Date.now();
+      state.arrearsItems.push({ id, type:'NSF', sourceLine: row.i, amount: pay, fee, total, status:'OPEN', createdAt:new Date().toISOString() });
+
+      const nsfReasonVal = document.getElementById('nsfReason').value;
+      const nsfNoteText = `[NSF - ${nsfReasonVal}] Paiement #${row.i} du ${fmtDate(row.date)} rejeté. Montant: ${money(pay)} + frais NSF ${money(fee)} = ${money(total)} ajouté à la souffrance.`;
+      logEvent('📋 Note client', nsfNoteText);
+      logEvent('NSF', `NSF sur #${row.i}. Souffrance auto: ${money(pay)} + ${money(fee)} = ${money(total)}.`);
+
+      recalculateBalancesAndInterest();
+      closeModal();
+      renderAll();
+      openArrearsResolver(id);
+    }
+
     function openFirstArrears(){
       const first = state.arrearsItems.find(a => a.status === 'OPEN');
-      if(first && typeof openArrearsResolver === 'function') openArrearsResolver(first.id);
+      if(first) openArrearsResolver(first.id);
     }
-    function openArrearsResolver(){ alert('Resolver souffrance non inclus dans ce snippet complet (tu l’avais déjà dans ta version).'); }
 
-    // Placeholder (tu avais déjà openAction complet dans ta version)
+    // ===== Resolver Souffrance (simplifié: LAST / NEW / SELECT)
+    function openArrearsResolver(arrearsId){
+      const item = state.arrearsItems.find(a => a.id === arrearsId && a.status === 'OPEN');
+      if(!item) return;
+
+      const overlay = document.getElementById('overlay');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+      const foot = document.getElementById('modalFoot');
+
+      title.textContent = '⚠️ Répartir la souffrance';
+
+      const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
+      const availableLines = ordered.filter(r => !r.paid && r.status !== 'NSF');
+      const lastUnpaid = [...ordered].reverse().find(r => !r.paid && r.status !== 'NSF');
+
+      body.innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.1)">
+          <div>
+            <div style="font-size:11px;color:var(--muted2)">Montant souffrance</div>
+            <div style="font-size:28px;font-weight:700;color:var(--warn);">${money(item.total)}</div>
+            <div style="font-size:11px;color:var(--muted2);margin-top:4px;">Paiement #${item.sourceLine} : ${money(item.amount)} + ${money(item.fee)} NSF</div>
+          </div>
+          <div style="text-align:center;padding:0 12px;border-left:1px solid rgba(255,255,255,0.1)">
+            <div style="font-size:10px;color:var(--muted2)">Lignes</div>
+            <div id="arrCount" style="font-size:22px;font-weight:bold">0</div>
+          </div>
+          <div style="text-align:center;padding:0 12px;border-left:1px solid rgba(255,255,255,0.1)">
+            <div style="font-size:10px;color:var(--muted2)">Par ligne</div>
+            <div id="arrPerLine" style="font-size:14px;font-weight:bold;color:var(--warn)">-</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(251,191,36,0.05);border-radius:12px;padding:10px;border:1px solid rgba(251,191,36,0.2);margin-bottom:12px">
+          <div style="font-size:12px;font-weight:bold;color:var(--warn);margin-bottom:8px">📊 Placer la souffrance sur</div>
+          <select id="arrMode" onchange="onArrModeChange('${item.id}')" style="width:100%;padding:8px;font-size:12px;margin-bottom:8px;border-radius:6px;background:#1a1a2e;border:1px solid rgba(255,255,255,0.15);color:#fff">
+            <option value="SELECT">Choisir les lignes</option>
+            <option value="NEW">+ Nouvelle ligne de paiement</option>
+            <option value="LAST">Dernier paiement existant</option>
+          </select>
+
+          <div id="arrSelectBox" class="listBox" style="max-height:220px;background:transparent;border:1px solid rgba(255,255,255,0.08)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+              <div style="font-size:12px;font-weight:bold;color:var(--warn)">Lignes disponibles</div>
+              <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer">
+                <input type="checkbox" id="arrSelectAll" onchange="toggleArrSelectAll()" />
+                Tout
+              </label>
+            </div>
+            ${availableLines.map(t=>{
+              const total = clamp2((t.total||0)+(t.adjustment||0));
+              return `
+                <div style="display:grid;grid-template-columns:22px 1fr 80px 80px;gap:6px;padding:6px 8px;border-radius:6px;align-items:center;font-size:12px"
+                     onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
+                  <input type="checkbox" class="arrLineChk" value="${t.i}" onchange="updateArrPreview('${item.id}')" style="width:16px;height:16px"/>
+                  <div><span style="color:var(--muted2)">#${t.i}</span> ${fmtDate(t.date)}</div>
+                  <div style="text-align:right;color:var(--muted2)">${money(total)}</div>
+                  <div class="arrNewAmt" data-i="${t.i}" style="text-align:right;font-weight:bold;color:var(--warn)">-</div>
+                </div>`;
+            }).join('')}
+          </div>
+
+          <div id="arrNewBox" style="display:none;margin-top:10px">
+            <div class="row">
+              <div class="field">
+                <label>Date</label>
+                <input type="date" id="arrNewDate" value="${new Date().toISOString().split('T')[0]}"/>
+              </div>
+              <div class="field">
+                <label>Mode</label>
+                <select id="arrNewMethod">
+                  <option value="PPA">PPA</option>
+                  <option value="VIREMENT" selected>À venir cash</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div id="arrLastBox" style="display:none;margin-top:10px;color:var(--muted2);font-size:12px">
+            ${lastUnpaid ? `→ Ligne #${lastUnpaid.i} · ${fmtDate(lastUnpaid.date)} recevra ${money(item.total)}` : 'Aucune ligne disponible'}
+          </div>
+        </div>
+      `;
+
+      foot.innerHTML = `
+        <button class="btn" onclick="closeModal()">Annuler</button>
+        <button class="btn primary" id="arrConfirm" onclick="applyArrearsResolve('${item.id}')">Confirmer</button>
+      `;
+
+      overlay.style.display = 'flex';
+      setTimeout(()=>updateArrPreview(item.id), 0);
+    }
+
+    function onArrModeChange(arrearsId){
+      const mode = document.getElementById('arrMode').value;
+      const sel = document.getElementById('arrSelectBox');
+      const nw = document.getElementById('arrNewBox');
+      const ls = document.getElementById('arrLastBox');
+
+      sel.style.display = (mode === 'SELECT') ? 'block' : 'none';
+      nw.style.display = (mode === 'NEW') ? 'block' : 'none';
+      ls.style.display = (mode === 'LAST') ? 'block' : 'none';
+
+      const item = state.arrearsItems.find(a => a.id === arrearsId);
+      if(!item) return;
+
+      if(mode === 'LAST' || mode === 'NEW'){
+        document.getElementById('arrCount').textContent = '1';
+        document.getElementById('arrPerLine').textContent = money(item.total);
+      } else {
+        updateArrPreview(arrearsId);
+      }
+    }
+
+    function toggleArrSelectAll(){
+      const selectAll = document.getElementById('arrSelectAll').checked;
+      document.querySelectorAll('.arrLineChk').forEach(chk => chk.checked = selectAll);
+
+      const confirmBtn = document.getElementById('arrConfirm');
+      const match = confirmBtn.getAttribute('onclick').match(/applyArrearsResolve\('(.+?)'\)/);
+      if(match) updateArrPreview(match[1]);
+    }
+
+    function updateArrPreview(arrearsId){
+      const item = state.arrearsItems.find(a => a.id === arrearsId);
+      if(!item) return;
+
+      const checkedIds = Array.from(document.querySelectorAll('.arrLineChk:checked')).map(x => Number(x.value));
+      const count = checkedIds.length;
+      const perLine = count > 0 ? clamp2(item.total / count) : 0;
+
+      document.getElementById('arrCount').textContent = count;
+      document.getElementById('arrPerLine').textContent = count > 0 ? money(perLine) : '-';
+
+      document.querySelectorAll('.arrNewAmt').forEach(el => {
+        const lineI = Number(el.dataset.i);
+        if(checkedIds.includes(lineI)){
+          const row = state.schedule.find(r => r.i === lineI);
+          const currentTotal = clamp2((row?.total||0) + (row?.adjustment||0));
+          el.textContent = money(currentTotal + perLine);
+          el.style.color = 'var(--warn)';
+        } else {
+          el.textContent = '-';
+          el.style.color = 'var(--muted2)';
+        }
+      });
+
+      const allCheckboxes = document.querySelectorAll('.arrLineChk');
+      const selectAllChk = document.getElementById('arrSelectAll');
+      if(selectAllChk){
+        selectAllChk.checked = allCheckboxes.length > 0 && checkedIds.length === allCheckboxes.length;
+        selectAllChk.indeterminate = checkedIds.length > 0 && checkedIds.length < allCheckboxes.length;
+      }
+    }
+
+    function applyArrearsResolve(id){
+      const item = state.arrearsItems.find(a => a.id === id && a.status === 'OPEN');
+      if(!item) return;
+
+      const mode = document.getElementById('arrMode').value;
+      const amt = clamp2(item.total);
+      if(amt <= 0) return;
+
+      if(mode === 'NEW'){
+        const d = document.getElementById('arrNewDate').value;
+        const method = document.getElementById('arrNewMethod').value;
+        const maxI = Math.max(...state.schedule.map(r=>r.i));
+        state.schedule.push({ i: maxI + 1, date: d, total: amt, interest: 0.00, adhesion: 0.00, balance: 0.00, adjustment: 0.00, status:'À venir', paid:false, method: method });
+        item.status = 'RESOLVED';
+        logEvent('Souffrance (NOUVELLE LIGNE)', `Souffrance ${money(amt)} déplacée en nouvelle ligne (${fmtDate(d)}).`);
+        closeModal(); renderAll(); return;
+      }
+
+      if(mode === 'LAST'){
+        const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
+        const lastUnpaid = [...ordered].reverse().find(r => !r.paid && r.status !== 'NSF');
+        if(!lastUnpaid) return;
+        lastUnpaid.adjustment = clamp2((lastUnpaid.adjustment||0) + amt);
+        item.status = 'RESOLVED';
+        logEvent('Souffrance (DERNIER)', `Souffrance ${money(amt)} ajoutée au dernier paiement #${lastUnpaid.i} (${fmtDate(lastUnpaid.date)}).`);
+        recalculateBalancesAndInterest();
+        closeModal(); renderAll(); return;
+      }
+
+      if(mode === 'SELECT'){
+        const checkedIds = Array.from(document.querySelectorAll('.arrLineChk:checked')).map(x => Number(x.value));
+        if(!checkedIds.length) return;
+        const perLine = clamp2(amt / checkedIds.length);
+        const targets = state.schedule.filter(r => checkedIds.includes(r.i));
+        targets.forEach(t => t.adjustment = clamp2((t.adjustment||0) + perLine));
+        item.status = 'RESOLVED';
+        logEvent('Souffrance (RÉPARTIE)', `Souffrance ${money(amt)} répartie sur ${checkedIds.length} ligne(s): #${checkedIds.join(', #')} (+${money(perLine)} chacune).`);
+        recalculateBalancesAndInterest();
+        closeModal(); renderAll(); return;
+      }
+    }
+
+    // ===== Paiement manuel
+    function applyManual(){
+      const amt = clamp2(Number(document.getElementById('manualAmt').value || 0));
+      const to = document.getElementById('manualTo').value;
+      if(amt<=0){ closeModal(); return; }
+
+      if(to === 'arrears'){
+        let remaining = amt;
+        let closed = 0;
+        for(const a of state.arrearsItems){
+          if(a.status !== 'OPEN') continue;
+          if(remaining >= a.total){
+            remaining = clamp2(remaining - a.total);
+            a.status = 'RESOLVED';
+            closed++;
+          } else {
+            a.total = clamp2(a.total - remaining);
+            remaining = 0;
+            break;
+          }
+        }
+        logEvent('Paiement manuel', `Paiement ${money(amt)} appliqué à la souffrance. Items fermés: ${closed}. Reste non utilisé: ${money(remaining)}.`);
+      } else {
+        logEvent('Paiement manuel', `Paiement reçu ${money(amt)} (note seulement).`);
+      }
+
+      closeModal();
+      renderAll();
+    }
+
+    function applyNote(){
+      const txt = (document.getElementById('noteTxt').value || '').trim();
+      if(!txt){ closeModal(); return; }
+      logEvent('Note', txt);
+      closeModal();
+      renderAll();
+    }
+
+    // ===== Open modal actions (report/capital/entente gardés comme placeholders “sans changement”)
     function openAction(kind){
-      alert('openAction complet non inclus ici (tu l’avais déjà). Ajout “Enregistrer” ne dépend pas de openAction.');
+      const row = state.schedule.find(r=>r.i===state.selected) || state.schedule[0];
+      const overlay = document.getElementById('overlay');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+      const foot = document.getElementById('modalFoot');
+
+      title.textContent = ({
+        report:'📅 Reporter un paiement',
+        capital:'💰 Ajout de capital (financement)',
+        nsf:'❌ NSF (banque) → Souffrance automatique',
+        manual:'💵 Paiement manuel',
+        note:'📝 Ajouter une note',
+        entente:'📋 Entente fixe'
+      })[kind] || 'Action';
+
+      if(kind === 'nsf'){
+        const nsfPayAmt = clamp2((row.total||0)+(row.adjustment||0));
+        const nsfDefaultFee = 48.00;
+        const nsfTotal = clamp2(nsfPayAmt + nsfDefaultFee);
+
+        body.innerHTML = `
+          <div class="nsfCalc">
+            <div class="nsfRow">
+              <div class="nsfLabel">Paiement rejeté</div>
+              <div class="nsfLine">#${row.i} · ${fmtDate(row.date)}</div>
+              <div class="nsfAmount">${money(nsfPayAmt)}</div>
+            </div>
+            <div class="nsfRow add">
+              <div class="nsfLabel">Frais NSF (banque)</div>
+              <div class="nsfLine">
+                <input id="nsfFee" type="number" step="0.01" value="48.00" oninput="updateNSFTotal()" style="width:80px;text-align:right"/>
+              </div>
+              <div class="nsfAmount" id="nsfFeeDisplay">+ ${money(nsfDefaultFee)}</div>
+            </div>
+            <div class="nsfRow total">
+              <div class="nsfLabel">Total Souffrance</div>
+              <div class="nsfLine">→ Ajouté automatiquement</div>
+              <div class="nsfAmount" id="nsfTotalDisplay">${money(nsfTotal)}</div>
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:10px">
+            <label>📝 Note interne (contexte du NSF)</label>
+            <select id="nsfReason">
+              <option value="Fonds insuffisants">Fonds insuffisants signalé par la banque</option>
+              <option value="Compte fermé">Compte fermé</option>
+              <option value="Paiement bloqué">Paiement bloqué par le client</option>
+              <option value="Erreur bancaire">Erreur bancaire</option>
+            </select>
+          </div>
+
+          <div class="summary" style="background:rgba(251,113,133,.1);border-color:rgba(251,113,133,.25)">
+            ⚠️ Une note interne sera générée automatiquement.
+          </div>
+        `;
+
+        foot.innerHTML = `
+          <button class="btn" onclick="closeModal()">Annuler</button>
+          <button class="btn danger" onclick="applyNSF()">Confirmer NSF</button>
+        `;
+        overlay.style.display = 'flex';
+        return;
+      }
+
+      if(kind === 'manual'){
+        body.innerHTML = `
+          <div class="row">
+            <div class="field">
+              <label>Montant reçu</label>
+              <input id="manualAmt" type="number" step="0.01" value="148.00" />
+            </div>
+            <div class="field">
+              <label>Appliquer à</label>
+              <select id="manualTo">
+                <option value="arrears" selected>Souffrance (réduire)</option>
+                <option value="note">Note seulement</option>
+              </select>
+            </div>
+          </div>
+          <div class="summary">Démo : “Souffrance” = ferme des items OPEN (FIFO) jusqu’à épuisement du montant.</div>
+        `;
+        foot.innerHTML = `
+          <button class="btn" onclick="closeModal()">Annuler</button>
+          <button class="btn primary" onclick="applyManual()">Enregistrer</button>
+        `;
+        overlay.style.display = 'flex';
+        return;
+      }
+
+      if(kind === 'note'){
+        body.innerHTML = `
+          <div class="field">
+            <label>Note</label>
+            <input id="noteTxt" placeholder="Ex: client reporte au prochain vendredi…" />
+          </div>
+          <div class="summary">Les notes restent dans l'historique (audit).</div>
+        `;
+        foot.innerHTML = `
+          <button class="btn" onclick="closeModal()">Annuler</button>
+          <button class="btn primary" onclick="applyNote()">Ajouter</button>
+        `;
+        overlay.style.display = 'flex';
+        return;
+      }
+
+      // Placeholder sans toucher ton reste (tu avais des gros blocs ici)
+      body.innerHTML = `<div class="summary">Action "${kind}" (inchangée). Ton bloc original peut rester ici tel quel.</div>`;
+      foot.innerHTML = `<button class="btn" onclick="closeModal()">Fermer</button>`;
+      overlay.style.display = 'flex';
     }
 
-    // ===== ✅ Init: charger la sauvegarde sinon reset
-    if(!loadLoanState()){
-      resetDemo(true);
-    }
+    // ===== INIT
+    // 1) Dossier par défaut (comme avant)
+    resetDemo(true);
 
-    // expose
+    // 2) ✅ Charger si déjà sauvegardé (disquette)
+    loadLoanState();
+
+    // expose for inline handlers
     window.searchClients = searchClients;
     window.selectClient = selectClient;
+
     window.updateTotalFinanced = updateTotalFinanced;
     window.updateLoanAmount = updateLoanAmount;
     window.generateNewPaymentSchedule = generateNewPaymentSchedule;
-    window.restoreLoanBackup = restoreLoanBackup;
-    window.editCell = function(){};
-    window.applyNSFDirect = applyNSFDirect;
-    window.openFirstArrears = openFirstArrears;
-    window.openArrearsResolver = openArrearsResolver;
-    window.openAction = openAction;
-    window.resetDemo = resetDemo;
 
-    // ✅ expose SAVE/LOAD
     window.saveLoanState = saveLoanState;
     window.loadLoanState = loadLoanState;
+
+    window.resetDemo = resetDemo;
+    window.renderAll = renderAll;
+    window.selectRow = selectRow;
+    window.openAction = openAction;
+
+    window.editCell = editCell;
+
+    window.updateNSFTotal = updateNSFTotal;
+    window.applyNSF = applyNSF;
+    window.applyNSFDirect = applyNSFDirect;
+
+    window.openArrearsResolver = openArrearsResolver;
+    window.openFirstArrears = openFirstArrears;
+    window.onArrModeChange = onArrModeChange;
+    window.toggleArrSelectAll = toggleArrSelectAll;
+    window.updateArrPreview = updateArrPreview;
+    window.applyArrearsResolve = applyArrearsResolve;
+
+    window.openEditNote = openEditNote;
+    window.saveEditNote = saveEditNote;
+    window.deleteNote = deleteNote;
+
+    window.closeModal = closeModal;
+    window.applyManual = applyManual;
+    window.applyNote = applyNote;
   </script>
 </body>
 </html>
