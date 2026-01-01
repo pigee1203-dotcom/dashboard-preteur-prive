@@ -20,7 +20,6 @@
       --bad:#f87171;
       --accent:#60a5fa;
       --purple:#a78bfa;
-      --glow:0 0 40px rgba(96,165,250,.15);
       --shadow:0 4px 24px rgba(0,0,0,.4);
       --shadow2:0 8px 40px rgba(0,0,0,.5);
       --r:20px;
@@ -38,22 +37,9 @@
       line-height:1.4;
       -webkit-font-smoothing:antialiased;
     }
-
-    /* === LAYOUT === */
-    .app{
-      max-width:1400px;
-      margin:0 auto;
-      padding:16px;
-      display:grid;
-      gap:16px;
-    }
-
-    /* === TOP BAR - iPhone style === */
+    .app{max-width:1400px;margin:0 auto;padding:16px;display:grid;gap:16px;}
     .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
       padding:12px 20px;
       background:linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.04) 100%);
       border:1px solid var(--stroke2);
@@ -63,8 +49,7 @@
     }
     .brand{display:flex;align-items:center;gap:14px}
     .logo{
-      width:44px;height:44px;
-      border-radius:14px;
+      width:44px;height:44px;border-radius:14px;
       background:linear-gradient(135deg, var(--accent), var(--good));
       display:flex;align-items:center;justify-content:center;
       font-size:22px;
@@ -74,41 +59,24 @@
     .brand-text p{font-size:12px;color:var(--muted2);margin-top:2px}
     .status-pill{
       display:flex;align-items:center;gap:8px;
-      padding:8px 14px;
-      background:var(--glass2);
+      padding:8px 14px;background:var(--glass2);
       border:1px solid var(--stroke2);
-      border-radius:999px;
-      font-size:12px;
-      font-weight:500;
+      border-radius:999px;font-size:12px;font-weight:500;
     }
     .status-dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good)}
     .status-pill.demo .status-dot{background:var(--warn);box-shadow:0 0 8px var(--warn)}
 
-    /* === KPI CARDS - Glossy pills === */
-    .kpi-row{
-      display:grid;
-      grid-template-columns:repeat(4, 1fr);
-      gap:12px;
-    }
+    .kpi-row{display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;}
     @media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:500px){.kpi-row{grid-template-columns:1fr}}
-
     .kpi-card{
-      position:relative;
-      padding:16px 18px;
+      position:relative;padding:16px 18px;
       background:linear-gradient(180deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,.03) 100%);
       border:1px solid var(--stroke2);
       border-radius:var(--r2);
       backdrop-filter:blur(12px);
       box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.08);
       overflow:hidden;
-    }
-    .kpi-card::before{
-      content:'';
-      position:absolute;
-      top:0;left:0;right:0;
-      height:1px;
-      background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
     }
     .kpi-card .kpi-label{
       display:flex;align-items:center;justify-content:space-between;
@@ -120,33 +88,14 @@
     .kpi-card .kpi-dot.warn{background:var(--warn);box-shadow:0 0 10px var(--warn)}
     .kpi-card .kpi-dot.bad{background:var(--bad);box-shadow:0 0 10px var(--bad)}
     .kpi-card .kpi-value{
-      margin-top:10px;
-      font-size:26px;font-weight:700;
-      font-family:var(--mono);
-      letter-spacing:-.02em;
-      display:flex;align-items:center;gap:10px;
+      margin-top:10px;font-size:26px;font-weight:700;
+      font-family:var(--mono);letter-spacing:-.02em;
     }
     .kpi-card .kpi-sub{margin-top:6px;font-size:11px;color:var(--muted2)}
-    .kpi-btn{
-      background:var(--warn);
-      border:none;border-radius:8px;
-      padding:6px 10px;
-      font-size:14px;
-      cursor:pointer;
-      box-shadow:0 2px 8px rgba(251,191,36,.3);
-      transition:transform .1s, box-shadow .1s;
-    }
-    .kpi-btn:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(251,191,36,.4)}
 
-    /* === MAIN GRID === */
-    .main-grid{
-      display:grid;
-      grid-template-columns:1fr 380px;
-      gap:16px;
-    }
+    .main-grid{display:grid;grid-template-columns:1fr 380px;gap:16px;}
     @media(max-width:1100px){.main-grid{grid-template-columns:1fr}}
 
-    /* === PANEL - Glossy card === */
     .panel{
       background:linear-gradient(180deg, var(--glass2) 0%, var(--glass) 100%);
       border:1px solid var(--stroke);
@@ -164,17 +113,14 @@
     .panel-head h2{font-size:15px;font-weight:600}
     .panel-head small{color:var(--muted2);font-size:11px;margin-top:2px}
 
-    /* === ACTION BUTTONS - Pill style === */
     .actions{display:flex;gap:8px;flex-wrap:wrap}
     .btn{
       display:inline-flex;align-items:center;gap:6px;
       padding:10px 14px;
       background:linear-gradient(180deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,.05) 100%);
       border:1px solid var(--stroke2);
-      border-radius:14px;
-      color:var(--text);
-      font-size:12px;font-weight:500;
-      cursor:pointer;
+      border-radius:14px;color:var(--text);
+      font-size:12px;font-weight:500;cursor:pointer;
       transition:all .15s ease;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
       white-space:nowrap;
@@ -186,19 +132,16 @@
       border-color:rgba(96,165,250,.5);
       box-shadow:0 2px 12px rgba(96,165,250,.2), inset 0 1px 0 rgba(255,255,255,.15);
     }
-    .btn.danger{
-      background:linear-gradient(180deg, rgba(248,113,113,.35) 0%, rgba(248,113,113,.2) 100%);
-      border-color:rgba(248,113,113,.5);
-    }
     .btn.good{
       background:linear-gradient(180deg, rgba(52,211,153,.35) 0%, rgba(52,211,153,.2) 100%);
       border-color:rgba(52,211,153,.5);
     }
-    .btn.ghost{background:transparent;border-color:transparent;box-shadow:none}
-    .btn.ghost:hover{background:var(--glass2)}
-    .btn.disabled{opacity:.4;pointer-events:none}
+    .btn.warn{
+      background:linear-gradient(180deg, rgba(251,191,36,.35) 0%, rgba(251,191,36,.2) 100%);
+      border-color:rgba(251,191,36,.5);
+    }
 
-    /* === TABLE === */
+    .hint{padding:12px 20px;font-size:11px;color:var(--muted2);border-bottom:1px solid var(--stroke)}
     .table-wrap{overflow-y:auto;overflow-x:hidden;padding:0;max-height:420px}
     table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;table-layout:fixed}
     th,td{padding:6px 4px;text-align:left;overflow:hidden;text-overflow:ellipsis}
@@ -213,995 +156,277 @@
     }
     td{border-bottom:1px solid rgba(255,255,255,.04)}
     tr:hover td{background:rgba(255,255,255,.03)}
-    tr.selected td{background:rgba(96,165,250,.1)}
     .mono{font-family:var(--mono)}
-
-    .status{
-      display:inline-flex;align-items:center;gap:6px;
-      padding:4px 10px;
-      background:var(--glass2);
-      border:1px solid var(--stroke);
-      border-radius:999px;
-      font-size:10px;font-weight:500;
-    }
-    .dot{width:6px;height:6px;border-radius:50%}
-    .dot.good{background:var(--good)}
-    .dot.warn{background:var(--warn)}
-    .dot.bad{background:var(--bad)}
-
     .table-footer{
       display:flex;justify-content:space-between;align-items:center;
-      padding:12px 20px;
-      background:var(--glass);
+      padding:12px 20px;background:var(--glass);
       border-top:1px solid var(--stroke);
       font-size:11px;color:var(--muted2);
     }
-    .hint{padding:12px 20px;font-size:11px;color:var(--muted2);border-bottom:1px solid var(--stroke)}
 
-    /* === RIGHT COLUMN === */
     .right-col{display:flex;flex-direction:column;gap:16px}
-
-    /* === CLIENT CARD === */
-    .client-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      padding:16px;
-    }
+    .client-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px;}
     .client-item{
-      padding:12px;
-      background:var(--glass);
+      padding:12px;background:var(--glass);
       border:1px solid var(--stroke);
       border-radius:14px;
     }
     .client-item .k{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em}
     .client-item .v{margin-top:6px;font-size:13px;font-weight:600}
-
-    /* === ARREARS BOX === */
-    .section{padding:16px}
-    .arrears-box{
-      margin-top:12px;
-      max-height:200px;
-      overflow-y:auto;
-    }
-    .arrears-row{
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      padding:12px;
-      background:var(--glass);
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      margin-bottom:8px;
-    }
-    .arrears-row:hover{border-color:var(--stroke2)}
-    .arrears-left{flex:1;min-width:0}
-    .arrears-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:500}
-    .arrears-calc{
-      display:flex;align-items:center;gap:6px;
-      margin-top:6px;
-      font-family:var(--mono);font-size:12px;
-    }
-    .arrears-calc .item{color:var(--muted)}
-    .arrears-calc .fee{color:var(--bad)}
-    .arrears-calc .op{color:var(--muted2);font-size:10px}
-    .arrears-calc .total{color:var(--text);font-weight:700;font-size:14px}
-    .arrears-meta{margin-top:4px;font-size:10px;color:var(--muted2)}
-    .tag{
-      display:inline-flex;align-items:center;gap:6px;
-      padding:4px 10px;
-      background:rgba(248,113,113,.15);
-      border:1px solid rgba(248,113,113,.25);
-      border-radius:999px;
-      font-size:10px;font-weight:500;
-      color:var(--bad);
-    }
-
-    /* === EVENTS/NOTES === */
-    .notes{display:flex;flex-direction:column;gap:8px;margin-top:12px;max-height:250px;overflow-y:auto}
-    .note{
-      padding:12px;
-      background:var(--glass);
-      border:1px solid var(--stroke);
-      border-radius:12px;
-      border-left:3px solid var(--muted);
-    }
-    .note.note-report{border-left-color:var(--accent)}
-    .note.note-nsf{border-left-color:var(--bad)}
-    .note.note-paiement{border-left-color:var(--good)}
-    .note.note-souffrance{border-left-color:var(--warn)}
-    .note.note-client{border-left-color:var(--purple);background:rgba(167,139,250,.08)}
-    .note .meta{display:flex;justify-content:space-between;align-items:center;gap:8px}
-    .note .title{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500}
-    .note .time{font-size:10px;color:var(--muted2);font-family:var(--mono)}
-    .note .txt{margin-top:6px;font-size:11px;color:var(--muted);line-height:1.5}
-
-    /* === MODAL - iOS style === */
-    .modalOverlay{
-      position:fixed;inset:0;
-      background:rgba(0,0,0,.7);
-      backdrop-filter:blur(8px);
-      display:none;align-items:center;justify-content:center;
-      padding:20px;
-      z-index:1000;
-    }
-    .modal{
-      width:min(720px, 100%);
-      background:linear-gradient(180deg, rgba(30,30,35,.98) 0%, rgba(24,24,28,.98) 100%);
-      border:1px solid var(--stroke2);
-      border-radius:var(--r3);
-      box-shadow:0 40px 120px rgba(0,0,0,.6);
-      backdrop-filter:blur(20px);
-      overflow:hidden;
-    }
-    .modalHead{
-      display:flex;justify-content:space-between;align-items:center;
-      padding:16px 20px;
-      background:linear-gradient(180deg, rgba(255,255,255,.06) 0%, transparent 100%);
-      border-bottom:1px solid var(--stroke);
-    }
-    .modalHead h3{font-size:16px;font-weight:600}
-    .modalBody{padding:20px;max-height:60vh;overflow-y:auto}
-    .modalFoot{
-      display:flex;justify-content:flex-end;gap:10px;
-      padding:16px 20px;
-      background:var(--glass);
-      border-top:1px solid var(--stroke);
-    }
-
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media(max-width:600px){.row{grid-template-columns:1fr}}
-
-    .field{
-      padding:14px;
-      background:var(--glass);
-      border:1px solid var(--stroke);
-      border-radius:16px;
-    }
-    .field label{display:block;font-size:11px;color:var(--muted2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
-    .field input, .field select, .field textarea{
-      width:100%;
-      background:rgba(255,255,255,.05);
-      border:1px solid var(--stroke2);
-      border-radius:10px;
-      color:var(--text);
-      padding:10px 12px;
-      font-size:13px;
-      outline:none;
-      transition:border-color .15s;
-      font-family:inherit;
-    }
-    .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--accent)}
-    .field select option{background:#1e1e23;color:#fff}
-
-    .summary{
-      margin-top:16px;
-      padding:14px;
-      background:rgba(96,165,250,.08);
-      border:1px solid rgba(96,165,250,.2);
-      border-radius:14px;
-      font-size:12px;color:var(--muted);
-    }
-
-    .listBox{
-      margin-top:12px;
-      padding:10px;
-      background:var(--glass);
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      max-height:180px;
-      overflow-y:auto;
-    }
-    .chk{
-      display:grid;grid-template-columns:20px 1fr auto;gap:10px;
-      align-items:center;
-      padding:10px 12px;
-      background:rgba(255,255,255,.02);
-      border:1px solid var(--stroke);
-      border-radius:10px;
-      margin-bottom:6px;
-      cursor:pointer;
-    }
-    .chk:hover{background:rgba(255,255,255,.04)}
-    .chk.selected{background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.3)}
-    .chk input{margin:0}
-    .chk .info{min-width:0}
-    .chk .t{font-size:12px;font-weight:500}
-    .chk .m{font-size:10px;color:var(--muted2)}
-    .chk .amounts{text-align:right;font-family:var(--mono);font-size:11px}
-    .chk .current{color:var(--muted)}
-    .chk .add{color:var(--good)}
-    .chk .newtotal{color:var(--text);font-weight:600}
-
-    .inlineInfo{
-      display:grid;grid-template-columns:1fr 1fr;gap:10px;
-      margin:12px 0;
-      padding:12px;
-      background:rgba(96,165,250,.08);
-      border:1px solid rgba(96,165,250,.2);
-      border-radius:12px;
-    }
-    .inlineInfo .label{font-size:10px;color:var(--muted2);text-transform:uppercase}
-    .inlineInfo .value{font-family:var(--mono);font-weight:600;margin-top:4px}
-
-    .nsfCalc{
-      background:var(--glass);
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      overflow:hidden;
-    }
-    .nsfRow{
-      display:grid;grid-template-columns:120px 1fr auto;gap:12px;
-      padding:14px 16px;
-      align-items:center;
-      border-bottom:1px solid var(--stroke);
-    }
-    .nsfRow:last-child{border-bottom:none}
-    .nsfRow.add{background:rgba(248,113,113,.08)}
-    .nsfRow.total{background:rgba(248,113,113,.15)}
-    .nsfLabel{font-size:12px;color:var(--muted2)}
-    .nsfLine{font-size:12px;color:var(--muted)}
-    .nsfAmount{font-family:var(--mono);font-size:14px;font-weight:600;text-align:right}
-    .nsfRow.add .nsfAmount{color:var(--bad)}
-    .nsfRow.total .nsfAmount{font-size:18px}
-
-    /* Arrears list style */
-    .arrearsBox{margin-top:12px;max-height:200px;overflow-y:auto}
-    .arrearsRow{
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      padding:12px;
-      background:var(--glass);
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      margin-bottom:8px;
-    }
-    .arrearsLeft{flex:1}
-    .arrearsTitle{display:flex;align-items:center;gap:8px;font-size:12px}
-    .arrearsCalc{display:flex;align-items:center;gap:6px;margin:6px 0 4px;font-family:var(--mono);font-size:12px}
-    .arrearsCalc .calcItem{color:var(--muted)}
-    .arrearsCalc .calcItem.fee{color:var(--bad)}
-    .arrearsCalc .calcOp{color:var(--muted2);font-size:10px}
-    .arrearsCalc .calcTotal{color:var(--text);font-weight:700;font-size:14px}
-    .arrearsMeta{font-size:10px;color:var(--muted2)}
-
-    /* scrollbar */
-    ::-webkit-scrollbar{width:6px;height:6px}
-    ::-webkit-scrollbar-track{background:transparent}
-    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
-    ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.25)}
-
-    /* === FLIP CARD === */
-    .flip-container{
-      perspective:1000px;
-      cursor:pointer;
-    }
-    .flip-card{
-      position:relative;
-      width:100%;
-      transition:transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
-      transform-style:preserve-3d;
-    }
-    .flip-container.flipped .flip-card{
-      transform:rotateY(180deg);
-    }
-    .flip-front, .flip-back{
-      backface-visibility:hidden;
-      -webkit-backface-visibility:hidden;
-    }
-    .flip-front{ position:relative; }
+    .flip-container{perspective:1000px;cursor:pointer;}
+    .flip-card{position:relative;width:100%;transition:transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);transform-style:preserve-3d;}
+    .flip-container.flipped .flip-card{transform:rotateY(180deg);}
+    .flip-front, .flip-back{backface-visibility:hidden;-webkit-backface-visibility:hidden;}
     .flip-back{
-      position:absolute;
-      top:0;left:0;right:0;
+      position:absolute;top:0;left:0;right:0;
       transform:rotateY(180deg);
       background:linear-gradient(180deg, var(--glass2) 0%, var(--glass) 100%);
       border-radius:var(--r2);
       min-height:100%;
     }
     .flip-hint{
-      position:absolute;
-      bottom:8px;right:12px;
-      font-size:10px;
-      color:var(--muted2);
-      display:flex;align-items:center;gap:4px;
+      position:absolute;bottom:8px;right:12px;
+      font-size:10px;color:var(--muted2);
       opacity:0.7;
-      transition:opacity .2s;
     }
-    .flip-container:hover .flip-hint{opacity:1}
+
+    .notes{display:flex;flex-direction:column;gap:8px;margin-top:12px;max-height:250px;overflow-y:auto}
+    .note{
+      padding:12px;background:var(--glass);
+      border:1px solid var(--stroke);
+      border-radius:12px;
+      border-left:3px solid var(--muted);
+    }
+    .note .meta{display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .note .title{font-size:12px;font-weight:500}
+    .note .time{font-size:10px;color:var(--muted2);font-family:var(--mono)}
+    .note .txt{margin-top:6px;font-size:11px;color:var(--muted);line-height:1.5}
   </style>
 </head>
 
 <body>
-  <div class="app">
-    <!-- TOP BAR -->
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo">💼</div>
-        <div class="brand-text">
-          <h1>Dashboard Prêteur</h1>
-          <p>Gestion simplifiée</p>
-        </div>
-      </div>
-
-      <!-- SEARCH BAR -->
-      <div class="search-box" style="flex:1;max-width:450px;position:relative">
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--glass2);border:1px solid var(--stroke2);border-radius:14px;transition:all .2s" id="searchContainer">
-          <span style="font-size:16px">🔍</span>
-          <input type="text" id="clientSearch" placeholder="Rechercher un client (nom, #, téléphone, courriel...)"
-            style="flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:13px"
-            oninput="searchClients(this.value)"
-            onfocus="document.getElementById('searchContainer').style.borderColor='var(--accent)'"
-            onblur="setTimeout(()=>{document.getElementById('searchContainer').style.borderColor='var(--stroke2)';document.getElementById('searchResults').style.display='none'},200)"
-          />
-          <kbd style="padding:3px 8px;background:var(--glass);border:1px solid var(--stroke);border-radius:6px;font-size:10px;color:var(--muted2)">ESC</kbd>
-        </div>
-        <!-- Search Results Dropdown -->
-        <div id="searchResults" style="display:none;position:absolute;top:100%;left:0;right:0;margin-top:8px;background:rgba(24,24,28,.98);border:1px solid var(--stroke2);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5);max-height:320px;overflow-y:auto;z-index:100"></div>
-      </div>
-
-      <div style="display:flex;gap:10px;align-items:center">
-        <div class="status-pill"><span class="status-dot"></span> Connecté</div>
-        <div class="status-pill demo"><span class="status-dot"></span> Mode Démo</div>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">💼</div>
+      <div class="brand-text">
+        <h1>Dashboard Prêteur</h1>
+        <p>Gestion simplifiée</p>
       </div>
     </div>
 
-    <!-- KPI ROW -->
-    <div class="kpi-row" id="kpi"></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="status-pill"><span class="status-dot"></span> Connecté</div>
+      <div class="status-pill demo"><span class="status-dot"></span> Mode Démo</div>
+    </div>
+  </div>
 
-    <!-- MAIN GRID -->
-    <div class="main-grid">
-      <!-- LEFT: Payment Calendar -->
+  <div class="kpi-row" id="kpi"></div>
+
+  <div class="main-grid">
+    <!-- LEFT -->
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Calendrier des paiements</h2>
+          <small id="subHeader">—</small>
+        </div>
+        <div class="actions">
+          <button class="btn primary" onclick="recalculateFromUI()">🧮 Recalculer</button>
+          <button class="btn good" onclick="saveLoanSettings()">💾 Sauvegarder</button>
+          <button class="btn" onclick="loadLoanSettings(true)">↩️ Charger</button>
+        </div>
+      </div>
+
+      <div class="hint">Le tableau se regénère à partir des valeurs de “Prêt & Banque”.</div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:30px">#</th>
+              <th style="width:95px">Date</th>
+              <th style="width:80px">Total</th>
+              <th style="width:80px">Intérêt</th>
+              <th style="width:80px">Capital</th>
+              <th style="width:80px">Adh.</th>
+              <th style="width:90px">Solde avant</th>
+              <th style="width:90px">Solde après</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <div id="footerInfo">—</div>
+        <div class="mono" id="selectedInfo">Plan</div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-col">
+      <div class="panel flip-container" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card">
+          <!-- FRONT -->
+          <div class="flip-front">
+            <div class="panel-head">
+              <div>
+                <h2>Fiche client</h2>
+                <small>#10023</small>
+              </div>
+              <div class="status-pill"><span class="status-dot"></span> Actif</div>
+            </div>
+            <div class="client-grid">
+              <div class="client-item"><div class="k">Prénom</div><div class="v">Marc</div></div>
+              <div class="client-item"><div class="k">Nom</div><div class="v">Savoie</div></div>
+              <div class="client-item"><div class="k">Ville</div><div class="v">Montréal</div></div>
+              <div class="client-item"><div class="k">Courriel</div><div class="v">marc.savoie@email.com</div></div>
+            </div>
+            <div class="flip-hint">🔄 Infos prêt & banque</div>
+          </div>
+
+          <!-- BACK -->
+          <div class="flip-back">
+            <div class="panel-head">
+              <div>
+                <h2>Prêt & Banque</h2>
+                <small>Marc Savoie #10023</small>
+              </div>
+              <div class="status-pill"><span class="status-dot"></span> PAD Actif</div>
+            </div>
+
+            <div class="client-grid">
+              <div class="client-item">
+                <div class="k">Montant prêt</div>
+                <div class="v mono">
+                  <input type="number" id="loanAmount" value="2000" step="0.01"
+                    style="width:110px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:13px;font-family:var(--mono);text-align:right"
+                    oninput="updateTotalFinanced()" onclick="event.stopPropagation()"/> $
+                </div>
+              </div>
+
+              <div class="client-item">
+                <div class="k">Frais ouverture</div>
+                <div class="v mono">
+                  <input type="number" id="openingFees" value="250" step="0.01"
+                    style="width:110px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:13px;font-family:var(--mono);text-align:right"
+                    oninput="updateTotalFinanced()" onclick="event.stopPropagation()"/> $
+                </div>
+              </div>
+
+              <div class="client-item">
+                <div class="k">Montant financé</div>
+                <div class="v mono" id="totalFinanced">2 250,00 $</div>
+              </div>
+
+              <div class="client-item">
+                <div class="k">Date origine</div>
+                <div class="v mono">
+                  <input type="date" id="originDate" value="2024-11-07"
+                    style="width:140px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px"
+                    onclick="event.stopPropagation()"/>
+                </div>
+              </div>
+
+              <div class="client-item">
+                <div class="k">1er paiement</div>
+                <div class="v mono">
+                  <input type="date" id="firstPaymentDate" value="2024-11-15"
+                    style="width:140px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px"
+                    onclick="event.stopPropagation()"/>
+                </div>
+              </div>
+
+              <div class="client-item">
+                <div class="k">Nb paiements</div>
+                <div class="v mono">
+                  <input type="number" id="numPayments" value="26" min="1" max="104"
+                    style="width:80px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:13px;font-family:var(--mono);text-align:right"
+                    onclick="event.stopPropagation()"/>
+                </div>
+              </div>
+
+              <div class="client-item">
+                <div class="k">Taux intérêt</div>
+                <div class="v mono">
+                  <input type="number" id="interestRate" value="18.99" step="0.01" min="0" max="100"
+                    style="width:90px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:13px;font-family:var(--mono);text-align:right"
+                    onclick="event.stopPropagation()"/> %
+                </div>
+              </div>
+
+              <div class="client-item">
+                <div class="k">Type taux</div>
+                <div class="v">
+                  <select id="rateType"
+                    style="width:100%;background:#1a1a2e;border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:6px 8px;font-size:12px"
+                    onclick="event.stopPropagation()">
+                    <option value="annual" selected>Annuel</option>
+                    <option value="monthly">Mensuel</option>
+                    <option value="periodic">Par période</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="client-item">
+                <div class="k">Fréquence</div>
+                <div class="v">
+                  <select id="paymentFrequency"
+                    style="width:100%;background:#1a1a2e;border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:6px 8px;font-size:12px"
+                    onclick="event.stopPropagation()">
+                    <option value="7">7 jours</option>
+                    <option value="14" selected>14 jours</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- ✅ BOUTONS: SAUVEGARDER / RECALCULER -->
+              <div class="client-item" style="grid-column:span 2;display:grid;gap:10px">
+                <button class="btn primary" onclick="recalculateFromUI();event.stopPropagation()" style="width:100%;justify-content:center">
+                  🧮 Recalculer le plan avec ces valeurs
+                </button>
+                <button class="btn good" onclick="saveLoanSettings();event.stopPropagation()" style="width:100%;justify-content:center">
+                  💾 Sauvegarder Prêt & Banque
+                </button>
+                <button class="btn warn" onclick="saveAndRecalculate();event.stopPropagation()" style="width:100%;justify-content:center">
+                  💾🧮 Sauvegarder + Recalculer
+                </button>
+                <button class="btn" onclick="loadLoanSettings(true);event.stopPropagation()" style="width:100%;justify-content:center">
+                  ↩️ Charger sauvegarde (et recalculer)
+                </button>
+              </div>
+
+              <div class="client-item"><div class="k">Institution</div><div class="v">Desjardins</div></div>
+              <div class="client-item"><div class="k">Transit</div><div class="v mono">81520</div></div>
+              <div class="client-item"><div class="k">Folio</div><div class="v mono">0648291</div></div>
+              <div class="client-item"><div class="k">Compte</div><div class="v mono">7234851</div></div>
+            </div>
+
+            <div class="flip-hint">🔄 Retour fiche client</div>
+          </div>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="panel-head">
-          <div>
-            <h2>Calendrier des paiements</h2>
-            <small id="subHeader">26 paiements · 14 jours · Adhésion 45,00$</small>
-          </div>
-          <div class="actions">
-            <button class="btn primary" onclick="openAction('report')">📅 Reporter</button>
-            <button class="btn" onclick="openAction('capital')">💰 Capital</button>
-            <button class="btn" onclick="openAction('manual')">💵 Manuel</button>
-            <button class="btn" onclick="openAction('entente')">📋 Entente</button>
-            <button class="btn danger" onclick="openAction('nsf')">❌ NSF</button>
-            <button class="btn ghost" onclick="resetDemo()">↩️</button>
-          </div>
+          <div><h2>Notes</h2><small>Historique</small></div>
         </div>
-
-        <div class="hint">Sélectionner une ligne pour agir dessus</div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:30px">#</th>
-                <th style="width:85px">Date</th>
-                <th style="width:95px">Type</th>
-                <th style="width:60px">Total</th>
-                <th style="width:55px">Prêt</th>
-                <th style="width:55px">Int.</th>
-                <th style="width:55px">Cap.</th>
-                <th style="width:55px">Adh.</th>
-                <th style="width:50px">NSF</th>
-                <th style="width:50px">Ajust</th>
-                <th style="width:70px">Statut</th>
-                <th style="width:60px">Avant</th>
-                <th style="width:60px">Après</th>
-              </tr>
-            </thead>
-            <tbody id="rows"></tbody>
-          </table>
-        </div>
-
-        <div class="table-footer">
-          <div>Taux nominal <span class="mono">18.99%</span> · Fréquence 7 ou 14 jours</div>
-          <div class="mono" id="selectedInfo">Sélection: #1</div>
-        </div>
-      </div>
-
-      <!-- RIGHT COLUMN -->
-      <div class="right-col">
-        <!-- Client Card - Flip -->
-        <div class="panel flip-container" onclick="this.classList.toggle('flipped')">
-          <div class="flip-card">
-            <!-- FRONT - Info client -->
-            <div class="flip-front">
-              <div class="panel-head">
-                <div>
-                  <h2>Fiche client</h2>
-                  <small>#10023</small>
-                </div>
-                <div class="status-pill"><span class="status-dot"></span> Actif</div>
-              </div>
-              <div class="client-grid">
-                <div class="client-item">
-                  <div class="k">Prénom</div>
-                  <div class="v">Marc</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Nom</div>
-                  <div class="v">Savoie</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Adresse</div>
-                  <div class="v" style="font-size:11px">123 Rue Principale</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">App</div>
-                  <div class="v">4B</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Ville</div>
-                  <div class="v">Montréal</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Prov/État</div>
-                  <div class="v">QC</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Code postal</div>
-                  <div class="v mono">H2X 1Y4</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Date naissance</div>
-                  <div class="v mono">1985-03-22</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Numéro 1</div>
-                  <div class="v mono">514-555-1234</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Numéro 2</div>
-                  <div class="v mono">438-555-9876</div>
-                </div>
-                <div class="client-item" style="grid-column:span 2">
-                  <div class="k">Courriel</div>
-                  <div class="v">marc.savoie@email.com</div>
-                </div>
-              </div>
-              <div class="flip-hint">🔄 Infos prêt & banque</div>
-            </div>
-
-            <!-- BACK - Info prêt & bancaire -->
-            <div class="flip-back">
-              <div class="panel-head">
-                <div>
-                  <h2>Prêt & Banque</h2>
-                  <small>Marc Savoie #10023</small>
-                </div>
-                <div class="status-pill"><span class="status-dot"></span> PAD Actif</div>
-              </div>
-
-              <div class="client-grid">
-                <div class="client-item">
-                  <div class="k">Produit</div>
-                  <div class="v">Marge de crédit</div>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">Montant prêt</div>
-                  <div class="v mono">
-                    <input type="number" id="loanAmount" value="2000" step="0.01"
-                      style="width:90px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:13px;font-family:var(--mono);text-align:right"
-                      oninput="updateTotalFinanced()" onclick="event.stopPropagation()"/> $
-                  </div>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">Frais ouverture</div>
-                  <div class="v mono">
-                    <input type="number" id="openingFees" value="250" step="0.01"
-                      style="width:90px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:13px;font-family:var(--mono);text-align:right"
-                      oninput="updateTotalFinanced()" onclick="event.stopPropagation()"/> $
-                  </div>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">Montant financé</div>
-                  <div class="v mono" id="totalFinanced">2 250,00 $</div>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">Date origine</div>
-                  <div class="v mono">
-                    <input type="date" id="originDate" value="2024-11-07"
-                      style="width:120px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px"
-                      onclick="event.stopPropagation()"/>
-                  </div>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">1er paiement</div>
-                  <div class="v mono">
-                    <input type="date" id="firstPaymentDate" value="2024-11-15"
-                      style="width:120px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px"
-                      onclick="event.stopPropagation()"/>
-                  </div>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">Nb paiements</div>
-                  <div class="v mono">
-                    <input type="number" id="numPayments" value="26" min="1" max="104"
-                      style="width:60px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:13px;font-family:var(--mono);text-align:right"
-                      onclick="event.stopPropagation()"/>
-                  </div>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">Paiement souhaité</div>
-                  <div class="v mono">
-                    <input type="number" id="desiredPayment" value="147" step="0.01" min="1"
-                      style="width:70px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:13px;font-family:var(--mono);text-align:right"
-                      onclick="event.stopPropagation()"/> $
-                  </div>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">Taux intérêt</div>
-                  <div class="v mono">
-                    <input type="number" id="interestRate" value="18.99" step="0.01" min="0" max="100"
-                      style="width:70px;background:rgba(255,255,255,.08);border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:13px;font-family:var(--mono);text-align:right"
-                      onclick="event.stopPropagation()"/> %
-                  </div>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">Type taux</div>
-                  <div class="v">
-                    <select id="rateType" style="background:#1a1a2e;border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px" onclick="event.stopPropagation()">
-                      <option value="annual" style="background:#1a1a2e;color:#fff">Annuel</option>
-                      <option value="monthly" style="background:#1a1a2e;color:#fff">Mensuel</option>
-                      <option value="periodic" style="background:#1a1a2e;color:#fff">Par période</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">Fréquence</div>
-                  <div class="v">
-                    <select id="paymentFrequency" style="background:#1a1a2e;border:1px solid var(--stroke2);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px" onclick="event.stopPropagation()">
-                      <option value="7" style="background:#1a1a2e;color:#fff">7 jours</option>
-                      <option value="14" selected style="background:#1a1a2e;color:#fff">14 jours</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="client-item" style="grid-column:span 2">
-                  <button class="btn primary" onclick="updateLoanAmount();event.stopPropagation()" style="width:100%;justify-content:center">
-                    🔄 Générer nouveau plan
-                  </button>
-                </div>
-
-                <!-- ✅ AJOUT : SAUVEGARDE BANQUE & PRÊT -->
-                <div class="client-item" style="grid-column:span 2">
-                  <button class="btn good" onclick="saveLoanSettings();event.stopPropagation()" style="width:100%;justify-content:center">
-                    💾 Sauvegarder Banque & Prêt
-                  </button>
-                </div>
-                <div class="client-item" style="grid-column:span 2">
-                  <button class="btn" onclick="loadLoanSettings(true);event.stopPropagation()" style="width:100%;justify-content:center">
-                    ↩️ Revenir aux valeurs sauvegardées
-                  </button>
-                </div>
-
-                <div class="client-item" style="grid-column:span 2">
-                  <button class="btn" onclick="restoreLoanBackup();event.stopPropagation()" style="width:100%;justify-content:center">
-                    ↩️ Restaurer plan précédent
-                  </button>
-                </div>
-
-                <div class="client-item">
-                  <div class="k">Institution</div>
-                  <div class="v">Desjardins</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Transit</div>
-                  <div class="v mono">81520</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Folio</div>
-                  <div class="v mono">0648291</div>
-                </div>
-                <div class="client-item">
-                  <div class="k">Compte</div>
-                  <div class="v mono">7234851</div>
-                </div>
-              </div>
-
-              <div class="flip-hint">🔄 Retour fiche client</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Notes -->
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <h2>Notes</h2>
-              <small>Cliquer pour modifier</small>
-            </div>
-          </div>
-
-          <div class="section">
-            <div class="arrearsBox" id="arrearsList"></div>
-            <div class="notes" id="events"></div>
-            <div id="rightArrears" style="display:none">0,00 $</div>
-            <div id="rightNext" style="display:none"></div>
-          </div>
+        <div style="padding:16px">
+          <div class="notes" id="events"></div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Modal -->
-  <div class="modalOverlay" id="overlay" onclick="closeModal(event)">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modalHead">
-        <h3 id="modalTitle">Action</h3>
-        <button class="btn" onclick="closeModal()">✕ Fermer</button>
-      </div>
-      <div class="modalBody" id="modalBody"></div>
-      <div class="modalFoot" id="modalFoot"></div>
-    </div>
-  </div>
+</div>
 
 <script>
-  // ===== Utilities
+  // ===================== UTILITAIRES
+  const STORAGE_KEY = 'loan_settings_v1';
+
   const money = (n) => (Number(n||0)).toLocaleString('fr-CA',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' $';
-  const fmtDate = (iso) => new Date(iso+'T00:00:00').toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'}).replace('.','');
   const clamp2 = (n) => Math.round((Number(n)||0)*100)/100;
-
-  // ======================
-  // ✅ SAUVEGARDE BANQUE & PRET (localStorage)
-  // ======================
-  const LS_LOAN_KEY = "margill_loan_settings_v1";
-
-  function getLoanFormData(){
-    return {
-      loanAmount: Number(document.getElementById('loanAmount')?.value || 0),
-      openingFees: Number(document.getElementById('openingFees')?.value || 0),
-      originDate: document.getElementById('originDate')?.value || '',
-      firstPaymentDate: document.getElementById('firstPaymentDate')?.value || '',
-      numPayments: Number(document.getElementById('numPayments')?.value || 0),
-      desiredPayment: Number(document.getElementById('desiredPayment')?.value || 0),
-      interestRate: Number(document.getElementById('interestRate')?.value || 0),
-      rateType: document.getElementById('rateType')?.value || 'annual',
-      paymentFrequency: Number(document.getElementById('paymentFrequency')?.value || 14),
-      savedAt: new Date().toISOString()
-    };
-  }
-
-  function applyLoanFormData(d){
-    if(!d) return;
-
-    if(document.getElementById('loanAmount')) document.getElementById('loanAmount').value = d.loanAmount ?? 0;
-    if(document.getElementById('openingFees')) document.getElementById('openingFees').value = d.openingFees ?? 0;
-
-    if(document.getElementById('originDate')) document.getElementById('originDate').value = d.originDate || '2024-11-07';
-    if(document.getElementById('firstPaymentDate')) document.getElementById('firstPaymentDate').value = d.firstPaymentDate || '2024-11-15';
-
-    if(document.getElementById('numPayments')) document.getElementById('numPayments').value = d.numPayments ?? 26;
-    if(document.getElementById('desiredPayment')) document.getElementById('desiredPayment').value = d.desiredPayment ?? 0;
-
-    if(document.getElementById('interestRate')) document.getElementById('interestRate').value = d.interestRate ?? 18.99;
-    if(document.getElementById('rateType')) document.getElementById('rateType').value = d.rateType || 'annual';
-    if(document.getElementById('paymentFrequency')) document.getElementById('paymentFrequency').value = String(d.paymentFrequency ?? 14);
-
-    updateTotalFinanced();
-  }
-
-  function saveLoanSettings(){
-    const data = getLoanFormData();
-    const total = (data.loanAmount || 0) + (data.openingFees || 0);
-    if(total <= 0){
-      alert("Montant invalide (prêt + frais = 0).");
-      return;
-    }
-    localStorage.setItem(LS_LOAN_KEY, JSON.stringify(data));
-    logEvent('💾 Sauvegarde', `Banque & Prêt sauvegardé. Financé: ${money(total)} · ${data.numPayments} paiements · ${data.interestRate}% · ${data.paymentFrequency}j`);
-    renderAll();
-    alert("✅ Banque & Prêt sauvegardé.");
-  }
-
-  function loadLoanSettings(showToast=false){
-    const raw = localStorage.getItem(LS_LOAN_KEY);
-    if(!raw){
-      if(showToast) alert("Aucune sauvegarde trouvée.");
-      return null;
-    }
-    try{
-      const data = JSON.parse(raw);
-      applyLoanFormData(data);
-      if(showToast) alert("✅ Valeurs sauvegardées rechargées.");
-      return data;
-    }catch(e){
-      console.error(e);
-      if(showToast) alert("Sauvegarde corrompue.");
-      return null;
-    }
-  }
-
-  // ===== Base de données clients (démo)
-  const clientsDB = [
-    {id:'10023', prenom:'Marc', nom:'Savoie', tel1:'514-555-1234', tel2:'438-555-9876', courriel:'marc.savoie@email.com', ville:'Montréal', solde:2156.70, statut:'actif'},
-    {id:'10024', prenom:'Julie', nom:'Tremblay', tel1:'514-555-2345', tel2:'', courriel:'julie.tremblay@gmail.com', ville:'Laval', solde:1850.00, statut:'actif'},
-    {id:'10025', prenom:'Pierre', nom:'Gagnon', tel1:'450-555-3456', tel2:'514-555-4567', courriel:'pgagnon@outlook.com', ville:'Longueuil', solde:3200.50, statut:'actif'},
-    {id:'10026', prenom:'Marie', nom:'Bouchard', tel1:'438-555-5678', tel2:'', courriel:'marie.b@hotmail.com', ville:'Québec', solde:0, statut:'fermé'},
-    {id:'10027', prenom:'Jean', nom:'Lavoie', tel1:'514-555-6789', tel2:'', courriel:'jlavoie@gmail.com', ville:'Gatineau', solde:4500.00, statut:'souffrance'},
-    {id:'10028', prenom:'Sophie', nom:'Martin', tel1:'450-555-7890', tel2:'438-555-8901', courriel:'sophie.martin@yahoo.com', ville:'Sherbrooke', solde:1200.00, statut:'actif'},
-    {id:'10029', prenom:'François', nom:'Roy', tel1:'514-555-9012', tel2:'', courriel:'froy@videotron.ca', ville:'Trois-Rivières', solde:2800.00, statut:'actif'},
-    {id:'10030', prenom:'Isabelle', nom:'Côté', tel1:'438-555-0123', tel2:'514-555-1234', courriel:'isabelle.cote@gmail.com', ville:'Montréal', solde:950.00, statut:'actif'},
-    {id:'10031', prenom:'Michel', nom:'Bélanger', tel1:'450-555-2345', tel2:'', courriel:'mbelanger@bell.net', ville:'Laval', solde:0, statut:'fermé'},
-    {id:'10032', prenom:'Catherine', nom:'Fortin', tel1:'514-555-3456', tel2:'', courriel:'cfortin@outlook.com', ville:'Brossard', solde:1750.25, statut:'actif'},
-  ];
-
-  // ===== Recherche clients
-  function searchClients(query){
-    const results = document.getElementById('searchResults');
-    if(!query || query.length < 2){
-      results.style.display = 'none';
-      return;
-    }
-
-    const q = query.toLowerCase();
-    const matches = clientsDB.filter(c =>
-      c.id.includes(q) ||
-      c.prenom.toLowerCase().includes(q) ||
-      c.nom.toLowerCase().includes(q) ||
-      (c.prenom + ' ' + c.nom).toLowerCase().includes(q) ||
-      (c.nom + ' ' + c.prenom).toLowerCase().includes(q) ||
-      c.tel1.includes(q) ||
-      c.tel2.includes(q) ||
-      c.courriel.toLowerCase().includes(q) ||
-      c.ville.toLowerCase().includes(q)
-    ).slice(0, 8);
-
-    if(matches.length === 0){
-      results.innerHTML = `<div style="padding:16px;text-align:center;color:var(--muted2)">Aucun client trouvé</div>`;
-    } else {
-      results.innerHTML = matches.map(c => {
-        const statutColor = c.statut === 'actif' ? 'var(--good)' : c.statut === 'souffrance' ? 'var(--bad)' : 'var(--muted2)';
-        const statutLabel = c.statut === 'actif' ? 'Actif' : c.statut === 'souffrance' ? 'Souffrance' : 'Fermé';
-        return `
-          <div onclick="selectClient('${c.id}')" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--stroke);cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.05)'" onmouseout="this.style.background=''">
-            <div style="flex:1;min-width:0">
-              <div style="font-weight:600;font-size:14px">${c.prenom} ${c.nom}</div>
-              <div style="font-size:11px;color:var(--muted2);margin-top:2px">#${c.id} · ${c.tel1} · ${c.ville}</div>
-            </div>
-            <div style="text-align:right">
-              <div style="font-family:var(--mono);font-size:13px;font-weight:600">${money(c.solde)}</div>
-              <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;margin-top:2px">
-                <span style="width:6px;height:6px;border-radius:50%;background:${statutColor}"></span>
-                <span style="font-size:10px;color:var(--muted2)">${statutLabel}</span>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    results.style.display = 'block';
-  }
-
-  function selectClient(clientId){
-    const client = clientsDB.find(c => c.id === clientId);
-    if(!client) return;
-
-    document.getElementById('searchResults').style.display = 'none';
-    document.getElementById('clientSearch').value = '';
-
-    alert(`Chargement du dossier de ${client.prenom} ${client.nom} (#${client.id})\n\nEn production, ceci chargerait les données du client depuis la base de données.`);
-  }
-
-  // Fermer avec ESC
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape'){
-      document.getElementById('searchResults').style.display = 'none';
-      document.getElementById('clientSearch').value = '';
-      document.getElementById('clientSearch').blur();
-    }
-  });
-
-  // ===== Sauvegarde avant modification du prêt
-  let backupBeforeLoanChange = null;
-
-  // ===== Mettre à jour le montant financé en temps réel
-  function updateTotalFinanced(){
-    const loanAmt = Number(document.getElementById('loanAmount').value) || 0;
-    const fees = Number(document.getElementById('openingFees').value) || 0;
-    const total = loanAmt + fees;
-    document.getElementById('totalFinanced').textContent = money(total);
-  }
-
-  // ===== Modifier montant du prêt et générer nouveau calendrier
-  function updateLoanAmount(){
-    const loanAmt = Number(document.getElementById('loanAmount').value) || 0;
-    const fees = Number(document.getElementById('openingFees').value) || 0;
-    const total = loanAmt + fees;
-    const numPay = parseInt(document.getElementById('numPayments').value) || 26;
-    const rate = parseFloat(document.getElementById('interestRate').value) || 18.99;
-    const freq = parseInt(document.getElementById('paymentFrequency').value) || 14;
-
-    if(total <= 0){
-      alert('Le montant doit être supérieur à 0');
-      return;
-    }
-    if(numPay <= 0){
-      alert('Le nombre de paiements doit être supérieur à 0');
-      return;
-    }
-
-    // Sauvegarder l'état actuel avant modification
-    backupBeforeLoanChange = {
-      schedule: JSON.parse(JSON.stringify(state.schedule)),
-      initialBalance: loanConfig.initialBalance,
-      events: JSON.parse(JSON.stringify(state.events)),
-      arrearsItems: JSON.parse(JSON.stringify(state.arrearsItems))
-    };
-
-    document.getElementById('totalFinanced').textContent = money(total);
-
-    loanConfig.initialBalance = total;
-
-    generateNewPaymentSchedule(total);
-
-    logEvent('🔄 Nouveau plan généré', `${money(total)} · ${numPay} paiements · ${rate}% · ${freq}j — Sauvegarde créée`);
-  }
-
-  // ===== Générer nouveau calendrier basé sur les paramètres
-  function generateNewPaymentSchedule(totalFinanced){
-    const numPayments = parseInt(document.getElementById('numPayments').value) || 26;
-    const nominalRate = (parseFloat(document.getElementById('interestRate').value) || 18.99) / 100;
-    const frequency = parseInt(document.getElementById('paymentFrequency').value) || 14;
-    const originDate = document.getElementById('originDate').value || '2024-11-07';
-    const firstPaymentDate = document.getElementById('firstPaymentDate').value || '2024-11-15';
-    const rateType = document.getElementById('rateType')?.value || 'annual';
-
-    const adhesionFee = frequency === 7 ? 22.50 : 45.00;
-
-    let dailyRate;
-    if(rateType === 'periodic'){
-      dailyRate = nominalRate / frequency;
-    } else if(rateType === 'monthly'){
-      dailyRate = nominalRate / 30;
-    } else {
-      const effectiveRate = nominalRate * 1.028;
-      dailyRate = effectiveRate / 365;
-    }
-
-    loanConfig.originDate = originDate;
-    loanConfig.initialBalance = totalFinanced;
-    loanConfig.nominalRate = nominalRate;
-    loanConfig.effectiveRate = dailyRate * 365;
-
-    const originD = new Date(originDate + 'T00:00:00');
-    const firstD = new Date(firstPaymentDate + 'T00:00:00');
-    const daysToFirst = Math.max(1, Math.round((firstD - originD) / (1000 * 60 * 60 * 24)));
-
-    const newSchedule = [];
-    let principalBalance = totalFinanced;
-    let currentDate = new Date(firstPaymentDate + 'T00:00:00');
-
-    for(let i = 1; i <= numPayments; i++){
-      let dateStr;
-      let daysForInterest;
-
-      if(i === 1){
-        dateStr = firstPaymentDate;
-        daysForInterest = daysToFirst;
-      } else {
-        currentDate.setDate(currentDate.getDate() + frequency);
-        dateStr = currentDate.toISOString().split('T')[0];
-        daysForInterest = frequency;
-      }
-
-      const interest = clamp2(principalBalance * dailyRate * daysForInterest);
-      const balanceWithInterest = clamp2(principalBalance + interest);
-
-      let capital;
-      if(i === numPayments){
-        capital = principalBalance;
-      } else {
-        capital = clamp2(totalFinanced / numPayments);
-      }
-
-      const loanPart = clamp2(capital + interest);
-      const payment = clamp2(loanPart + adhesionFee);
-
-      const newPrincipalBalance = Math.max(0, clamp2(principalBalance - capital));
-
-      newSchedule.push({
-        i: i,
-        date: dateStr,
-        total: payment,
-        interest: interest,
-        adhesion: adhesionFee,
-        balance: balanceWithInterest,
-        balanceBefore: principalBalance,
-        principalAfter: newPrincipalBalance,
-        status: 'À venir',
-        adjustment: 0,
-        paid: false,
-        method: 'A_VENIR',
-        ententeApplied: false,
-        nsfReportFee: 0
-      });
-
-      principalBalance = newPrincipalBalance;
-    }
-
-    state.schedule = newSchedule;
-
-    const totalInterest = clamp2(newSchedule.reduce((sum, r) => sum + r.interest, 0));
-    document.getElementById('subHeader').textContent = `${numPayments} paiements · ${frequency}j · Adh ${money(adhesionFee)} · Int. total: ${money(totalInterest)}`;
-
-    renderAll();
-  }
-
-  // ===== Restaurer la sauvegarde
-  function restoreLoanBackup(){
-    if(!backupBeforeLoanChange){
-      alert('Aucune sauvegarde disponible');
-      return;
-    }
-
-    state.schedule = backupBeforeLoanChange.schedule;
-    state.events = backupBeforeLoanChange.events;
-    state.arrearsItems = backupBeforeLoanChange.arrearsItems;
-    loanConfig.initialBalance = backupBeforeLoanChange.initialBalance;
-
-    document.getElementById('loanAmount').value = (backupBeforeLoanChange.initialBalance - 250).toFixed(0);
-    document.getElementById('openingFees').value = '250';
-    document.getElementById('totalFinanced').textContent = money(backupBeforeLoanChange.initialBalance);
-
-    backupBeforeLoanChange = null;
-
-    renderAll();
-    logEvent('↩️ Restauration', 'Calendrier restauré à la version précédente');
-  }
-
-  // ===== "Vérité" calendrier (démo)
-  const originalSchedule = [
-    {i:1,  date:'2024-11-15', total:147.92, interest:  9.62, adhesion:45.00, balance:2156.70},
-    {i:2,  date:'2024-11-29', total:147.19, interest: 16.15, adhesion:45.00, balance:2070.66},
-    {i:3,  date:'2024-12-13', total:146.56, interest: 15.51, adhesion:45.00, balance:1984.61},
-    {i:4,  date:'2024-12-27', total:145.94, interest: 14.87, adhesion:45.00, balance:1898.54},
-    {i:5,  date:'2025-01-10', total:145.31, interest: 14.22, adhesion:45.00, balance:1812.45},
-    {i:6,  date:'2025-01-24', total:144.72, interest: 13.61, adhesion:45.00, balance:1726.34},
-    {i:7,  date:'2025-02-07', total:144.09, interest: 12.97, adhesion:45.00, balance:1640.22},
-    {i:8,  date:'2025-02-21', total:143.47, interest: 12.32, adhesion:45.00, balance:1554.07},
-    {i:9,  date:'2025-03-07', total:142.84, interest: 11.67, adhesion:45.00, balance:1467.90},
-    {i:10, date:'2025-03-21', total:142.21, interest: 11.03, adhesion:45.00, balance:1381.72},
-    {i:11, date:'2025-04-04', total:141.58, interest: 10.38, adhesion:45.00, balance:1295.52},
-    {i:12, date:'2025-04-18', total:140.95, interest:  9.73, adhesion:45.00, balance:1209.30},
-    {i:13, date:'2025-05-02', total:140.33, interest:  9.08, adhesion:45.00, balance:1123.05},
-    {i:14, date:'2025-05-16', total:139.70, interest:  8.44, adhesion:45.00, balance:1036.79},
-    {i:15, date:'2025-05-30', total:139.07, interest:  7.79, adhesion:45.00, balance: 950.51},
-    {i:16, date:'2025-06-13', total:138.44, interest:  7.14, adhesion:45.00, balance: 864.21},
-    {i:17, date:'2025-06-27', total:137.82, interest:  6.49, adhesion:45.00, balance: 777.88},
-    {i:18, date:'2025-07-11', total:137.19, interest:  5.84, adhesion:45.00, balance: 691.53},
-    {i:19, date:'2025-07-25', total:136.56, interest:  5.19, adhesion:45.00, balance: 605.16},
-    {i:20, date:'2025-08-08', total:135.93, interest:  4.55, adhesion:45.00, balance: 518.78},
-    {i:21, date:'2025-08-22', total:135.31, interest:  3.90, adhesion:45.00, balance: 432.37},
-    {i:22, date:'2025-09-05', total:134.68, interest:  3.25, adhesion:45.00, balance: 345.94},
-    {i:23, date:'2025-09-19', total:134.05, interest:  2.60, adhesion:45.00, balance: 259.49},
-    {i:24, date:'2025-10-03', total:133.42, interest:  1.95, adhesion:45.00, balance: 173.02},
-    {i:25, date:'2025-10-17', total:132.80, interest:  1.30, adhesion:45.00, balance:  86.52},
-    {i:26, date:'2025-10-26', total:132.17, interest:  0.42, adhesion:45.00, balance:   0.00},
-  ];
-
-  function getPaymentFrequency(){
-    const dates = originalSchedule.map(r => new Date(r.date + 'T00:00:00')).sort((a,b) => a-b);
-    if(dates.length < 2) return 14;
-    const diff = Math.round((dates[1] - dates[0]) / (1000 * 60 * 60 * 24));
-    return diff <= 10 ? 7 : 14;
-  }
-  function getAdhesionFee(){ return getPaymentFrequency() === 7 ? 22.50 : 45.00; }
-
-  // ===== Configuration du prêt (valeurs Margill)
-  const loanConfig = {
-    initialBalance: 2250.00,
-    originDate: '2024-11-07',
-    nominalRate: 0.1899,
-    effectiveRate: 0.1952
-  };
+  const fmtDate = (iso) => new Date(iso+'T00:00:00').toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'}).replace('.','');
 
   function daysBetween(date1, date2){
     const d1 = new Date(date1 + 'T00:00:00');
@@ -1209,602 +434,282 @@
     return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
   }
 
-  // ===== Recalcul des soldes et intérêts après modifications (style Margill)
-  function recalculateBalancesAndInterest(){
-    const dailyRate = loanConfig.effectiveRate / 365;
-    const adhesionFee = getAdhesionFee();
-
-    const ordered = [...state.schedule].sort((a,b) => a.date.localeCompare(b.date));
-
-    let hasModifications = false;
-    for(let i = 0; i < ordered.length; i++){
-      const row = ordered[i];
-      const orig = originalSchedule.find(o => o.i === row.i);
-      if((row.adjustment || 0) !== 0 || row.status === 'NSF' || row.status === 'Frais report' || !orig || row.ententeApplied){
-        hasModifications = true;
-        break;
-      }
-    }
-
-    if(!hasModifications){
-      let prevBal = loanConfig.initialBalance;
-      ordered.forEach((row) => {
-        const orig = originalSchedule.find(o => o.i === row.i);
-        row.balanceBefore = clamp2(prevBal);
-        if(orig){
-          row.interest = orig.interest;
-          row.balance = orig.balance;
-          row.total = orig.total;
-          row.adhesion = orig.adhesion;
-          prevBal = orig.balance;
-        }
-      });
-      state.schedule = ordered;
-      return;
-    }
-
-    const linesToRedistribute = [];
-    const linesWithAdjustment = [];
-    const specialLines = [];
-
-    for(let i = 0; i < ordered.length; i++){
-      const row = ordered[i];
-      if(row.status === 'NSF' || row.status === 'Frais report'){
-        specialLines.push({idx: i, row: row});
-      } else if((row.adjustment || 0) !== 0 || row.ententeApplied){
-        linesWithAdjustment.push({idx: i, row: row});
-      } else {
-        linesToRedistribute.push({idx: i, row: row});
-      }
-    }
-
-    let tempBalance = loanConfig.initialBalance;
-    let prevDate = loanConfig.originDate;
-
-    for(let i = 0; i < ordered.length; i++){
-      const row = ordered[i];
-      const orig = originalSchedule.find(o => o.i === row.i);
-      const days = Math.max(1, daysBetween(prevDate, row.date));
-
-      if(row.status === 'Frais report' || row.status === 'NSF'){
-        prevDate = row.date;
-        continue;
-      }
-
-      const interest = clamp2(tempBalance * dailyRate * days);
-
-      let totalCollect;
-      if(row.ententeApplied){
-        totalCollect = row.total || 0;
-      } else {
-        const baseTotal = orig ? orig.total : (row.total || 0);
-        totalCollect = clamp2(baseTotal + (row.adjustment || 0));
-      }
-
-      const adhesion = row.adhesion || (orig ? orig.adhesion : adhesionFee);
-      const loanPart = clamp2(totalCollect - adhesion);
-      const capitalPaid = Math.max(0, clamp2(loanPart - interest));
-      tempBalance = clamp2(tempBalance - capitalPaid);
-
-      prevDate = row.date;
-    }
-
-    const deficit = tempBalance;
-
-    const numLines = linesToRedistribute.length;
-    const adjustmentPerLine = numLines > 0 ? clamp2(deficit / numLines) : 0;
-
-    let runningBalance = loanConfig.initialBalance;
-    prevDate = loanConfig.originDate;
-
-    for(let i = 0; i < ordered.length; i++){
-      const row = ordered[i];
-      const orig = originalSchedule.find(o => o.i === row.i);
-      const days = Math.max(1, daysBetween(prevDate, row.date));
-
-      row.balanceBefore = clamp2(runningBalance);
-
-      if(row.status === 'Frais report'){
-        row.interest = 0;
-        row.balance = clamp2(runningBalance);
-        prevDate = row.date;
-        continue;
-      }
-
-      if(row.status === 'NSF'){
-        row.interest = clamp2(runningBalance * dailyRate * days);
-        row.balance = clamp2(runningBalance);
-        prevDate = row.date;
-        continue;
-      }
-
-      row.interest = clamp2(runningBalance * dailyRate * days);
-
-      const hasAdj = (row.adjustment || 0) !== 0;
-      const hasEntente = row.ententeApplied === true;
-      const baseTotal = orig ? orig.total : (row.total || 0);
-      const adhesion = row.adhesion || (orig ? orig.adhesion : adhesionFee);
-      row.adhesion = adhesion;
-
-      if(hasEntente){
-        const totalCollect = row.total || 0;
-        const loanPart = clamp2(totalCollect - adhesion);
-        const capitalPaid = Math.max(0, clamp2(loanPart - row.interest));
-        runningBalance = clamp2(runningBalance - capitalPaid);
-      } else if(hasAdj){
-        row.total = baseTotal;
-        const totalCollect = clamp2(baseTotal + row.adjustment);
-        const loanPart = clamp2(totalCollect - adhesion);
-        const capitalPaid = Math.max(0, clamp2(loanPart - row.interest));
-        runningBalance = clamp2(runningBalance - capitalPaid);
-      } else {
-        const newLoanPart = clamp2((baseTotal - adhesion) + adjustmentPerLine);
-        row.total = clamp2(newLoanPart + adhesion);
-        const capitalPaid = Math.max(0, clamp2(newLoanPart - row.interest));
-        runningBalance = clamp2(runningBalance - capitalPaid);
-      }
-
-      row.balance = clamp2(runningBalance);
-      prevDate = row.date;
-    }
-
-    let lastNormalIdx = -1;
-    for(let i = ordered.length - 1; i >= 0; i--){
-      if(ordered[i].status !== 'NSF' && ordered[i].status !== 'Frais report'){
-        lastNormalIdx = i;
-        break;
-      }
-    }
-
-    if(lastNormalIdx >= 0 && ordered[lastNormalIdx].balance !== 0){
-      const lastRow = ordered[lastNormalIdx];
-      const remainingBalance = lastRow.balance;
-      const currentLoanPart = clamp2(lastRow.total - lastRow.adhesion);
-      const newLoanPart = clamp2(currentLoanPart + remainingBalance);
-      lastRow.total = clamp2(newLoanPart + lastRow.adhesion);
-      lastRow.balance = 0;
-    }
-
-    state.schedule = ordered;
-  }
-
-  // ===== State
+  // ===================== STATE
   let state = {
     schedule: [],
-    selected: 1,
-    arrearsItems: [],
     events: []
   };
 
-  function resetDemo(skipConfirm = false){
-    if(!skipConfirm && !confirm('⚠️ Réinitialiser le dossier?\n\nToutes les modifications (ententes, reports, NSF) seront perdues.')){
+  function logEvent(title, txt){
+    state.events.push({
+      ts: new Date().toISOString(),
+      title, txt
+    });
+    renderEvents();
+  }
+
+  // ===================== UI HELPERS
+  function updateTotalFinanced(){
+    const loanAmt = Number(document.getElementById('loanAmount').value) || 0;
+    const fees = Number(document.getElementById('openingFees').value) || 0;
+    document.getElementById('totalFinanced').textContent = money(loanAmt + fees);
+  }
+
+  function getLoanSettingsFromUI(){
+    const loanAmt = clamp2(Number(document.getElementById('loanAmount').value) || 0);
+    const fees = clamp2(Number(document.getElementById('openingFees').value) || 0);
+    const totalFinanced = clamp2(loanAmt + fees);
+
+    return {
+      loanAmount: loanAmt,
+      openingFees: fees,
+      totalFinanced,
+      originDate: document.getElementById('originDate').value || '2024-11-07',
+      firstPaymentDate: document.getElementById('firstPaymentDate').value || '2024-11-15',
+      numPayments: Math.max(1, parseInt(document.getElementById('numPayments').value) || 26),
+      interestRatePct: clamp2(Number(document.getElementById('interestRate').value) || 18.99),
+      rateType: document.getElementById('rateType').value || 'annual',
+      frequencyDays: parseInt(document.getElementById('paymentFrequency').value) || 14
+    };
+  }
+
+  function applyLoanSettingsToUI(s){
+    if(!s) return;
+    document.getElementById('loanAmount').value = s.loanAmount ?? 2000;
+    document.getElementById('openingFees').value = s.openingFees ?? 250;
+    document.getElementById('originDate').value = s.originDate ?? '2024-11-07';
+    document.getElementById('firstPaymentDate').value = s.firstPaymentDate ?? '2024-11-15';
+    document.getElementById('numPayments').value = s.numPayments ?? 26;
+    document.getElementById('interestRate').value = s.interestRatePct ?? 18.99;
+    document.getElementById('rateType').value = s.rateType ?? 'annual';
+    document.getElementById('paymentFrequency').value = s.frequencyDays ?? 14;
+    updateTotalFinanced();
+  }
+
+  // ===================== SAUVEGARDE / CHARGEMENT
+  function saveLoanSettings(){
+    const s = getLoanSettingsFromUI();
+    if(s.totalFinanced <= 0){
+      alert('Montant financé doit être > 0');
       return;
     }
-    state.schedule = originalSchedule.map(r => ({
-      ...r,
-      status:'À venir',
-      adjustment:0.00,
-      paid:false,
-      method:'A_VENIR',
-      ententeApplied: false,
-      nsfReportFee: 0
-    }));
-    state.selected = 1;
-    state.arrearsItems = [];
-    state.events = [{
-      id: 'evt_' + Date.now() + '_init',
-      ts:new Date().toISOString(),
-      title:'🔄 Dossier réinitialisé',
-      txt:'Le dossier a été remis à son état initial.'
-    }];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    logEvent('💾 Sauvegarde', `Paramètres sauvegardés: financé ${money(s.totalFinanced)}, ${s.numPayments} paiements, taux ${s.interestRatePct}%, freq ${s.frequencyDays}j.`);
+  }
+
+  function loadLoanSettings(andRecalc = false){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){
+      alert('Aucune sauvegarde trouvée.');
+      return;
+    }
+    const s = JSON.parse(raw);
+    applyLoanSettingsToUI(s);
+    logEvent('↩️ Chargement', `Sauvegarde chargée: financé ${money(s.totalFinanced)}.`);
+    if(andRecalc) recalculateFromUI();
+  }
+
+  function saveAndRecalculate(){
+    saveLoanSettings();
+    recalculateFromUI();
+  }
+
+  // ===================== CALCUL / GÉNÉRATION DU PLAN
+  // Règle adhésion: 7j => 22.50 / 14j => 45.00
+  function getAdhesionFee(freqDays){
+    return (freqDays === 7) ? 22.50 : 45.00;
+  }
+
+  // Daily rate selon type de taux (inclut l'ajustement "Margill" 2.8% sur annuel)
+  function computeDailyRate(nominalRate, rateType, frequencyDays){
+    if(rateType === 'periodic'){
+      // nominalRate = taux par période (ex: 0.02 par 14j) -> quotidien
+      return nominalRate / frequencyDays;
+    }
+    if(rateType === 'monthly'){
+      return nominalRate / 30;
+    }
+    // annual
+    const effectiveRate = nominalRate * 1.028; // Margill
+    return effectiveRate / 365;
+  }
+
+  function generateScheduleFromSettings(s){
+    const adhesionFee = getAdhesionFee(s.frequencyDays);
+    const nominalRate = (s.interestRatePct/100);
+    const dailyRate = computeDailyRate(nominalRate, s.rateType, s.frequencyDays);
+
+    const originD = new Date(s.originDate + 'T00:00:00');
+    const firstD = new Date(s.firstPaymentDate + 'T00:00:00');
+    const daysToFirst = Math.max(1, Math.round((firstD - originD) / (1000 * 60 * 60 * 24)));
+
+    let principal = s.totalFinanced;
+    let currentDate = new Date(s.firstPaymentDate + 'T00:00:00');
+    const schedule = [];
+
+    // Capital fixe par paiement (sauf dernier ajusté)
+    const baseCapital = clamp2(s.totalFinanced / s.numPayments);
+
+    for(let i=1;i<=s.numPayments;i++){
+      let dateStr, daysForInterest;
+
+      if(i === 1){
+        dateStr = s.firstPaymentDate;
+        daysForInterest = daysToFirst;
+      } else {
+        currentDate.setDate(currentDate.getDate() + s.frequencyDays);
+        dateStr = currentDate.toISOString().split('T')[0];
+        daysForInterest = s.frequencyDays;
+      }
+
+      const interest = clamp2(principal * dailyRate * daysForInterest);
+
+      let capital = (i === s.numPayments) ? principal : baseCapital;
+      capital = clamp2(capital);
+
+      const loanPart = clamp2(capital + interest);
+      const total = clamp2(loanPart + adhesionFee);
+
+      const before = principal;
+      const after = clamp2(Math.max(0, principal - capital));
+      principal = after;
+
+      schedule.push({
+        i,
+        date: dateStr,
+        total,
+        interest,
+        capital,
+        adhesion: adhesionFee,
+        balanceBefore: before,
+        balanceAfter: after
+      });
+    }
+
+    return {schedule, adhesionFee, dailyRate};
+  }
+
+  function recalculateFromUI(){
+    const s = getLoanSettingsFromUI();
+    if(s.totalFinanced <= 0){
+      alert('Montant financé doit être > 0');
+      return;
+    }
+
+    // sécurité dates
+    if(!s.originDate || !s.firstPaymentDate){
+      alert('Dates origine et 1er paiement sont obligatoires');
+      return;
+    }
+
+    const {schedule, adhesionFee} = generateScheduleFromSettings(s);
+    state.schedule = schedule;
+
+    // Header info
+    const totalInterest = clamp2(schedule.reduce((sum,r)=>sum + (r.interest||0),0));
+    document.getElementById('subHeader').textContent =
+      `${s.numPayments} paiements · ${s.frequencyDays}j · Adh ${money(adhesionFee)} · Int. total: ${money(totalInterest)}`;
+
+    document.getElementById('footerInfo').textContent =
+      `Financé ${money(s.totalFinanced)} · Taux ${s.interestRatePct}% (${s.rateType})`;
+
     renderAll();
+
+    logEvent('🧮 Recalcul', `Nouveau plan généré sur ${s.numPayments} paiements. Financé ${money(s.totalFinanced)}.`);
   }
 
-  function calcDerived(row){
-    const loanPart = clamp2((row.total||0) - (row.adhesion||0));
-    const capital  = clamp2(loanPart - (row.interest||0));
-    return {loanPart, capital};
-  }
-
-  function arrearsTotal(){
-    return clamp2(state.arrearsItems
-      .filter(a => a.status === 'OPEN')
-      .reduce((s,a)=> s + (a.total || 0), 0));
-  }
-
+  // ===================== RENDER
   function renderKPI(){
-    const financed = loanConfig.initialBalance || 2250.00;
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
-    const next = ordered.find(r => !r.paid) || ordered[0];
-    const aTotal = arrearsTotal();
-
-    const interestTotal = clamp2(state.schedule.reduce((sum, r) => sum + (r.interest || 0), 0));
+    const s = getLoanSettingsFromUI();
+    const totalInterest = clamp2(state.schedule.reduce((sum,r)=>sum + (r.interest||0),0));
+    const last = state.schedule[state.schedule.length-1];
+    const remaining = last ? last.balanceAfter : 0;
 
     const kpis = [
-      {label:'Solde contrat', dot:'good', value: money(next?.balance ?? 0), sub:'Solde après la ligne'},
-      {label:'Souffrance', dot: aTotal>0?'bad':'good', value: money(aTotal), sub:'NSF = paiement + 48$', hasBtn: aTotal > 0},
-      {label:'Montant financé', dot:'good', value: money(financed), sub:'Prêt + frais ouverture'},
-      {label:'Intérêt total', dot:'warn', value: money(interestTotal), sub:'Somme des intérêts'}
+      {label:'Montant financé', dot:'good', value: money(s.totalFinanced), sub:'Prêt + frais ouverture'},
+      {label:'Nb paiements', dot:'good', value: String(s.numPayments), sub:`Fréquence: ${s.frequencyDays} jours`},
+      {label:'Intérêt total', dot:'warn', value: money(totalInterest), sub:'Somme des intérêts'},
+      {label:'Solde fin', dot:(remaining===0?'good':'bad'), value: money(remaining), sub:'Après dernier paiement'}
     ];
 
     document.getElementById('kpi').innerHTML = kpis.map(k=>`
       <div class="kpi-card">
         <div class="kpi-label"><span>${k.label}</span><span class="kpi-dot ${k.dot}"></span></div>
-        <div class="kpi-value">
-          ${k.value}
-          ${k.hasBtn ? `<button class="kpi-btn" onclick="openFirstArrears()" title="Répartir la souffrance">📊</button>` : ''}
-        </div>
+        <div class="kpi-value">${k.value}</div>
         <div class="kpi-sub">${k.sub}</div>
       </div>
     `).join('');
-
-    document.getElementById('rightArrears').textContent = money(aTotal);
-    document.getElementById('rightNext').innerHTML =
-      `${fmtDate(next.date)} · <span class="mono">${money((next.total||0)+(next.adjustment||0))}</span>`;
   }
 
   function renderTable(){
-    const ordered = [...state.schedule].sort((a,b)=> (a.date.localeCompare(b.date) || a.i-b.i));
     const tbody = document.getElementById('rows');
+    tbody.innerHTML = (state.schedule || []).map(r=>`
+      <tr>
+        <td class="mono">${r.i}</td>
+        <td>${fmtDate(r.date)}</td>
+        <td class="mono">${money(r.total)}</td>
+        <td class="mono">${money(r.interest)}</td>
+        <td class="mono">${money(r.capital)}</td>
+        <td class="mono">${money(r.adhesion)}</td>
+        <td class="mono">${money(r.balanceBefore)}</td>
+        <td class="mono">${money(r.balanceAfter)}</td>
+      </tr>
+    `).join('');
 
-    tbody.innerHTML = ordered.map(r=>{
-      const sel = r.i===state.selected;
-      const {loanPart, capital} = calcDerived(r);
-      const totalToCollect = clamp2((r.total||0) + (r.adjustment||0));
-      const nsfRepFee = r.nsfReportFee || 0;
-
-      if(r.isCapitalLine){
-        return `
-          <tr onclick="selectRow(${r.i})" style="background:rgba(34,197,94,0.15);${sel?'outline:2px solid var(--good)':''}">
-            <td class="mono" style="color:var(--good);font-weight:bold">${r.i}</td>
-            <td style="color:var(--good)">${fmtDate(r.date)}</td>
-            <td colspan="10" style="text-align:left;padding-left:20px">
-              <span style="background:var(--good);color:#000;padding:4px 12px;border-radius:20px;font-weight:bold;font-size:12px">
-                💰 AJOUT DE CAPITAL FINANCÉ: ${money(r.capitalAmount || r.total)}
-              </span>
-              <span style="margin-left:15px;color:var(--muted2);font-size:11px">Ce montant est ajouté au solde du prêt</span>
-            </td>
-            <td class="mono" style="color:var(--good);font-weight:bold">${money(r.balance||0)}</td>
-          </tr>
-        `;
-      }
-
-      const statusDot =
-        r.status === 'NSF' ? 'bad' :
-        r.status === 'Frais report' ? 'warn' :
-        (r.paid ? 'good' : 'warn');
-
-      const statusLabel =
-        r.status === 'NSF' ? 'NSF' :
-        r.status === 'Frais report' ? 'Frais report' :
-        (r.paid ? 'Payé' : 'À venir');
-
-      const inputStyle = "width:55px;background:transparent;border:1px solid var(--stroke);border-radius:3px;color:var(--text);text-align:right;padding:2px 3px;font-size:10px";
-      const selectStyle = "width:100%;background:#1a1a2e;border:1px solid var(--stroke);border-radius:3px;color:var(--text);padding:2px;font-size:9px";
-      const dateStyle = "width:85px;background:transparent;border:1px solid var(--stroke);border-radius:3px;color:var(--text);padding:2px 3px;font-size:10px";
-
-      return `
-        <tr onclick="selectRow(${r.i})" style="${sel?'background:rgba(96,165,250,.08)':''}">
-          <td class="mono">${r.i}</td>
-          <td><input type="date" value="${r.date}" style="${dateStyle}" onchange="editCell(${r.i}, 'date', this.value)" onclick="event.stopPropagation()"/></td>
-          <td>
-            <select style="${selectStyle}" onchange="editCell(${r.i}, 'method', this.value)" onclick="event.stopPropagation()">
-              <option value="NON_PAYE" style="background:#1a1a2e;color:#fff" ${r.method==='NON_PAYE'?'selected':''}>PMNT NON PAYÉ</option>
-              <option value="A_VENIR" style="background:#1a1a2e;color:#fff" ${(r.method||'A_VENIR')==='A_VENIR'?'selected':''}>PMNT A VENIR</option>
-              <option value="A_VENIR_CASH" style="background:#1a1a2e;color:#fff" ${r.method==='A_VENIR_CASH'?'selected':''}>PMNT A VENIR CASH</option>
-              <option value="PPA_FAIT" style="background:#1a1a2e;color:#fff" ${r.method==='PPA_FAIT'?'selected':''}>PPA FAIT</option>
-              <option value="FAIT_CASH" style="background:#1a1a2e;color:#fff" ${r.method==='FAIT_CASH'?'selected':''}>PMNT FAIT CASH</option>
-            </select>
-          </td>
-          <td class="mono"><input type="number" step="0.01" value="${totalToCollect.toFixed(2)}" style="${inputStyle}" onchange="editCell(${r.i}, 'total', this.value)" onclick="event.stopPropagation()"/></td>
-          <td class="mono">${money(loanPart)}</td>
-          <td class="mono"><input type="number" step="0.01" value="${(r.interest||0).toFixed(2)}" style="${inputStyle}" onchange="editCell(${r.i}, 'interest', this.value)" onclick="event.stopPropagation()"/></td>
-          <td class="mono">${money(capital)}</td>
-          <td class="mono"><input type="number" step="0.01" value="${(r.adhesion||0).toFixed(2)}" style="${inputStyle}" onchange="editCell(${r.i}, 'adhesion', this.value)" onclick="event.stopPropagation()"/></td>
-          <td class="mono"><input type="number" step="0.01" value="${nsfRepFee || ''}" placeholder="-" style="${inputStyle}" onchange="applyNSFDirect(${r.i}, this.value)" onclick="event.stopPropagation()"/></td>
-          <td class="mono"><input type="number" step="0.01" value="${(r.adjustment||0).toFixed(2)}" style="${inputStyle}" onchange="editCell(${r.i}, 'adjustment', this.value)" onclick="event.stopPropagation()"/></td>
-          <td><span class="status"><span class="dot ${statusDot}"></span>${statusLabel}</span></td>
-          <td class="mono">${money(r.balanceBefore||0)}</td>
-          <td class="mono">${money(r.balance||0)}</td>
-        </tr>
-      `;
-    }).join('');
-
-    const row = state.schedule.find(r=>r.i===state.selected) || ordered[0];
     document.getElementById('selectedInfo').textContent =
-      `Sélection: #${row.i} · ${fmtDate(row.date)} · Total ${money((row.total||0)+(row.adjustment||0))}`;
+      state.schedule?.length ? `Lignes: ${state.schedule.length}` : 'Aucun plan';
   }
 
   function renderEvents(){
-    const items = [...state.events].slice(-15).reverse();
-    const getIcon = (title) => {
-      if(title.includes('Note client')) return '📋';
-      if(title.includes('Report')) return '📅';
-      if(title.includes('NSF')) return '❌';
-      if(title.includes('Paiement')) return '💵';
-      if(title.includes('Souffrance')) return '⚠️';
-      if(title.includes('Note')) return '📝';
-      if(title.includes('Modification')) return '✏️';
-      if(title.includes('Capital')) return '💰';
-      if(title.includes('Entente')) return '📋';
-      return '📋';
-    };
-    const getClass = (title) => {
-      if(title.includes('Note client')) return 'note-client';
-      if(title.includes('Report')) return 'note-report';
-      if(title.includes('NSF')) return 'note-nsf';
-      if(title.includes('Paiement')) return 'note-paiement';
-      if(title.includes('Souffrance')) return 'note-souffrance';
-      if(title.includes('Note')) return 'note-note';
-      return '';
-    };
-    document.getElementById('events').innerHTML = items.map(e=>{
+    const box = document.getElementById('events');
+    const items = [...state.events].slice(-12).reverse();
+    box.innerHTML = items.map(e=>{
       const d = new Date(e.ts);
-      const dateStr = d.toLocaleDateString('fr-CA',{day:'2-digit',month:'short'});
-      const timeStr = d.toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'});
-      const eventId = e.id || '';
       return `
-        <div class="note ${getClass(e.title)}" onclick="${eventId ? `openEditNote('${eventId}')` : ''}" style="cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background=''">
+        <div class="note">
           <div class="meta">
-            <span class="title"><span class="icon">${getIcon(e.title)}</span> ${e.title}</span>
-            <span class="time">${dateStr} · ${timeStr}</span>
+            <div class="title">${e.title}</div>
+            <div class="time">${d.toLocaleDateString('fr-CA',{day:'2-digit',month:'short'})} · ${d.toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'})}</div>
           </div>
           <div class="txt">${e.txt}</div>
         </div>
       `;
-    }).join('');
-  }
-
-  function renderArrearsList(){
-    const box = document.getElementById('arrearsList');
-    const open = state.arrearsItems
-      .filter(a => a.status === 'OPEN')
-      .sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
-
-    if(!open.length){
-      box.innerHTML = `<div style="color:var(--muted2); font-size:12px; padding:6px 4px;">Aucune souffrance ouverte.</div>`;
-      return;
-    }
-
-    box.innerHTML = open.map(a=>{
-      const dateStr = new Date(a.createdAt).toLocaleString('fr-CA',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-      return `
-        <div class="arrearsRow">
-          <div class="arrearsLeft">
-            <div class="arrearsTitle">
-              <span class="tag"><span class="dot bad"></span> NSF</span>
-              Ligne #${a.sourceLine}
-            </div>
-            <div class="arrearsCalc">
-              <span class="calcItem">${money(a.amount)}</span>
-              <span class="calcOp">+</span>
-              <span class="calcItem fee">${money(a.fee)} frais</span>
-              <span class="calcOp">=</span>
-              <span class="calcTotal">${money(a.total)}</span>
-            </div>
-            <div class="arrearsMeta">${dateStr}</div>
-          </div>
-          <div class="actions">
-            <button class="btn" onclick="openArrearsResolver('${a.id}')" title="Répartir sur plusieurs paiements" style="font-size:16px;padding:6px 10px">📊</button>
-            <button class="btn danger" onclick="openArrearsResolver('${a.id}')">Traiter</button>
-          </div>
-        </div>
-      `;
-    }).join('');
+    }).join('') || `<div style="color:var(--muted2);font-size:12px">Aucune note.</div>`;
   }
 
   function renderAll(){
+    updateTotalFinanced();
     renderKPI();
     renderTable();
-    renderArrearsList();
     renderEvents();
   }
 
-  function selectRow(i){ state.selected=i; renderAll(); }
+  // ===================== INIT
+  function init(){
+    updateTotalFinanced();
 
-  function logEvent(title, txt){
-    state.events.push({
-      id: 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2,5),
-      ts: new Date().toISOString(),
-      title,
-      txt
-    });
-  }
-
-  // ===== Ouvrir et modifier une note
-  function openEditNote(eventId){
-    const evt = state.events.find(e => e.id === eventId);
-    if(!evt) return;
-
-    const overlay = document.getElementById('overlay');
-    const title = document.getElementById('modalTitle');
-    const body = document.getElementById('modalBody');
-    const foot = document.getElementById('modalFoot');
-
-    title.textContent = '📝 Modifier la note';
-
-    const d = new Date(evt.ts);
-    const dateStr = d.toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'});
-    const timeStr = d.toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'});
-
-    body.innerHTML = `
-      <div class="field">
-        <label>Titre</label>
-        <input id="editNoteTitle" value="${evt.title.replace(/"/g, '&quot;')}" />
-      </div>
-      <div class="field" style="margin-top:12px">
-        <label>Contenu</label>
-        <textarea id="editNoteTxt" rows="4" style="resize:vertical;">${evt.txt}</textarea>
-      </div>
-      <div style="margin-top:12px;font-size:11px;color:var(--muted2)">
-        Créé le ${dateStr} à ${timeStr}
-      </div>
-    `;
-
-    foot.innerHTML = `
-      <button class="btn danger" onclick="deleteNote('${eventId}')">🗑️ Supprimer</button>
-      <button class="btn" onclick="closeModal()">Annuler</button>
-      <button class="btn primary" onclick="saveEditNote('${eventId}')">Enregistrer</button>
-    `;
-
-    overlay.style.display = 'flex';
-  }
-
-  function saveEditNote(eventId){
-    const evt = state.events.find(e => e.id === eventId);
-    if(!evt) return;
-
-    evt.title = document.getElementById('editNoteTitle').value || evt.title;
-    evt.txt = document.getElementById('editNoteTxt').value || evt.txt;
-
-    closeModal();
-    renderAll();
-  }
-
-  function deleteNote(eventId){
-    if(!confirm('Supprimer cette note?')) return;
-    state.events = state.events.filter(e => e.id !== eventId);
-    closeModal();
-    renderAll();
-  }
-
-  // ===== Edit cell
-  function editCell(lineNum, field, value){
-    const row = state.schedule.find(r => r.i === lineNum);
-    if(!row) return;
-
-    if(field === 'date'){
-      row.date = value;
-      logEvent('✏️ Modification', `Ligne #${lineNum}: date modifiée → ${fmtDate(value)}`);
-
-    } else if(field === 'method'){
-      const oldMethod = row.method;
-      row.method = value;
-
-      if(value === 'NON_PAYE' && oldMethod !== 'NON_PAYE'){
-        const nsfFee = 48.00;
-        const paymentAmt = clamp2((row.total || 0) + (row.adjustment || 0));
-        const totalArrears = clamp2(paymentAmt + nsfFee);
-
-        row.nsfReportFee = nsfFee;
-        row.status = 'NSF';
-
-        const arrearsId = 'arr_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
-        state.arrearsItems.push({
-          id: arrearsId,
-          type: 'NSF',
-          sourceLine: lineNum,
-          amount: paymentAmt,
-          fee: nsfFee,
-          total: totalArrears,
-          status: 'OPEN',
-          createdAt: new Date().toISOString()
-        });
-
-        logEvent('❌ NSF Automatique', `Ligne #${lineNum}: Paiement non payé → Souffrance ${money(totalArrears)} (${money(paymentAmt)} + ${money(nsfFee)} frais)`);
-      } else {
-        logEvent('✏️ Modification', `Ligne #${lineNum}: type modifié → ${value}`);
-      }
-
-    } else if(field === 'total'){
-      const newTotal = clamp2(Number(value) || 0);
-      row.total = newTotal;
-      row.adjustment = 0;
-      logEvent('✏️ Modification', `Ligne #${lineNum}: total modifié → ${money(newTotal)}`);
-
-    } else if(field === 'interest'){
-      row.interest = clamp2(Number(value) || 0);
-      logEvent('✏️ Modification', `Ligne #${lineNum}: intérêt modifié → ${money(row.interest)}`);
-
-    } else if(field === 'adhesion'){
-      row.adhesion = clamp2(Number(value) || 0);
-      logEvent('✏️ Modification', `Ligne #${lineNum}: adhésion modifiée → ${money(row.adhesion)}`);
-
-    } else if(field === 'adjustment'){
-      row.adjustment = clamp2(Number(value) || 0);
-      logEvent('✏️ Modification', `Ligne #${lineNum}: ajustement modifié → ${money(row.adjustment)}`);
+    // ✅ Auto-charger la sauvegarde si elle existe
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      try{
+        const s = JSON.parse(raw);
+        applyLoanSettingsToUI(s);
+        logEvent('↩️ Auto-chargement', 'Sauvegarde détectée et chargée.');
+      } catch(e){}
     }
 
-    recalculateBalancesAndInterest();
-    renderAll();
+    // Génère un plan au démarrage
+    recalculateFromUI();
   }
 
-  // ===== MODAL helpers
-  function closeModal(ev){
-    if(ev && ev.target && ev.target.id !== 'overlay') return;
-    document.getElementById('overlay').style.display = 'none';
-  }
+  init();
 
-  // ===== NSF helpers
-  function applyNSFDirect(lineNum, value){
-    const fee = clamp2(Number(value) || 0);
-    const row = state.schedule.find(r => r.i === lineNum);
-    if(!row) return;
-
-    if(fee > 0){
-      const pay = clamp2((row.total||0) + (row.adjustment||0));
-      const total = clamp2(pay + fee);
-
-      row.status = 'NSF';
-      row.nsfReportFee = fee;
-
-      const existingIdx = state.arrearsItems.findIndex(a => a.sourceLine === lineNum && a.status === 'OPEN');
-      if(existingIdx >= 0){
-        state.arrearsItems[existingIdx].fee = fee;
-        state.arrearsItems[existingIdx].total = total;
-      } else {
-        state.arrearsItems.push({
-          id: 'arr_' + Date.now(),
-          sourceLine: lineNum,
-          amount: pay,
-          fee: fee,
-          total: total,
-          type: 'NSF',
-          status: 'OPEN',
-          createdAt: new Date().toISOString()
-        });
-      }
-
-      logEvent('NSF', `NSF manuel sur #${lineNum}. Souffrance: ${money(pay)} + ${money(fee)} = ${money(total)}.`);
-    } else {
-      if(row.status === 'NSF'){
-        row.status = 'À venir';
-        row.nsfReportFee = 0;
-        state.arrearsItems = state.arrearsItems.filter(a => !(a.sourceLine === lineNum && a.type === 'NSF'));
-        logEvent('NSF retiré', `NSF retiré de la ligne #${lineNum}.`);
-      }
-    }
-
-    renderAll();
-  }
-
-  // ===== Stubs/Actions (tu avais déjà tout ton gros module ici)
-  // IMPORTANT: Pour garder ton code complet original, j'ai laissé tes actions avancées (report/entente/capital/arrears)
-  // dans ton fichier de base. Si tu veux que je te réintègre 100% de ces sections dans CE fichier aussi,
-  // dis-moi "COLLE LE RESTE" et je te renvoie une version qui inclut toutes les fonctions restantes.
-
-  // ===== Init
-  resetDemo(true);          // état initial
-  loadLoanSettings(false);  // ✅ recharge la sauvegarde Banque & Prêt si disponible
-
-  // expose
-  window.searchClients = searchClients;
-  window.selectClient = selectClient;
+  // Expose
   window.updateTotalFinanced = updateTotalFinanced;
-  window.updateLoanAmount = updateLoanAmount;
-  window.restoreLoanBackup = restoreLoanBackup;
-
-  window.saveLoanSettings = saveLoanSettings;   // ✅
-  window.loadLoanSettings = loadLoanSettings;   // ✅
-
-  window.renderAll = renderAll;
-  window.selectRow = selectRow;
-  window.openEditNote = openEditNote;
-  window.saveEditNote = saveEditNote;
-  window.deleteNote = deleteNote;
-  window.editCell = editCell;
-  window.closeModal = closeModal;
-  window.applyNSFDirect = applyNSFDirect;
+  window.saveLoanSettings = saveLoanSettings;
+  window.loadLoanSettings = loadLoanSettings;
+  window.recalculateFromUI = recalculateFromUI;
+  window.saveAndRecalculate = saveAndRecalculate;
 </script>
 </body>
 </html>
