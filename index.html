@@ -19,12 +19,10 @@
       --warn:#fbbf24;
       --bad:#f87171;
       --accent:#60a5fa;
-      --purple:#a78bfa;
       --shadow:0 4px 24px rgba(0,0,0,.4);
       --shadow2:0 8px 40px rgba(0,0,0,.5);
       --r:20px;
       --r2:24px;
-      --r3:32px;
       --mono:'SF Mono', ui-monospace, Consolas, monospace;
       --sans:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
     }
@@ -381,7 +379,6 @@
                 </div>
               </div>
 
-              <!-- ✅ BOUTONS: SAUVEGARDER / RECALCULER -->
               <div class="client-item" style="grid-column:span 2;display:grid;gap:10px">
                 <button class="btn primary" onclick="recalculateFromUI();event.stopPropagation()" style="width:100%;justify-content:center">
                   🧮 Recalculer le plan avec ces valeurs
@@ -421,34 +418,21 @@
 </div>
 
 <script>
-  // ===================== UTILITAIRES
+  // ========= UTILITAIRES
   const STORAGE_KEY = 'loan_settings_v1';
-
   const money = (n) => (Number(n||0)).toLocaleString('fr-CA',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' $';
   const clamp2 = (n) => Math.round((Number(n)||0)*100)/100;
   const fmtDate = (iso) => new Date(iso+'T00:00:00').toLocaleDateString('fr-CA',{day:'2-digit',month:'short',year:'numeric'}).replace('.','');
 
-  function daysBetween(date1, date2){
-    const d1 = new Date(date1 + 'T00:00:00');
-    const d2 = new Date(date2 + 'T00:00:00');
-    return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
-  }
-
-  // ===================== STATE
-  let state = {
-    schedule: [],
-    events: []
-  };
+  // ========= STATE
+  let state = { schedule: [], events: [] };
 
   function logEvent(title, txt){
-    state.events.push({
-      ts: new Date().toISOString(),
-      title, txt
-    });
+    state.events.push({ ts: new Date().toISOString(), title, txt });
     renderEvents();
   }
 
-  // ===================== UI HELPERS
+  // ========= UI
   function updateTotalFinanced(){
     const loanAmt = Number(document.getElementById('loanAmount').value) || 0;
     const fees = Number(document.getElementById('openingFees').value) || 0;
@@ -486,7 +470,7 @@
     updateTotalFinanced();
   }
 
-  // ===================== SAUVEGARDE / CHARGEMENT
+  // ========= SAUVEGARDE / CHARGEMENT
   function saveLoanSettings(){
     const s = getLoanSettingsFromUI();
     if(s.totalFinanced <= 0){
@@ -514,22 +498,20 @@
     recalculateFromUI();
   }
 
-  // ===================== CALCUL / GÉNÉRATION DU PLAN
-  // Règle adhésion: 7j => 22.50 / 14j => 45.00
+  // ========= CALCUL
+  // Adhésion: 7j => 22.50 / 14j => 45.00
   function getAdhesionFee(freqDays){
     return (freqDays === 7) ? 22.50 : 45.00;
   }
 
-  // Daily rate selon type de taux (inclut l'ajustement "Margill" 2.8% sur annuel)
+  // Daily rate selon type de taux + ajustement Margill 2.8% sur annuel
   function computeDailyRate(nominalRate, rateType, frequencyDays){
     if(rateType === 'periodic'){
-      // nominalRate = taux par période (ex: 0.02 par 14j) -> quotidien
-      return nominalRate / frequencyDays;
+      return nominalRate / frequencyDays; // taux par période -> quotidien
     }
     if(rateType === 'monthly'){
       return nominalRate / 30;
     }
-    // annual
     const effectiveRate = nominalRate * 1.028; // Margill
     return effectiveRate / 365;
   }
@@ -547,7 +529,6 @@
     let currentDate = new Date(s.firstPaymentDate + 'T00:00:00');
     const schedule = [];
 
-    // Capital fixe par paiement (sauf dernier ajusté)
     const baseCapital = clamp2(s.totalFinanced / s.numPayments);
 
     for(let i=1;i<=s.numPayments;i++){
@@ -586,7 +567,7 @@
       });
     }
 
-    return {schedule, adhesionFee, dailyRate};
+    return {schedule, adhesionFee};
   }
 
   function recalculateFromUI(){
@@ -595,8 +576,6 @@
       alert('Montant financé doit être > 0');
       return;
     }
-
-    // sécurité dates
     if(!s.originDate || !s.firstPaymentDate){
       alert('Dates origine et 1er paiement sont obligatoires');
       return;
@@ -605,7 +584,6 @@
     const {schedule, adhesionFee} = generateScheduleFromSettings(s);
     state.schedule = schedule;
 
-    // Header info
     const totalInterest = clamp2(schedule.reduce((sum,r)=>sum + (r.interest||0),0));
     document.getElementById('subHeader').textContent =
       `${s.numPayments} paiements · ${s.frequencyDays}j · Adh ${money(adhesionFee)} · Int. total: ${money(totalInterest)}`;
@@ -614,11 +592,10 @@
       `Financé ${money(s.totalFinanced)} · Taux ${s.interestRatePct}% (${s.rateType})`;
 
     renderAll();
-
     logEvent('🧮 Recalcul', `Nouveau plan généré sur ${s.numPayments} paiements. Financé ${money(s.totalFinanced)}.`);
   }
 
-  // ===================== RENDER
+  // ========= RENDER
   function renderKPI(){
     const s = getLoanSettingsFromUI();
     const totalInterest = clamp2(state.schedule.reduce((sum,r)=>sum + (r.interest||0),0));
@@ -684,11 +661,11 @@
     renderEvents();
   }
 
-  // ===================== INIT
+  // ========= INIT
   function init(){
     updateTotalFinanced();
 
-    // ✅ Auto-charger la sauvegarde si elle existe
+    // Auto-charge sauvegarde si présente
     const raw = localStorage.getItem(STORAGE_KEY);
     if(raw){
       try{
@@ -698,13 +675,13 @@
       } catch(e){}
     }
 
-    // Génère un plan au démarrage
+    // Génère plan au démarrage
     recalculateFromUI();
   }
 
   init();
 
-  // Expose
+  // expose
   window.updateTotalFinanced = updateTotalFinanced;
   window.saveLoanSettings = saveLoanSettings;
   window.loadLoanSettings = loadLoanSettings;
